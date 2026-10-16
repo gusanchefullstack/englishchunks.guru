@@ -5,7 +5,16 @@ from scoring.combine import aggregate_sounds, combine, fluency, weakest, word_ac
 
 def test_word_accuracy_ignores_case_and_punctuation() -> None:
     assert word_accuracy("That makes sense.", "that makes sense") == 1.0
-    assert word_accuracy("That makes sense.", "that make sense") == pytest.approx(2 / 3)
+    assert word_accuracy("That makes sense.", "that make sense") == 1.0  # light stemming
+    assert word_accuracy("That makes sense.", "this is sense") == pytest.approx(1 / 3)
+
+
+def test_word_accuracy_does_not_punish_restarts() -> None:
+    assert word_accuracy("That makes sense.", "that makes that makes sense") == 1.0
+    assert word_accuracy("That makes sense.", "not make sense not make sense") == pytest.approx(
+        2 / 3
+    )
+    assert word_accuracy("That makes sense.", "completely different words") == 0.0
 
 
 def test_fluency_rewards_rate_and_penalizes_long_pauses() -> None:
@@ -16,16 +25,21 @@ def test_fluency_rewards_rate_and_penalizes_long_pauses() -> None:
     assert fluency([], [], 0.0, "B1") == 0.0
 
 
-def test_weakest_prefers_repeated_sounds_and_returns_two_to_three() -> None:
+def test_weakest_prefers_repeated_weak_sounds() -> None:
     stats = aggregate_sounds(
         [("ð", 30), ("ð", 40), ("s", 50), ("s", 60), ("æ", 10), ("t", 90), ("t", 95)]
     )
-    assert weakest(stats) == ["ð", "s", "t"]  # æ heard once, so repeated sounds come first
+    assert weakest(stats) == ["ð", "s", "æ"]  # repeated weak sounds first, then singles; t is fine
 
 
-def test_weakest_falls_back_to_single_occurrences() -> None:
-    stats = aggregate_sounds([("ð", 30), ("s", 50)])
-    assert weakest(stats) == ["ð", "s"]
+def test_weakest_never_flags_well_pronounced_sounds() -> None:
+    # Real case: "That makes sense" heard as "Not make sense" — /s/ was perfect 3 times.
+    stats = aggregate_sounds([("ð", 2), ("æ", 15), ("t", 100), ("s", 100), ("s", 100), ("s", 100)])
+    assert weakest(stats) == ["ð", "æ"]
+
+
+def test_weakest_is_empty_when_everything_is_good() -> None:
+    assert weakest(aggregate_sounds([("ð", 95), ("s", 99)])) == []
 
 
 def test_combine_weights_components() -> None:

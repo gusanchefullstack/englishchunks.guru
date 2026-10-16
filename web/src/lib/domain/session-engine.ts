@@ -125,7 +125,10 @@ export async function startLibrarySession(
   });
 }
 
+const UUID = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
+
 async function ownSession(tx: Tx, ctx: SessionCtx, sessionId: string, lock = false) {
+  if (!UUID.test(sessionId)) throw new AppError("not_found", "Session not found.");
   const q = tx
     .select()
     .from(practiceSession)
@@ -305,4 +308,36 @@ export async function setCountsTowardLimit(sessionId: string, counts: boolean) {
     .update(practiceSession)
     .set({ countsTowardLimit: counts })
     .where(eq(practiceSession.id, sessionId));
+}
+
+/** Read-only view of today for the /today page — never creates a session (safe to prefetch). */
+export async function getTodayStatus(ctx: SessionCtx) {
+  const practiceDate = practiceDateFor(ctx.timeZone, ctx.now);
+  const d = db();
+  const [existing] = await d
+    .select({ id: practiceSession.id })
+    .from(practiceSession)
+    .where(
+      and(
+        eq(practiceSession.userId, ctx.userId),
+        eq(practiceSession.practiceDate, practiceDate),
+        eq(practiceSession.origin, "daily"),
+      ),
+    );
+  const limit = await limitFor(d as unknown as Tx, ctx.userId);
+  const [used] = await d
+    .select({ n: count() })
+    .from(practiceSession)
+    .where(
+      and(
+        eq(practiceSession.userId, ctx.userId),
+        eq(practiceSession.practiceDate, practiceDate),
+        eq(practiceSession.countsTowardLimit, true),
+      ),
+    );
+  return {
+    existingSessionId: existing?.id ?? null,
+    limit,
+    remaining: Math.max(0, limit - (used?.n ?? 0)),
+  };
 }

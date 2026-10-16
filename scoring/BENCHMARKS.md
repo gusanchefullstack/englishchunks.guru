@@ -8,7 +8,18 @@ wav2vec2-lv-60-espeak-cv-ft (ONNX dynamic int8, 318 MB). Weights 0.5 phoneme / 0
 | Check | Setup | Result | Target |
 |-------|-------|--------|--------|
 | Latency (SC-003) | 50 synthetic espeak-ng clips, Apple Silicon laptop, 1 process | p50 0.41 s · p95 0.51 s · 0 unusable | p95 ≤ 5 s ✅ |
-| Calibration (SC-005) | speechocean762 test split, 600 utterances (300 with human total ≤ 6, 300 with ≥ 8), all cross-sentence pairs with a human gap ≥ 3 | **88.5 %** correct over 66,189 pairs | ≥ 85 % ✅ |
+| Calibration (SC-005) | speechocean762 test split, 600 utterances (300 with human total ≤ 6, 300 with ≥ 8), all cross-sentence pairs with a human gap ≥ 3 | **89.1 %** correct over 66,189 pairs (after LCS-recall word accuracy; 88.5 % before) | ≥ 85 % ✅ |
+| Real browser format | Chromium MediaRecorder Opus/WebM (2.4 s) → web `scoringClient` → HMAC HTTP → service | decoded and scored in 0.57 s (local), ~1 s in the read-only Docker container | ✅ |
+
+### Fixes found by the real-format smoke test
+
+- Word accuracy now uses in-order recall (LCS) with light stemming, so restarts/repeats
+  ("that makes… that makes sense") aren't treated as wrong content — they lower fluency instead.
+- Weakest sounds only include sounds scoring < 85; a well-pronounced repeated sound was being
+  flagged first.
+- Container: Docker `--tmpfs` defaults to `noexec`, which blocks phonemizer's espeak-ng copy;
+  the unit now mounts `/tmp` with `exec` (still read-only root, size-limited, no audio written).
+- Models preload in a background thread at startup; `/healthz` reports `loading` → `ok`.
 
 ### Still to run before learners use scoring
 

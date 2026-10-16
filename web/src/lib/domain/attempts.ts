@@ -13,6 +13,7 @@ import {
 import { MAX_AUDIO_BYTES, recordingMimeTypes, type ScoreResult } from "@/lib/contracts/scoring";
 import { AppError } from "@/lib/errors";
 import { scoringClient } from "@/lib/providers/scoring-client";
+import { CAPS, consume } from "./caps";
 import { composeFeedback } from "./feedback";
 import type { HintInput } from "./prompts";
 import { setCountsTowardLimit, type SessionCtx } from "./session-engine";
@@ -90,6 +91,11 @@ export async function recordAttempt(
     throw new AppError("validation", "Unknown item for this step.");
 
   const expectedText = await expectedTextFor(s.id, s.chunkId, input.item);
+  await consume(
+    `scoring:${s.id}`,
+    CAPS.scoringPerSession,
+    "You've reached today's recording limit for this practice. Continue to the next step.",
+  );
 
   let outcome;
   try {

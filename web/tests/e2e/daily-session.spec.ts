@@ -12,6 +12,9 @@ async function record(page: Page, scope: Page | Locator = page) {
 
 test("learner completes the full daily session (US1, V1)", async ({ page }) => {
   await page.goto("/today");
+  await expect(page.getByRole("heading", { name: /today's chunk is ready/i })).toBeVisible();
+  await expectNoA11yViolations(page);
+  await page.getByRole("button", { name: /start today's chunk/i }).click();
   await expect(page).toHaveURL(/\/practice\//);
 
   // Learn

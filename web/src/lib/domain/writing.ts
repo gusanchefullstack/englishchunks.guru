@@ -5,6 +5,7 @@ import { chunk, practiceSession, writingResult } from "@/db/schema";
 import { WritingFeedback } from "@/lib/contracts/llm";
 import { AppError } from "@/lib/errors";
 import { llm } from "@/lib/providers/llm";
+import { CAPS, consume } from "./caps";
 import { checkWriting } from "./feedback-guards";
 import { buildWritingPrompt } from "./prompts";
 import type { SessionCtx } from "./session-engine";
@@ -25,6 +26,11 @@ export async function submitWriting(
   if (!s) throw new AppError("not_found", "Session not found.");
   if (s.step !== "write") throw new AppError("conflict", "This isn't the writing step.");
   const [c] = await d.select().from(chunk).where(eq(chunk.id, s.chunkId));
+  await consume(
+    `writing:${s.id}`,
+    CAPS.writingChecksPerSession,
+    "You've checked your sentences several times. Continue to reading aloud.",
+  );
 
   const graded = await Promise.all(
     sentences.map((sentence) =>

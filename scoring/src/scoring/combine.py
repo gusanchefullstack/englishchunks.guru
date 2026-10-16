@@ -4,8 +4,6 @@ import re
 from collections import defaultdict
 from dataclasses import dataclass, field
 
-from .align import sequence_accuracy
-
 # Comfortable speaking-rate targets (words per minute) by CEFR level. Below the floor = halting.
 _WPM_FLOOR = {"A1": 55, "A2": 65, "B1": 80, "B2": 95, "C1": 110, "C2": 120}
 _LONG_PAUSE_S = 0.8
@@ -18,8 +16,34 @@ def words(text: str) -> list[str]:
     return _WORD_RE.findall(t)
 
 
+def _stem(w: str) -> str:
+    """Light stemming so "make"/"makes"/"made" style slips count as the same word."""
+    for suffix in ("ing", "ed", "s"):
+        if len(w) > len(suffix) + 2 and w.endswith(suffix):
+            return w[: -len(suffix)]
+    return w
+
+
+def _lcs(a: list[str], b: list[str]) -> int:
+    prev = [0] * (len(b) + 1)
+    for x in a:
+        cur = [0] * (len(b) + 1)
+        for j, y in enumerate(b, 1):
+            cur[j] = prev[j - 1] + 1 if x == y else max(prev[j], cur[j - 1])
+        prev = cur
+    return prev[-1]
+
+
 def word_accuracy(expected_text: str, transcript: str) -> float:
-    return sequence_accuracy(words(expected_text), words(transcript))
+    """Share of expected words said, in order (LCS recall).
+
+    Repeats and restarts ("that makes… that makes sense") don't count as errors here — they
+    already lower fluency — so a learner who self-corrects isn't marked as saying the wrong thing.
+    """
+    expected = [_stem(w) for w in words(expected_text)]
+    if not expected:
+        return 0.0
+    return _lcs(expected, [_stem(w) for w in words(transcript)]) / len(expected)
 
 
 def fluency(
@@ -70,14 +94,22 @@ def aggregate_sounds(per_phone: list[tuple[str | None, float]]) -> dict[str, Sou
     return dict(stats)
 
 
+WEAK_BELOW = 85.0
+
+
 def weakest(stats: dict[str, SoundStat], k: int = 3) -> list[str]:
-    """2–3 lowest-scoring sounds; prefer sounds heard ≥ 2 times, else allow single occurrences."""
-    ranked = sorted(stats.items(), key=lambda kv: kv[1].mean)
-    repeated = [s for s, st in ranked if st.count >= 2]
-    chosen = repeated[:k]
-    if len(chosen) < 2:
-        chosen += [s for s, _ in ranked if s not in chosen][: k - len(chosen)]
-    return chosen[:k]
+    """Up to 3 sounds that need work, lowest score first.
+
+    Only sounds scoring below WEAK_BELOW qualify — a well-pronounced sound is never flagged.
+    Among those, sounds heard at least twice come first (more reliable evidence), then single
+    occurrences fill any remaining slots.
+    """
+    weak = sorted(
+        ((s, st) for s, st in stats.items() if st.mean < WEAK_BELOW), key=lambda kv: kv[1].mean
+    )
+    repeated = [s for s, st in weak if st.count >= 2]
+    singles = [s for s, st in weak if st.count < 2]
+    return (repeated + singles)[:k]
 
 
 def combine(
@@ -103,5 +135,5 @@ def combine(
             {"ipa": sym, "score": int(round(st.mean)), "count": st.count}
             for sym, st in sorted(stats.items(), key=lambda kv: kv[1].mean)
         ],
-        weakest_sounds=weakest(stats) if len(stats) >= 2 else list(stats)[:1],
+        weakest_sounds=weakest(stats),
     )

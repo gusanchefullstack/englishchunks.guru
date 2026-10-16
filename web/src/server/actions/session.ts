@@ -1,5 +1,6 @@
 "use server";
 
+import { redirect } from "next/navigation";
 import { z } from "zod";
 import { sessionSteps } from "@/db/schema";
 import { requireLearner } from "@/lib/authz";
@@ -16,6 +17,13 @@ const Id = z.uuid();
 
 export async function startDailySession() {
   return toResult(async () => engine.startDailySession(await ctx()));
+}
+
+/** Form action for the "Start today's chunk" button: creates (or resumes) and navigates. */
+export async function startTodayAndGo(): Promise<{ error: string } | undefined> {
+  const res = await startDailySession();
+  if (!res.ok) return { error: res.error.message };
+  redirect(`/practice/${res.data.id}`);
 }
 
 export async function startLibrarySession(chunkId: string) {
