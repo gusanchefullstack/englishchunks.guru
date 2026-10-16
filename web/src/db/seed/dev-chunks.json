@@ -1,0 +1,872 @@
+[
+  {
+    "text": "How's it going?",
+    "type": "polyword",
+    "level": "A1",
+    "registers": ["casual"],
+    "meaning": "A friendly way to ask how someone is.",
+    "usageNote": "Use it to greet friends or coworkers you know. Answer with \"Good, thanks!\"",
+    "examples": [
+      {
+        "position": 1,
+        "text": "Hi Sam! How's it going?",
+        "register": "casual",
+        "ipa": "hˈaɪ sˈæm hˌaʊz ɪt ɡˈoʊɪŋ"
+      },
+      {
+        "position": 2,
+        "text": "Morning, Lee. How's it going with the new laptop?",
+        "register": "professional",
+        "ipa": "mˈɔːɹnɪŋ lˈiː hˌaʊz ɪt ɡˌoʊɪŋ wɪððə nˈuː lˈæptɑːp"
+      },
+      {
+        "position": 3,
+        "text": "How's it going? I haven't seen you all week.",
+        "register": "casual",
+        "ipa": "hˌaʊz ɪt ɡˈoʊɪŋ aɪ hˈævənt sˈiːn juː ˈɔːl wˈiːk"
+      }
+    ],
+    "ipa": "hˌaʊz ɪt ɡˈoʊɪŋ"
+  },
+  {
+    "text": "See you later",
+    "type": "polyword",
+    "level": "A1",
+    "registers": ["casual", "professional"],
+    "meaning": "Goodbye — I will see you again soon.",
+    "usageNote": "Use it when you leave and expect to see the person again, today or soon.",
+    "examples": [
+      {
+        "position": 1,
+        "text": "Thanks for lunch! See you later.",
+        "register": "casual",
+        "ipa": "θˈæŋks fɔːɹ lˈʌntʃ sˈiː juː lˈeɪɾɚ"
+      },
+      {
+        "position": 2,
+        "text": "I'm off to the meeting. See you later.",
+        "register": "professional",
+        "ipa": "aɪm ˈɔf tə ðə mˈiːɾɪŋ sˈiː juː lˈeɪɾɚ"
+      },
+      {
+        "position": 3,
+        "text": "See you later, Mom!",
+        "register": "casual",
+        "ipa": "sˈiː juː lˈeɪɾɚ mˈɑːm"
+      }
+    ],
+    "ipa": "sˈiː juː lˈeɪɾɚ"
+  },
+  {
+    "text": "thank you so much",
+    "type": "polyword",
+    "level": "A1",
+    "registers": ["casual", "professional"],
+    "meaning": "A strong, warm way to say thanks.",
+    "usageNote": "Use it when someone helped you a lot or did something kind.",
+    "examples": [
+      {
+        "position": 1,
+        "text": "Thank you so much for the flowers!",
+        "register": "casual",
+        "ipa": "θˈæŋk juː sˈoʊ mˌʌtʃ fɚðə flˈaʊɚz"
+      },
+      {
+        "position": 2,
+        "text": "Thank you so much for your quick reply.",
+        "register": "professional",
+        "ipa": "θˈæŋk juː sˈoʊ mˌʌtʃ fɔːɹ jʊɹ kwˈɪk ɹᵻplˈaɪ"
+      },
+      {
+        "position": 3,
+        "text": "You fixed my bike? Thank you so much!",
+        "register": "casual",
+        "ipa": "juː fˈɪkst maɪ bˈaɪk θˈæŋk juː sˈoʊ mˌʌtʃ"
+      }
+    ],
+    "ipa": "θˈæŋk juː sˈoʊ mˌʌtʃ"
+  },
+  {
+    "text": "have a nice day",
+    "type": "polyword",
+    "level": "A1",
+    "registers": ["casual", "professional"],
+    "meaning": "A polite way to say goodbye and wish someone well.",
+    "usageNote": "Common in shops, cafés, and at the end of short conversations.",
+    "examples": [
+      {
+        "position": 1,
+        "text": "Here's your coffee. Have a nice day!",
+        "register": "professional",
+        "ipa": "hˈɪɹz jʊɹ kˈɔfi hæv ɐ nˈaɪs dˈeɪ"
+      },
+      {
+        "position": 2,
+        "text": "Bye, Ana! Have a nice day.",
+        "register": "casual",
+        "ipa": "bˈaɪ ˈɑːnə hæv ɐ nˈaɪs dˈeɪ"
+      },
+      {
+        "position": 3,
+        "text": "Thanks for calling, and have a nice day.",
+        "register": "professional",
+        "ipa": "θˈæŋks fɔːɹ kˈɔːlɪŋ ænd hæv ɐ nˈaɪs dˈeɪ"
+      }
+    ],
+    "ipa": "hæv ɐ nˈaɪs dˈeɪ"
+  },
+  {
+    "text": "take a break",
+    "type": "collocation",
+    "level": "A1",
+    "registers": ["casual", "professional"],
+    "meaning": "Stop working or studying for a short time to rest.",
+    "usageNote": "We say \"take\" a break, not \"make\" a break.",
+    "examples": [
+      {
+        "position": 1,
+        "text": "Let's take a break and get some water.",
+        "register": "casual",
+        "ipa": "lˈɛts tˈeɪk ɐ bɹˈeɪk ænd ɡɛt sˌʌm wˈɔːɾɚ"
+      },
+      {
+        "position": 2,
+        "text": "We'll take a break at eleven and continue after.",
+        "register": "professional",
+        "ipa": "wiːl tˈeɪk ɐ bɹˈeɪk æɾ ᵻlˈɛvən ænd kəntˈɪnjuː ˈæftɚ"
+      },
+      {
+        "position": 3,
+        "text": "You look tired. Take a break!",
+        "register": "casual",
+        "ipa": "juː lˈʊk tˈaɪɚd tˈeɪk ɐ bɹˈeɪk"
+      }
+    ],
+    "ipa": "tˈeɪk ɐ bɹˈeɪk"
+  },
+  {
+    "text": "by the way",
+    "type": "discourse_marker",
+    "level": "A2",
+    "registers": ["casual", "professional"],
+    "meaning": "Used to add a new topic or extra information.",
+    "usageNote": "Use it to change the topic naturally, often at the start of a sentence.",
+    "examples": [
+      {
+        "position": 1,
+        "text": "By the way, I loved your photos.",
+        "register": "casual",
+        "ipa": "baɪ ðə wˈeɪ aɪ lˈʌvd jʊɹ fˈoʊɾoʊz"
+      },
+      {
+        "position": 2,
+        "text": "By the way, the report is due on Friday.",
+        "register": "professional",
+        "ipa": "baɪ ðə wˈeɪ ðə ɹᵻpˈɔːɹt ɪz dˈuː ˌɔn fɹˈaɪdeɪ"
+      },
+      {
+        "position": 3,
+        "text": "By the way, did you call Mike?",
+        "register": "casual",
+        "ipa": "baɪ ðə wˈeɪ dˈɪd juː kˈɔːl mˈaɪk"
+      }
+    ],
+    "ipa": "baɪ ðə wˈeɪ"
+  },
+  {
+    "text": "make a decision",
+    "type": "collocation",
+    "level": "A2",
+    "registers": ["casual", "professional"],
+    "meaning": "Choose what to do after thinking about it.",
+    "usageNote": "We \"make\" a decision, not \"do\" a decision.",
+    "examples": [
+      {
+        "position": 1,
+        "text": "I can't make a decision about the dress.",
+        "register": "casual",
+        "ipa": "aɪ kˈænt mˌeɪk ɐ dᵻsˈɪʒən ɐbˌaʊt ðə dɹˈɛs"
+      },
+      {
+        "position": 2,
+        "text": "We need to make a decision before Monday.",
+        "register": "professional",
+        "ipa": "wiː nˈiːd tə mˌeɪk ɐ dᵻsˈɪʒən bᵻfˌɔːɹ mˈʌndeɪ"
+      },
+      {
+        "position": 3,
+        "text": "Take your time to make a decision.",
+        "register": "casual",
+        "ipa": "tˈeɪk jʊɹ tˈaɪm tə mˌeɪk ɐ dᵻsˈɪʒən"
+      }
+    ],
+    "ipa": "mˌeɪk ɐ dᵻsˈɪʒən"
+  },
+  {
+    "text": "I'm looking forward to it",
+    "type": "sentence_frame",
+    "level": "A2",
+    "registers": ["casual", "professional"],
+    "meaning": "I feel excited about something in the future.",
+    "usageNote": "Use it when you are happy about a plan. \"To\" is followed by a noun or \"-ing\" verb.",
+    "examples": [
+      {
+        "position": 1,
+        "text": "The trip is next week. I'm looking forward to it!",
+        "register": "casual",
+        "ipa": "ðə tɹˈɪp ɪz nˈɛkst wˈiːk aɪm lˈʊkɪŋ fˈɔːɹwɚd tʊ ɪt"
+      },
+      {
+        "position": 2,
+        "text": "Thanks for the invitation. I'm looking forward to it.",
+        "register": "professional",
+        "ipa": "θˈæŋks fɚðɪ ɪnvɪtˈeɪʃən aɪm lˈʊkɪŋ fˈɔːɹwɚd tʊ ɪt"
+      },
+      {
+        "position": 3,
+        "text": "A concert on Saturday? I'm looking forward to it.",
+        "register": "casual",
+        "ipa": "ɐ kˈɑːnsɚt ˌɔn sˈæɾɚdˌeɪ aɪm lˈʊkɪŋ fˈɔːɹwɚd tʊ ɪt"
+      }
+    ],
+    "ipa": "aɪm lˈʊkɪŋ fˈɔːɹwɚd tʊ ɪt"
+  },
+  {
+    "text": "no problem",
+    "type": "polyword",
+    "level": "A2",
+    "registers": ["casual", "professional"],
+    "meaning": "It's fine — it was easy or I'm happy to help.",
+    "usageNote": "Use it to answer \"thank you\" or \"sorry\" in a relaxed way.",
+    "examples": [
+      {
+        "position": 1,
+        "text": "Thanks for waiting. — No problem!",
+        "register": "casual",
+        "ipa": "θˈæŋks fɔːɹ wˈeɪɾɪŋ nˈoʊ pɹˈɑːbləm"
+      },
+      {
+        "position": 2,
+        "text": "Can you send it again? — No problem, here it is.",
+        "register": "professional",
+        "ipa": "kæn juː sˈɛnd ɪɾ ɐɡˈɛn nˈoʊ pɹˈɑːbləm hˈɪɹ ɪɾ ˈɪz"
+      },
+      {
+        "position": 3,
+        "text": "Sorry I'm late. — No problem.",
+        "register": "casual",
+        "ipa": "sˈɑːɹi aɪm lˈeɪt nˈoʊ pɹˈɑːbləm"
+      }
+    ],
+    "ipa": "nˈoʊ pɹˈɑːbləm"
+  },
+  {
+    "text": "pay attention",
+    "type": "collocation",
+    "level": "A2",
+    "registers": ["casual", "professional"],
+    "meaning": "Watch, listen, or think carefully about something.",
+    "usageNote": "Usually followed by \"to\": pay attention to the details.",
+    "examples": [
+      {
+        "position": 1,
+        "text": "Pay attention to the road, please.",
+        "register": "casual",
+        "ipa": "pˈeɪ ɐtˈɛnʃən tə ðə ɹˈoʊd plˈiːz"
+      },
+      {
+        "position": 2,
+        "text": "Please pay attention to the new safety rules.",
+        "register": "professional",
+        "ipa": "plˈiːz pˈeɪ ɐtˈɛnʃən tə ðə nˈuː sˈeɪfti ɹˈuːlz"
+      },
+      {
+        "position": 3,
+        "text": "I wasn't paying attention. Can you repeat that?",
+        "register": "casual",
+        "ipa": "aɪ wˈʌzn̩t pˈeɪɪŋ ɐtˈɛnʃən kæn juː ɹᵻpˈiːt ðˈæt"
+      }
+    ],
+    "ipa": "pˈeɪ ɐtˈɛnʃən"
+  },
+  {
+    "text": "that makes sense",
+    "type": "discourse_marker",
+    "level": "B1",
+    "registers": ["casual", "professional"],
+    "meaning": "I understand your reason, and it seems logical.",
+    "usageNote": "Use it to show you understand someone's reason, idea, or explanation.",
+    "examples": [
+      {
+        "position": 1,
+        "text": "Oh, you took the earlier train? That makes sense.",
+        "register": "casual",
+        "ipa": "ˈoʊ juː tˈʊk ðɪ ˈɜːlɪɚ tɹˈeɪn ðæt mˌeɪks sˈɛns"
+      },
+      {
+        "position": 2,
+        "text": "The deadline moved because of the launch. That makes sense.",
+        "register": "professional",
+        "ipa": "ðə dˈɛdlaɪn mˈuːvd bɪkˈʌz ʌvðə lˈɑːntʃ ðæt mˌeɪks sˈɛns"
+      },
+      {
+        "position": 3,
+        "text": "You prefer mornings when it's quiet? That makes sense.",
+        "register": "casual",
+        "ipa": "juː pɹɪfˈɜː mˈɔːɹnɪŋz wɛn ɪts kwˈaɪət ðæt mˌeɪks sˈɛns"
+      }
+    ],
+    "ipa": "ðæt mˌeɪks sˈɛns"
+  },
+  {
+    "text": "at the end of the day",
+    "type": "discourse_marker",
+    "level": "B1",
+    "registers": ["casual", "professional"],
+    "meaning": "When you think about what really matters.",
+    "usageNote": "Use it to give your final, most important point.",
+    "examples": [
+      {
+        "position": 1,
+        "text": "At the end of the day, you have to be happy.",
+        "register": "casual",
+        "ipa": "æt ðɪ ˈɛnd ʌvðə dˈeɪ juː hæv təbi hˈæpi"
+      },
+      {
+        "position": 2,
+        "text": "At the end of the day, the client decides.",
+        "register": "professional",
+        "ipa": "æt ðɪ ˈɛnd ʌvðə dˈeɪ ðə klˈaɪənt dᵻsˈaɪdz"
+      },
+      {
+        "position": 3,
+        "text": "It's expensive, but at the end of the day it's worth it.",
+        "register": "casual",
+        "ipa": "ɪts ɛkspˈɛnsɪv bˌʌt æt ðɪ ˈɛnd ʌvðə dˈeɪ ɪts wˈɜːθ ɪt"
+      }
+    ],
+    "ipa": "æt ðɪ ˈɛnd ʌvðə dˈeɪ"
+  },
+  {
+    "text": "I tend to",
+    "type": "sentence_frame",
+    "level": "B1",
+    "registers": ["casual", "professional"],
+    "meaning": "I usually do something; it's my habit.",
+    "usageNote": "Follow it with a base verb: I tend to wake up early.",
+    "examples": [
+      {
+        "position": 1,
+        "text": "I tend to drink tea in the evening.",
+        "register": "casual",
+        "ipa": "aɪ tˈɛnd tə dɹˈɪŋk tˈiː ɪnðɪ ˈiːvnɪŋ"
+      },
+      {
+        "position": 2,
+        "text": "I tend to reply to emails in the morning.",
+        "register": "professional",
+        "ipa": "aɪ tˈɛnd tə ɹᵻplˈaɪ tʊ ˈiːmeɪlz ɪnðə mˈɔːɹnɪŋ"
+      },
+      {
+        "position": 3,
+        "text": "I tend to forget names, sorry!",
+        "register": "casual",
+        "ipa": "aɪ tˈɛnd tə fɚɡˈɛt nˈeɪmz sˈɑːɹi"
+      }
+    ],
+    "ipa": "aɪ tˈɛnd tuː"
+  },
+  {
+    "text": "get used to",
+    "type": "verb_pattern",
+    "level": "B1",
+    "registers": ["casual", "professional"],
+    "meaning": "Become familiar with something new until it feels normal.",
+    "usageNote": "Follow it with a noun or an \"-ing\" verb: get used to working from home.",
+    "examples": [
+      {
+        "position": 1,
+        "text": "It took me a month to get used to the cold.",
+        "register": "casual",
+        "ipa": "ɪt tˈʊk mˌiː ɐ mˈʌnθ tə ɡɛt jˈuːzd tə ðə kˈoʊld"
+      },
+      {
+        "position": 2,
+        "text": "You'll get used to the new system quickly.",
+        "register": "professional",
+        "ipa": "juːl ɡɛt jˈuːzd tə ðə nˈuː sˈɪstəm kwˈɪkli"
+      },
+      {
+        "position": 3,
+        "text": "I can't get used to waking up at six.",
+        "register": "casual",
+        "ipa": "aɪ kˈænt ɡɛt jˈuːzd tə wˈeɪkɪŋ ˌʌp æt sˈɪks"
+      }
+    ],
+    "ipa": "ɡɛt jˈuːzd tuː"
+  },
+  {
+    "text": "or something like that",
+    "type": "vague_language",
+    "level": "B1",
+    "registers": ["casual"],
+    "meaning": "Approximately — it might not be exactly this.",
+    "usageNote": "Put it at the end when you aren't sure of the exact word or number.",
+    "examples": [
+      {
+        "position": 1,
+        "text": "She works in marketing or something like that.",
+        "register": "casual",
+        "ipa": "ʃiː wˈɜːks ɪn mˈɑːɹkɪɾɪŋ ɔːɹ sˈʌmθɪŋ lˈaɪk ðˈæt"
+      },
+      {
+        "position": 2,
+        "text": "The meeting is at three or something like that.",
+        "register": "professional",
+        "ipa": "ðə mˈiːɾɪŋ ɪz æt θɹˈiː ɔːɹ sˈʌmθɪŋ lˈaɪk ðˈæt"
+      },
+      {
+        "position": 3,
+        "text": "Let's get pizza or something like that.",
+        "register": "casual",
+        "ipa": "lˈɛts ɡɛt pˈiːtsə ɔːɹ sˈʌmθɪŋ lˈaɪk ðˈæt"
+      }
+    ],
+    "ipa": "ɔːɹ sˈʌmθɪŋ lˈaɪk ðˈæt"
+  },
+  {
+    "text": "having said that",
+    "type": "discourse_marker",
+    "level": "B2",
+    "registers": ["academic", "professional"],
+    "meaning": "Even so; despite what I just said.",
+    "usageNote": "Use it to add a contrasting point after a statement.",
+    "examples": [
+      {
+        "position": 1,
+        "text": "The hotel was small. Having said that, it was very clean.",
+        "register": "casual",
+        "ipa": "ðə hoʊtˈɛl wʌz smˈɔːl hˌævɪŋ sˈɛd ðˈæt ɪt wʌz vˈɛɹi klˈiːn"
+      },
+      {
+        "position": 2,
+        "text": "Sales fell this year. Having said that, profits are up.",
+        "register": "professional",
+        "ipa": "sˈeɪlz fˈɛl ðɪs jˈɪɹ hˌævɪŋ sˈɛd ðˈæt pɹˈɑːfɪts ɑːɹ ˈʌp"
+      },
+      {
+        "position": 3,
+        "text": "I'm tired. Having said that, I'd love to come.",
+        "register": "casual",
+        "ipa": "aɪm tˈaɪɚd hˌævɪŋ sˈɛd ðˈæt aɪd lˈʌv tə kˈʌm"
+      }
+    ],
+    "ipa": "hˌævɪŋ sˈɛd ðˈæt"
+  },
+  {
+    "text": "come up with",
+    "type": "verb_pattern",
+    "level": "B2",
+    "registers": ["casual", "professional"],
+    "meaning": "Think of an idea, plan, or answer.",
+    "usageNote": "Usually followed by a noun: come up with a plan, an idea, a name.",
+    "examples": [
+      {
+        "position": 1,
+        "text": "We need to come up with a name for the dog.",
+        "register": "casual",
+        "ipa": "wiː nˈiːd tə kˈʌm ˌʌp wɪð ɐ nˈeɪm fɚðə dˈɑːɡ"
+      },
+      {
+        "position": 2,
+        "text": "Can the team come up with a better solution?",
+        "register": "professional",
+        "ipa": "kæn ðə tˈiːm kˈʌm ˌʌp wɪð ɐ bˈɛɾɚ səlˈuːʃən"
+      },
+      {
+        "position": 3,
+        "text": "She always comes up with funny stories.",
+        "register": "casual",
+        "ipa": "ʃiː ˈɔːlweɪz kˈʌmz ˌʌp wɪð fˈʌni stˈɔːɹiz"
+      }
+    ],
+    "ipa": "kˈʌm ˈʌp wɪð"
+  },
+  {
+    "text": "on the other hand",
+    "type": "discourse_marker",
+    "level": "B2",
+    "registers": ["academic", "professional"],
+    "meaning": "Used to introduce a different side of an argument.",
+    "usageNote": "Often used after \"On the one hand...\" to compare two ideas.",
+    "examples": [
+      {
+        "position": 1,
+        "text": "The city is exciting. On the other hand, it's very expensive.",
+        "register": "casual",
+        "ipa": "ðə sˈɪɾi ɪz ɛksˈaɪɾɪŋ ɔnðɪ ˈʌðɚ hˈænd ɪts vˈɛɹi ɛkspˈɛnsɪv"
+      },
+      {
+        "position": 2,
+        "text": "Option A is cheaper. On the other hand, option B is faster.",
+        "register": "professional",
+        "ipa": "ˈɑːpʃən ɐ ɪz tʃˈiːpɚ ɔnðɪ ˈʌðɚ hˈænd ˈɑːpʃən bˈiː ɪz fˈæstɚ"
+      },
+      {
+        "position": 3,
+        "text": "I want to go out. On the other hand, I need sleep.",
+        "register": "casual",
+        "ipa": "aɪ wˈɔnt tə ɡˌoʊ ˈaʊt ɔnðɪ ˈʌðɚ hˈænd aɪ nˈiːd slˈiːp"
+      }
+    ],
+    "ipa": "ɔnðɪ ˈʌðɚ hˈænd"
+  },
+  {
+    "text": "I find it easy to",
+    "type": "sentence_frame",
+    "level": "B2",
+    "registers": ["casual", "professional"],
+    "meaning": "Something is not difficult for me to do.",
+    "usageNote": "Follow it with a base verb. Change \"easy\" to \"hard\" for the opposite.",
+    "examples": [
+      {
+        "position": 1,
+        "text": "I find it easy to talk to new people.",
+        "register": "casual",
+        "ipa": "aɪ fˈaɪnd ɪɾ ˈiːzi tə tˈɔːk tə nˈuː pˈiːpəl"
+      },
+      {
+        "position": 2,
+        "text": "I find it easy to work with clear deadlines.",
+        "register": "professional",
+        "ipa": "aɪ fˈaɪnd ɪɾ ˈiːzi tə wˈɜːk wɪð klˈɪɹ dˈɛdlaɪnz"
+      },
+      {
+        "position": 3,
+        "text": "I find it easy to cook for my family.",
+        "register": "casual",
+        "ipa": "aɪ fˈaɪnd ɪɾ ˈiːzi tə kˈʊk fɔːɹ maɪ fˈæmɪli"
+      }
+    ],
+    "ipa": "aɪ fˈaɪnd ɪɾ ˈiːzi tuː"
+  },
+  {
+    "text": "and that kind of thing",
+    "type": "vague_language",
+    "level": "B2",
+    "registers": ["casual"],
+    "meaning": "And other similar things.",
+    "usageNote": "Use it at the end of a list instead of naming every item.",
+    "examples": [
+      {
+        "position": 1,
+        "text": "I like hiking, camping, and that kind of thing.",
+        "register": "casual",
+        "ipa": "aɪ lˈaɪk hˈaɪkɪŋ kˈæmpɪŋ ænd ðæt kˈaɪnd ʌv θˈɪŋ"
+      },
+      {
+        "position": 2,
+        "text": "We handle invoices, refunds, and that kind of thing.",
+        "register": "professional",
+        "ipa": "wiː hˈændəl ˈɪnvɔɪsᵻz ɹᵻfˈʌndz ænd ðæt kˈaɪnd ʌv θˈɪŋ"
+      },
+      {
+        "position": 3,
+        "text": "She sells candles, soap, and that kind of thing.",
+        "register": "casual",
+        "ipa": "ʃiː sˈɛlz kˈændəlz sˈoʊp ænd ðæt kˈaɪnd ʌv θˈɪŋ"
+      }
+    ],
+    "ipa": "ænd ðæt kˈaɪnd ʌv θˈɪŋ"
+  },
+  {
+    "text": "spill the beans",
+    "type": "idiom",
+    "level": "C1",
+    "registers": ["casual"],
+    "meaning": "Tell a secret, often by accident.",
+    "usageNote": "Informal. Use it about surprises or secret news.",
+    "examples": [
+      {
+        "position": 1,
+        "text": "Don't spill the beans about the party!",
+        "register": "casual",
+        "ipa": "dˈoʊnt spˈɪl ðə bˈiːnz ɐbˌaʊt ðə pˈɑːɹɾi"
+      },
+      {
+        "position": 2,
+        "text": "Someone spilled the beans about the merger.",
+        "register": "professional",
+        "ipa": "sˈʌmwʌn spˈɪld ðə bˈiːnz ɐbˌaʊt ðə mˈɜːdʒɚ"
+      },
+      {
+        "position": 3,
+        "text": "Come on, spill the beans! Who is he?",
+        "register": "casual",
+        "ipa": "kˈʌm ˈɔn spˈɪl ðə bˈiːnz hˈuː ɪz hiː"
+      }
+    ],
+    "ipa": "spˈɪl ðə bˈiːnz"
+  },
+  {
+    "text": "by and large",
+    "type": "discourse_marker",
+    "level": "C1",
+    "registers": ["academic", "professional"],
+    "meaning": "In general; mostly.",
+    "usageNote": "Use it to give an overall opinion while admitting exceptions.",
+    "examples": [
+      {
+        "position": 1,
+        "text": "By and large, the trip was fun.",
+        "register": "casual",
+        "ipa": "baɪ ænd lˈɑːɹdʒ ðə tɹˈɪp wʌz fˈʌn"
+      },
+      {
+        "position": 2,
+        "text": "By and large, customers are happy with the service.",
+        "register": "professional",
+        "ipa": "baɪ ænd lˈɑːɹdʒ kˈʌstəmɚz ɑːɹ hˈæpi wɪððə sˈɜːvɪs"
+      },
+      {
+        "position": 3,
+        "text": "The movie was, by and large, a success.",
+        "register": "casual",
+        "ipa": "ðə mˈuːvi wʌz baɪ ænd lˈɑːɹdʒ ɐ səksˈɛs"
+      }
+    ],
+    "ipa": "baɪ ænd lˈɑːɹdʒ"
+  },
+  {
+    "text": "take into account",
+    "type": "verb_pattern",
+    "level": "C1",
+    "registers": ["academic", "professional"],
+    "meaning": "Consider something when making a decision.",
+    "usageNote": "The object can go in the middle: take your budget into account.",
+    "examples": [
+      {
+        "position": 1,
+        "text": "Did you take into account the traffic?",
+        "register": "casual",
+        "ipa": "dˈɪd juː tˈeɪk ˌɪntʊ ɐkˈaʊnt ðə tɹˈæfɪk"
+      },
+      {
+        "position": 2,
+        "text": "We must take into account the new regulations.",
+        "register": "professional",
+        "ipa": "wiː mˈʌst tˈeɪk ˌɪntʊ ɐkˈaʊnt ðə nˈuː ɹˌɛɡjʊlˈeɪʃənz"
+      },
+      {
+        "position": 3,
+        "text": "Take into account that she's only five.",
+        "register": "casual",
+        "ipa": "tˈeɪk ˌɪntʊ ɐkˈaʊnt ðæt ʃiːz ˈoʊnli fˈaɪv"
+      }
+    ],
+    "ipa": "tˈeɪk ˌɪntʊ ɐkˈaʊnt"
+  },
+  {
+    "text": "a far cry from",
+    "type": "idiom",
+    "level": "C1",
+    "registers": ["casual", "academic"],
+    "meaning": "Very different from something.",
+    "usageNote": "Use it to compare two things that are very different, often worse or better.",
+    "examples": [
+      {
+        "position": 1,
+        "text": "This tiny flat is a far cry from our old house.",
+        "register": "casual",
+        "ipa": "ðɪs tˈaɪni flˈæt ɪz ɐ fˈɑːɹ kɹˈaɪ fɹʌm ˌaʊɚɹ ˈoʊld hˈaʊs"
+      },
+      {
+        "position": 2,
+        "text": "The results are a far cry from what we expected.",
+        "register": "professional",
+        "ipa": "ðə ɹɪzˈʌlts ɑːɹ ɐ fˈɑːɹ kɹˈaɪ fɹʌm wʌt wiː ɛkspˈɛktᵻd"
+      },
+      {
+        "position": 3,
+        "text": "My cooking is a far cry from my mom's.",
+        "register": "casual",
+        "ipa": "maɪ kˈʊkɪŋ ɪz ɐ fˈɑːɹ kɹˈaɪ fɹʌm maɪ mˈɑːmz"
+      }
+    ],
+    "ipa": "ɐ fˈɑːɹ kɹˈaɪ fɹʌm"
+  },
+  {
+    "text": "bear in mind",
+    "type": "verb_pattern",
+    "level": "C1",
+    "registers": ["professional", "academic"],
+    "meaning": "Remember something important while you decide or act.",
+    "usageNote": "Often used as advice: Bear in mind that...",
+    "examples": [
+      {
+        "position": 1,
+        "text": "Bear in mind that the shop closes at six.",
+        "register": "casual",
+        "ipa": "bˈɛɹ ɪn mˈaɪnd ðætðə ʃˈɑːp klˈoʊzᵻz æt sˈɪks"
+      },
+      {
+        "position": 2,
+        "text": "Please bear in mind that prices may change.",
+        "register": "professional",
+        "ipa": "plˈiːz bˈɛɹ ɪn mˈaɪnd ðæt pɹˈaɪsᵻz mˈeɪ tʃˈeɪndʒ"
+      },
+      {
+        "position": 3,
+        "text": "Bear in mind he's new here.",
+        "register": "casual",
+        "ipa": "bˈɛɹ ɪn mˈaɪnd hiːz nˈuː hˈɪɹ"
+      }
+    ],
+    "ipa": "bˈɛɹ ɪn mˈaɪnd"
+  },
+  {
+    "text": "to all intents and purposes",
+    "type": "discourse_marker",
+    "level": "C2",
+    "registers": ["academic", "professional"],
+    "meaning": "In every important way; practically.",
+    "usageNote": "Formal. Use it when something is almost completely true.",
+    "examples": [
+      {
+        "position": 1,
+        "text": "To all intents and purposes, the holiday is over.",
+        "register": "casual",
+        "ipa": "tʊ ˈɔːl ɪntˈɛnts ænd pˈɜːpəsᵻz ðə hˈɑːlɪdˌeɪ ɪz ˈoʊvɚ"
+      },
+      {
+        "position": 2,
+        "text": "To all intents and purposes, the project is finished.",
+        "register": "professional",
+        "ipa": "tʊ ˈɔːl ɪntˈɛnts ænd pˈɜːpəsᵻz ðə pɹˈɑːdʒɛkt ɪz fˈɪnɪʃt"
+      },
+      {
+        "position": 3,
+        "text": "The car is, to all intents and purposes, new.",
+        "register": "casual",
+        "ipa": "ðə kˈɑːɹ ɪz tʊ ˈɔːl ɪntˈɛnts ænd pˈɜːpəsᵻz nˈuː"
+      }
+    ],
+    "ipa": "tʊ ˈɔːl ɪntˈɛnts ænd pˈɜːpəsᵻz"
+  },
+  {
+    "text": "a double-edged sword",
+    "type": "idiom",
+    "level": "C2",
+    "registers": ["academic", "professional"],
+    "meaning": "Something with both good and bad effects.",
+    "usageNote": "Use it to show that an advantage also brings a risk.",
+    "examples": [
+      {
+        "position": 1,
+        "text": "Living close to work is a double-edged sword.",
+        "register": "casual",
+        "ipa": "lˈɪvɪŋ klˈoʊs tə wˈɜːk ɪz ɐ dˈʌbəlˈɛdʒd sˈɔːɹd"
+      },
+      {
+        "position": 2,
+        "text": "Fast growth can be a double-edged sword.",
+        "register": "professional",
+        "ipa": "fˈæst ɡɹˈoʊθ kæn biː ɐ dˈʌbəlˈɛdʒd sˈɔːɹd"
+      },
+      {
+        "position": 3,
+        "text": "Fame is a double-edged sword.",
+        "register": "casual",
+        "ipa": "fˈeɪm ɪz ɐ dˈʌbəlˈɛdʒd sˈɔːɹd"
+      }
+    ],
+    "ipa": "ɐ dˈʌbəlˈɛdʒd sˈɔːɹd"
+  },
+  {
+    "text": "the be-all and end-all",
+    "type": "idiom",
+    "level": "C2",
+    "registers": ["casual", "professional"],
+    "meaning": "The most important thing, the only thing that matters.",
+    "usageNote": "Often used in the negative: Money isn't the be-all and end-all.",
+    "examples": [
+      {
+        "position": 1,
+        "text": "Grades aren't the be-all and end-all.",
+        "register": "casual",
+        "ipa": "ɡɹˈeɪdz ˌɑːɹnt ðə biːˈɔːl ænd ˈɛndˈɔːl"
+      },
+      {
+        "position": 2,
+        "text": "Price is not the be-all and end-all for our buyers.",
+        "register": "professional",
+        "ipa": "pɹˈaɪs ɪz nˌɑːt ðə biːˈɔːl ænd ˈɛndˈɔːl fɔːɹ ˌaʊɚ bˈaɪɚz"
+      },
+      {
+        "position": 3,
+        "text": "For him, football is the be-all and end-all.",
+        "register": "casual",
+        "ipa": "fɔːɹ hˈɪm fˈʊtbɔːl ɪz ðə biːˈɔːl ænd ˈɛndˈɔːl"
+      }
+    ],
+    "ipa": "ðə biːˈɔːl ænd ˈɛndˈɔːl"
+  },
+  {
+    "text": "in the grand scheme of things",
+    "type": "discourse_marker",
+    "level": "C2",
+    "registers": ["casual", "academic"],
+    "meaning": "When you think about the whole situation.",
+    "usageNote": "Use it to say a problem is small compared with the bigger picture.",
+    "examples": [
+      {
+        "position": 1,
+        "text": "In the grand scheme of things, one bad day isn't a big deal.",
+        "register": "casual",
+        "ipa": "ɪnðə ɡɹˈænd skˈiːm ʌv θˈɪŋz wˈʌn bˈæd dˈeɪ ˌɪzənt ɐ bˈɪɡ dˈiːl"
+      },
+      {
+        "position": 2,
+        "text": "In the grand scheme of things, the delay is minor.",
+        "register": "professional",
+        "ipa": "ɪnðə ɡɹˈænd skˈiːm ʌv θˈɪŋz ðə dᵻlˈeɪ ɪz mˈaɪnɚ"
+      },
+      {
+        "position": 3,
+        "text": "In the grand scheme of things, it doesn't matter.",
+        "register": "casual",
+        "ipa": "ɪnðə ɡɹˈænd skˈiːm ʌv θˈɪŋz ɪt dˈʌzənt mˈæɾɚ"
+      }
+    ],
+    "ipa": "ɪnðə ɡɹˈænd skˈiːm ʌv θˈɪŋz"
+  },
+  {
+    "text": "strike a balance",
+    "type": "collocation",
+    "level": "C2",
+    "registers": ["academic", "professional"],
+    "meaning": "Find a fair middle point between two different needs.",
+    "usageNote": "Usually followed by \"between\": strike a balance between work and rest.",
+    "examples": [
+      {
+        "position": 1,
+        "text": "I'm trying to strike a balance between work and fun.",
+        "register": "casual",
+        "ipa": "aɪm tɹˈaɪɪŋ tə stɹˈaɪk ɐ bˈæləns bᵻtwˌiːn wˈɜːk ænd fˈʌn"
+      },
+      {
+        "position": 2,
+        "text": "We must strike a balance between speed and quality.",
+        "register": "professional",
+        "ipa": "wiː mˈʌst stɹˈaɪk ɐ bˈæləns bᵻtwˌiːn spˈiːd ænd kwˈɔlᵻɾi"
+      },
+      {
+        "position": 3,
+        "text": "It's hard to strike a balance with two kids.",
+        "register": "casual",
+        "ipa": "ɪts hˈɑːɹd tə stɹˈaɪk ɐ bˈæləns wɪð tˈuː kˈɪdz"
+      }
+    ],
+    "ipa": "stɹˈaɪk ɐ bˈæləns"
+  }
+]

@@ -50,7 +50,7 @@ replaced.
 | username | text | unique, 3–24 chars, `[a-z0-9_]`, case-insensitive unique |
 | display_name | text | 1–40 chars, shown in rankings |
 | role | `user_role` | default `learner` |
-| status | `user_status` | `banned` via admin plugin maps to `suspended` |
+| status | derived | not stored: `pending_verification` = `email_verified` false; `suspended` = admin-plugin `banned`; else `active` (avoids two sources of truth) |
 | age_confirmed_at | timestamptz | required (FR-007: self-declared 16+) |
 | level | `cefr_level` | nullable until onboarding; required to start a session (FR-003) |
 | mother_tongue | text | ISO 639-1 code, nullable |

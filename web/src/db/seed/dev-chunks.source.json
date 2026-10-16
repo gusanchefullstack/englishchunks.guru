@@ -1,0 +1,392 @@
+[
+  {
+    "text": "How's it going?",
+    "type": "polyword",
+    "level": "A1",
+    "registers": ["casual"],
+    "meaning": "A friendly way to ask how someone is.",
+    "usageNote": "Use it to greet friends or coworkers you know. Answer with \"Good, thanks!\"",
+    "examples": [
+      ["Hi Sam! How's it going?", "casual"],
+      ["Morning, Lee. How's it going with the new laptop?", "professional"],
+      ["How's it going? I haven't seen you all week.", "casual"]
+    ]
+  },
+  {
+    "text": "See you later",
+    "type": "polyword",
+    "level": "A1",
+    "registers": ["casual", "professional"],
+    "meaning": "Goodbye — I will see you again soon.",
+    "usageNote": "Use it when you leave and expect to see the person again, today or soon.",
+    "examples": [
+      ["Thanks for lunch! See you later.", "casual"],
+      ["I'm off to the meeting. See you later.", "professional"],
+      ["See you later, Mom!", "casual"]
+    ]
+  },
+  {
+    "text": "thank you so much",
+    "type": "polyword",
+    "level": "A1",
+    "registers": ["casual", "professional"],
+    "meaning": "A strong, warm way to say thanks.",
+    "usageNote": "Use it when someone helped you a lot or did something kind.",
+    "examples": [
+      ["Thank you so much for the flowers!", "casual"],
+      ["Thank you so much for your quick reply.", "professional"],
+      ["You fixed my bike? Thank you so much!", "casual"]
+    ]
+  },
+  {
+    "text": "have a nice day",
+    "type": "polyword",
+    "level": "A1",
+    "registers": ["casual", "professional"],
+    "meaning": "A polite way to say goodbye and wish someone well.",
+    "usageNote": "Common in shops, cafés, and at the end of short conversations.",
+    "examples": [
+      ["Here's your coffee. Have a nice day!", "professional"],
+      ["Bye, Ana! Have a nice day.", "casual"],
+      ["Thanks for calling, and have a nice day.", "professional"]
+    ]
+  },
+  {
+    "text": "take a break",
+    "type": "collocation",
+    "level": "A1",
+    "registers": ["casual", "professional"],
+    "meaning": "Stop working or studying for a short time to rest.",
+    "usageNote": "We say \"take\" a break, not \"make\" a break.",
+    "examples": [
+      ["Let's take a break and get some water.", "casual"],
+      ["We'll take a break at eleven and continue after.", "professional"],
+      ["You look tired. Take a break!", "casual"]
+    ]
+  },
+  {
+    "text": "by the way",
+    "type": "discourse_marker",
+    "level": "A2",
+    "registers": ["casual", "professional"],
+    "meaning": "Used to add a new topic or extra information.",
+    "usageNote": "Use it to change the topic naturally, often at the start of a sentence.",
+    "examples": [
+      ["By the way, I loved your photos.", "casual"],
+      ["By the way, the report is due on Friday.", "professional"],
+      ["By the way, did you call Mike?", "casual"]
+    ]
+  },
+  {
+    "text": "make a decision",
+    "type": "collocation",
+    "level": "A2",
+    "registers": ["casual", "professional"],
+    "meaning": "Choose what to do after thinking about it.",
+    "usageNote": "We \"make\" a decision, not \"do\" a decision.",
+    "examples": [
+      ["I can't make a decision about the dress.", "casual"],
+      ["We need to make a decision before Monday.", "professional"],
+      ["Take your time to make a decision.", "casual"]
+    ]
+  },
+  {
+    "text": "I'm looking forward to it",
+    "type": "sentence_frame",
+    "level": "A2",
+    "registers": ["casual", "professional"],
+    "meaning": "I feel excited about something in the future.",
+    "usageNote": "Use it when you are happy about a plan. \"To\" is followed by a noun or \"-ing\" verb.",
+    "examples": [
+      ["The trip is next week. I'm looking forward to it!", "casual"],
+      ["Thanks for the invitation. I'm looking forward to it.", "professional"],
+      ["A concert on Saturday? I'm looking forward to it.", "casual"]
+    ]
+  },
+  {
+    "text": "no problem",
+    "type": "polyword",
+    "level": "A2",
+    "registers": ["casual", "professional"],
+    "meaning": "It's fine — it was easy or I'm happy to help.",
+    "usageNote": "Use it to answer \"thank you\" or \"sorry\" in a relaxed way.",
+    "examples": [
+      ["Thanks for waiting. — No problem!", "casual"],
+      ["Can you send it again? — No problem, here it is.", "professional"],
+      ["Sorry I'm late. — No problem.", "casual"]
+    ]
+  },
+  {
+    "text": "pay attention",
+    "type": "collocation",
+    "level": "A2",
+    "registers": ["casual", "professional"],
+    "meaning": "Watch, listen, or think carefully about something.",
+    "usageNote": "Usually followed by \"to\": pay attention to the details.",
+    "examples": [
+      ["Pay attention to the road, please.", "casual"],
+      ["Please pay attention to the new safety rules.", "professional"],
+      ["I wasn't paying attention. Can you repeat that?", "casual"]
+    ]
+  },
+  {
+    "text": "that makes sense",
+    "type": "discourse_marker",
+    "level": "B1",
+    "registers": ["casual", "professional"],
+    "meaning": "I understand your reason, and it seems logical.",
+    "usageNote": "Use it to show you understand someone's reason, idea, or explanation.",
+    "examples": [
+      ["Oh, you took the earlier train? That makes sense.", "casual"],
+      ["The deadline moved because of the launch. That makes sense.", "professional"],
+      ["You prefer mornings when it's quiet? That makes sense.", "casual"]
+    ]
+  },
+  {
+    "text": "at the end of the day",
+    "type": "discourse_marker",
+    "level": "B1",
+    "registers": ["casual", "professional"],
+    "meaning": "When you think about what really matters.",
+    "usageNote": "Use it to give your final, most important point.",
+    "examples": [
+      ["At the end of the day, you have to be happy.", "casual"],
+      ["At the end of the day, the client decides.", "professional"],
+      ["It's expensive, but at the end of the day it's worth it.", "casual"]
+    ]
+  },
+  {
+    "text": "I tend to",
+    "type": "sentence_frame",
+    "level": "B1",
+    "registers": ["casual", "professional"],
+    "meaning": "I usually do something; it's my habit.",
+    "usageNote": "Follow it with a base verb: I tend to wake up early.",
+    "examples": [
+      ["I tend to drink tea in the evening.", "casual"],
+      ["I tend to reply to emails in the morning.", "professional"],
+      ["I tend to forget names, sorry!", "casual"]
+    ]
+  },
+  {
+    "text": "get used to",
+    "type": "verb_pattern",
+    "level": "B1",
+    "registers": ["casual", "professional"],
+    "meaning": "Become familiar with something new until it feels normal.",
+    "usageNote": "Follow it with a noun or an \"-ing\" verb: get used to working from home.",
+    "examples": [
+      ["It took me a month to get used to the cold.", "casual"],
+      ["You'll get used to the new system quickly.", "professional"],
+      ["I can't get used to waking up at six.", "casual"]
+    ]
+  },
+  {
+    "text": "or something like that",
+    "type": "vague_language",
+    "level": "B1",
+    "registers": ["casual"],
+    "meaning": "Approximately — it might not be exactly this.",
+    "usageNote": "Put it at the end when you aren't sure of the exact word or number.",
+    "examples": [
+      ["She works in marketing or something like that.", "casual"],
+      ["The meeting is at three or something like that.", "professional"],
+      ["Let's get pizza or something like that.", "casual"]
+    ]
+  },
+  {
+    "text": "having said that",
+    "type": "discourse_marker",
+    "level": "B2",
+    "registers": ["academic", "professional"],
+    "meaning": "Even so; despite what I just said.",
+    "usageNote": "Use it to add a contrasting point after a statement.",
+    "examples": [
+      ["The hotel was small. Having said that, it was very clean.", "casual"],
+      ["Sales fell this year. Having said that, profits are up.", "professional"],
+      ["I'm tired. Having said that, I'd love to come.", "casual"]
+    ]
+  },
+  {
+    "text": "come up with",
+    "type": "verb_pattern",
+    "level": "B2",
+    "registers": ["casual", "professional"],
+    "meaning": "Think of an idea, plan, or answer.",
+    "usageNote": "Usually followed by a noun: come up with a plan, an idea, a name.",
+    "examples": [
+      ["We need to come up with a name for the dog.", "casual"],
+      ["Can the team come up with a better solution?", "professional"],
+      ["She always comes up with funny stories.", "casual"]
+    ]
+  },
+  {
+    "text": "on the other hand",
+    "type": "discourse_marker",
+    "level": "B2",
+    "registers": ["academic", "professional"],
+    "meaning": "Used to introduce a different side of an argument.",
+    "usageNote": "Often used after \"On the one hand...\" to compare two ideas.",
+    "examples": [
+      ["The city is exciting. On the other hand, it's very expensive.", "casual"],
+      ["Option A is cheaper. On the other hand, option B is faster.", "professional"],
+      ["I want to go out. On the other hand, I need sleep.", "casual"]
+    ]
+  },
+  {
+    "text": "I find it easy to",
+    "type": "sentence_frame",
+    "level": "B2",
+    "registers": ["casual", "professional"],
+    "meaning": "Something is not difficult for me to do.",
+    "usageNote": "Follow it with a base verb. Change \"easy\" to \"hard\" for the opposite.",
+    "examples": [
+      ["I find it easy to talk to new people.", "casual"],
+      ["I find it easy to work with clear deadlines.", "professional"],
+      ["I find it easy to cook for my family.", "casual"]
+    ]
+  },
+  {
+    "text": "and that kind of thing",
+    "type": "vague_language",
+    "level": "B2",
+    "registers": ["casual"],
+    "meaning": "And other similar things.",
+    "usageNote": "Use it at the end of a list instead of naming every item.",
+    "examples": [
+      ["I like hiking, camping, and that kind of thing.", "casual"],
+      ["We handle invoices, refunds, and that kind of thing.", "professional"],
+      ["She sells candles, soap, and that kind of thing.", "casual"]
+    ]
+  },
+  {
+    "text": "spill the beans",
+    "type": "idiom",
+    "level": "C1",
+    "registers": ["casual"],
+    "meaning": "Tell a secret, often by accident.",
+    "usageNote": "Informal. Use it about surprises or secret news.",
+    "examples": [
+      ["Don't spill the beans about the party!", "casual"],
+      ["Someone spilled the beans about the merger.", "professional"],
+      ["Come on, spill the beans! Who is he?", "casual"]
+    ]
+  },
+  {
+    "text": "by and large",
+    "type": "discourse_marker",
+    "level": "C1",
+    "registers": ["academic", "professional"],
+    "meaning": "In general; mostly.",
+    "usageNote": "Use it to give an overall opinion while admitting exceptions.",
+    "examples": [
+      ["By and large, the trip was fun.", "casual"],
+      ["By and large, customers are happy with the service.", "professional"],
+      ["The movie was, by and large, a success.", "casual"]
+    ]
+  },
+  {
+    "text": "take into account",
+    "type": "verb_pattern",
+    "level": "C1",
+    "registers": ["academic", "professional"],
+    "meaning": "Consider something when making a decision.",
+    "usageNote": "The object can go in the middle: take your budget into account.",
+    "examples": [
+      ["Did you take into account the traffic?", "casual"],
+      ["We must take into account the new regulations.", "professional"],
+      ["Take into account that she's only five.", "casual"]
+    ]
+  },
+  {
+    "text": "a far cry from",
+    "type": "idiom",
+    "level": "C1",
+    "registers": ["casual", "academic"],
+    "meaning": "Very different from something.",
+    "usageNote": "Use it to compare two things that are very different, often worse or better.",
+    "examples": [
+      ["This tiny flat is a far cry from our old house.", "casual"],
+      ["The results are a far cry from what we expected.", "professional"],
+      ["My cooking is a far cry from my mom's.", "casual"]
+    ]
+  },
+  {
+    "text": "bear in mind",
+    "type": "verb_pattern",
+    "level": "C1",
+    "registers": ["professional", "academic"],
+    "meaning": "Remember something important while you decide or act.",
+    "usageNote": "Often used as advice: Bear in mind that...",
+    "examples": [
+      ["Bear in mind that the shop closes at six.", "casual"],
+      ["Please bear in mind that prices may change.", "professional"],
+      ["Bear in mind he's new here.", "casual"]
+    ]
+  },
+  {
+    "text": "to all intents and purposes",
+    "type": "discourse_marker",
+    "level": "C2",
+    "registers": ["academic", "professional"],
+    "meaning": "In every important way; practically.",
+    "usageNote": "Formal. Use it when something is almost completely true.",
+    "examples": [
+      ["To all intents and purposes, the holiday is over.", "casual"],
+      ["To all intents and purposes, the project is finished.", "professional"],
+      ["The car is, to all intents and purposes, new.", "casual"]
+    ]
+  },
+  {
+    "text": "a double-edged sword",
+    "type": "idiom",
+    "level": "C2",
+    "registers": ["academic", "professional"],
+    "meaning": "Something with both good and bad effects.",
+    "usageNote": "Use it to show that an advantage also brings a risk.",
+    "examples": [
+      ["Living close to work is a double-edged sword.", "casual"],
+      ["Fast growth can be a double-edged sword.", "professional"],
+      ["Fame is a double-edged sword.", "casual"]
+    ]
+  },
+  {
+    "text": "the be-all and end-all",
+    "type": "idiom",
+    "level": "C2",
+    "registers": ["casual", "professional"],
+    "meaning": "The most important thing, the only thing that matters.",
+    "usageNote": "Often used in the negative: Money isn't the be-all and end-all.",
+    "examples": [
+      ["Grades aren't the be-all and end-all.", "casual"],
+      ["Price is not the be-all and end-all for our buyers.", "professional"],
+      ["For him, football is the be-all and end-all.", "casual"]
+    ]
+  },
+  {
+    "text": "in the grand scheme of things",
+    "type": "discourse_marker",
+    "level": "C2",
+    "registers": ["casual", "academic"],
+    "meaning": "When you think about the whole situation.",
+    "usageNote": "Use it to say a problem is small compared with the bigger picture.",
+    "examples": [
+      ["In the grand scheme of things, one bad day isn't a big deal.", "casual"],
+      ["In the grand scheme of things, the delay is minor.", "professional"],
+      ["In the grand scheme of things, it doesn't matter.", "casual"]
+    ]
+  },
+  {
+    "text": "strike a balance",
+    "type": "collocation",
+    "level": "C2",
+    "registers": ["academic", "professional"],
+    "meaning": "Find a fair middle point between two different needs.",
+    "usageNote": "Usually followed by \"between\": strike a balance between work and rest.",
+    "examples": [
+      ["I'm trying to strike a balance between work and fun.", "casual"],
+      ["We must strike a balance between speed and quality.", "professional"],
+      ["It's hard to strike a balance with two kids.", "casual"]
+    ]
+  }
+]
