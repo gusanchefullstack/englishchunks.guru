@@ -1,0 +1,13 @@
+# TLS termination for the scoring service (automatic HTTPS via Let's Encrypt).
+scoring.englishchunks.guru {
+	encode zstd gzip
+	request_body {
+		max_size 1100KB
+	}
+	# Access logs omit request bodies by design; keep them minimal.
+	log {
+		output file /var/log/caddy/scoring.log
+		format json
+	}
+	reverse_proxy 127.0.0.1:8001
+}

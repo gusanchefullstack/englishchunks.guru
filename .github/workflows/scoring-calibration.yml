@@ -1,0 +1,44 @@
+name: Scoring calibration
+
+# Constitution III: re-validate scoring quality whenever a speech model, quantization,
+# or the score formula changes. Public speechocean762 subset only; the consented volunteer set
+# is run manually before each scoring release.
+on:
+  pull_request:
+    paths:
+      - "scoring/src/scoring/asr.py"
+      - "scoring/src/scoring/engines.py"
+      - "scoring/src/scoring/phonemes.py"
+      - "scoring/src/scoring/align.py"
+      - "scoring/src/scoring/combine.py"
+      - "scoring/src/scoring/pipeline.py"
+      - "scoring/src/scoring/settings.py"
+      - "scoring/src/scoring/models/**"
+      - "web/src/content/sound-hints.json"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  calibration:
+    runs-on: ubuntu-latest
+    timeout-minutes: 60
+    defaults:
+      run:
+        working-directory: scoring
+    steps:
+      - uses: actions/checkout@v4
+      - run: sudo apt-get update && sudo apt-get install -y espeak-ng
+      - uses: astral-sh/setup-uv@v6
+      - uses: actions/cache@v4
+        with:
+          path: scoring/models
+          key: models-${{ hashFiles('scoring/src/scoring/models/download.py') }}
+      - run: uv sync --frozen --extra export
+      - run: uv run --extra export python -m scoring.models.download --wav2vec2
+      - run: uv run python -m tests.calibration.fetch_speechocean --n 400
+      - name: Pair-ranking accuracy ≥ 85% (SC-005)
+        run: uv run pytest -m calibration -s
+        env:
+          SCORING_SHARED_SECRET: ci-only-not-a-secret-ci-only-not-a-secret
