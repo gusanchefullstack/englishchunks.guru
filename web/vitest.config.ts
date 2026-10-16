@@ -16,6 +16,8 @@ export default defineConfig({
     // PGlite instances are per test file; keep files isolated.
     pool: "forks",
     testTimeout: 20_000,
+    hookTimeout: 60_000,
+    maxWorkers: 4,
     coverage: { provider: "v8", include: ["src/lib/**", "src/server/**"] },
   },
 });

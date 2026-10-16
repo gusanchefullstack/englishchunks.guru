@@ -22,7 +22,9 @@ describe("computeDailyScore (FR-018)", () => {
   });
 
   it("clamps to 0–100", () => {
-    expect(computeDailyScore({ speaking: 100, writing: 100, readAloud: 100 }, weights).score).toBe(100);
+    expect(computeDailyScore({ speaking: 100, writing: 100, readAloud: 100 }, weights).score).toBe(
+      100,
+    );
   });
 });
 
@@ -35,21 +37,27 @@ describe("nextStreak", () => {
   });
 
   it("continues on consecutive days and raises the longest streak", () => {
-    expect(nextStreak({ current: 4, longest: 4, lastPracticeDate: "2026-10-15" }, "2026-10-16")).toEqual({
+    expect(
+      nextStreak({ current: 4, longest: 4, lastPracticeDate: "2026-10-15" }, "2026-10-16"),
+    ).toEqual({
       current: 5,
       longest: 5,
     });
   });
 
   it("does not double-count a second practice on the same day", () => {
-    expect(nextStreak({ current: 5, longest: 9, lastPracticeDate: "2026-10-16" }, "2026-10-16")).toEqual({
+    expect(
+      nextStreak({ current: 5, longest: 9, lastPracticeDate: "2026-10-16" }, "2026-10-16"),
+    ).toEqual({
       current: 5,
       longest: 9,
     });
   });
 
   it("resets to 1 after a gap but keeps the longest (US3 scenario 2)", () => {
-    expect(nextStreak({ current: 7, longest: 12, lastPracticeDate: "2026-10-14" }, "2026-10-16")).toEqual({
+    expect(
+      nextStreak({ current: 7, longest: 12, lastPracticeDate: "2026-10-14" }, "2026-10-16"),
+    ).toEqual({
       current: 1,
       longest: 12,
     });
@@ -57,7 +65,9 @@ describe("nextStreak", () => {
 
   it("uses the session's start date, so crossing midnight still counts for the start day", () => {
     // Session started 23:55 on the 15th (practiceDate "2026-10-15"), finished after midnight.
-    expect(nextStreak({ current: 2, longest: 2, lastPracticeDate: "2026-10-14" }, "2026-10-15")).toEqual({
+    expect(
+      nextStreak({ current: 2, longest: 2, lastPracticeDate: "2026-10-14" }, "2026-10-15"),
+    ).toEqual({
       current: 3,
       longest: 3,
     });

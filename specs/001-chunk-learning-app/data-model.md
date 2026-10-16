@@ -184,8 +184,8 @@ user while unpracticed chunks at their level exist (FR-010; edge case recycles l
 | tip | text | generated message wrapping fixed hints (FR-014) |
 | hint_table_version | integer | `sound_hint.version` used |
 
-Unique: (`session_id`, `step`, `item`) — retakes of "try again" overwrite only when the previous
-one produced no score. **No audio column.**
+Unique: (`session_id`, `step`, `item`) — re-recording an item while its step is still current
+(Figma "Try again") replaces that item's score; once the step is advanced it is final. **No audio column.**
 
 ## writing_result
 

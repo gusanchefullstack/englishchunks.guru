@@ -1,7 +1,11 @@
 import type { ScoreWeights } from "@/db/schema";
 import { daysBetween } from "./time";
 
-export type StepScores = { speaking: number | null; writing: number | null; readAloud: number | null };
+export type StepScores = {
+  speaking: number | null;
+  writing: number | null;
+  readAloud: number | null;
+};
 
 /** Daily score (FR-018): weighted over completed steps; any skipped step marks it partial. */
 export function computeDailyScore(scores: StepScores, weights: ScoreWeights) {

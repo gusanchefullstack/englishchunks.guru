@@ -5,7 +5,9 @@ describe("tip post-check (FR-014, Principle II)", () => {
   const input = { allowedNumbers: ["78"] };
 
   it("accepts warm plain-English tips", () => {
-    expect(checkTip("Great clarity! Let your voice fall gently on the last word.", input)).toBeNull();
+    expect(
+      checkTip("Great clarity! Let your voice fall gently on the last word.", input),
+    ).toBeNull();
   });
 
   it("rejects IPA symbols (hints come only from the curated table)", () => {
