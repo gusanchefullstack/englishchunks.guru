@@ -139,7 +139,8 @@ Each entry records the decision, why it was chosen, and what else was considered
 ## R11. Authentication
 
 - **Decision**: Better Auth with the Drizzle adapter: email + password (email verification and
-  password reset via Resend), Google OAuth, account linking for same-email Google sign-in, admin
+  password reset via Resend), Google OAuth (no automatic same-email linking: an existing password account must be proven by
+  signing in with its password before Google is linked — spec edge case), admin
   plugin (roles, ban/suspend), built-in rate limiting on auth endpoints. Sessions in Postgres
   with HTTP-only secure cookies. Username plugin for unique usernames.
 - **Rationale**: TypeScript-first, self-hosted (user data stays in our DB), first-class Drizzle +

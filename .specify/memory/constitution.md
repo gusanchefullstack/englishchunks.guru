@@ -73,7 +73,9 @@ verification keeps changes safe.
   flow MUST be validated in test mode before go-live.
 - Admin routes and APIs MUST enforce role-based authorization server-side.
 - Learner voice recordings MUST be used only for scoring and MUST NOT be sent to third-party
-  services. Raw audio MUST be deleted (from memory, temp files, and any storage) as soon as its
+  services. Hosting infrastructure the project operates (its Vercel Functions and DigitalOcean
+  Droplet) is not a third-party service, provided audio only transits it in memory and is never
+  stored or logged there. Raw audio MUST be deleted (from memory, temp files, and any storage) as soon as its
   score is computed, including when scoring fails; only derived results (scores, transcripts
   of words, per-sound results) may be persisted.
 - Uploaded profile pictures MUST be validated (type, size), normalized, and stored in object
@@ -160,4 +162,4 @@ Rationale: a small team and a hackathon timeline reward predictable, typed, mini
 - Compliance is reviewed at every plan's Constitution Check, at `/speckit-analyze`, and during
   code review; unjustified violations block merge.
 
-**Version**: 1.1.0 | **Ratified**: 2026-10-16 | **Last Amended**: 2026-10-16
+**Version**: 1.1.1 | **Ratified**: 2026-10-16 | **Last Amended**: 2026-10-16
