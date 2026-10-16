@@ -28,16 +28,14 @@ describe("schema constraints (data-model.md)", () => {
 
   it("enforces longest_streak >= current_streak and reminder hour 0–23", async () => {
     await expect(
-      db
-        .insert(user)
-        .values({
-          ...baseUser,
-          id: "u2",
-          email: "b@x.dev",
-          username: "bee",
-          currentStreak: 3,
-          longestStreak: 2,
-        }),
+      db.insert(user).values({
+        ...baseUser,
+        id: "u2",
+        email: "b@x.dev",
+        username: "bee",
+        currentStreak: 3,
+        longestStreak: 2,
+      }),
     ).rejects.toThrow();
     await expect(
       db

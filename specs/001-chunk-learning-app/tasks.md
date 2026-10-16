@@ -75,23 +75,23 @@ story work begins until this phase is complete.
 
 ### 2b. Auth core & authorization
 
-- [ ] T022 Configure Better Auth in `web/src/lib/auth.ts` (Drizzle adapter, email+password with `requireEmailVerification`, username plugin, admin plugin, Google provider, **no automatic same-email linking** — a Google sign-in whose email belongs to an existing password account must first sign in with that password, then link (spec edge case), built-in rate limiting) and route `web/src/app/api/auth/[...all]/route.ts`
-- [ ] T023 [P] Server helpers `requireLearner()` (verified, active, has level) and `requireAdmin()` in `web/src/lib/authz.ts`, returning typed errors `unauthenticated|forbidden`
-- [ ] T024 [P] Unit tests for authz helpers in `web/tests/unit/authz.test.ts`
+- [X] T022 Configure Better Auth in `web/src/lib/auth.ts` (Drizzle adapter, email+password with `requireEmailVerification`, username plugin, admin plugin, Google provider, **no automatic same-email linking** — a Google sign-in whose email belongs to an existing password account must first sign in with that password, then link (spec edge case), built-in rate limiting) and route `web/src/app/api/auth/[...all]/route.ts`
+- [X] T023 [P] Server helpers `requireLearner()` (verified, active, has level) and `requireAdmin()` in `web/src/lib/authz.ts`, returning typed errors `unauthenticated|forbidden`
+- [X] T024 [P] Unit tests for authz helpers in `web/tests/unit/authz.test.ts`
 
 ### 2c. Providers & shared domain
 
-- [ ] T025 [P] Error/result types and error codes (`unauthenticated`, `forbidden`, `validation`, `limit_reached`, `not_found`, `conflict`, `unavailable`, `billing_inactive`) in `web/src/lib/errors.ts`
-- [ ] T026 [P] Structured logger (pino) with request-id and redaction of body/email/token fields in `web/src/lib/logger.ts`
-- [ ] T027 [P] `LlmProvider` interface + AI Gateway implementation using AI SDK `generateObject`, model ids from env, one retry on schema failure, usage recorded to `usage_counter` in `web/src/lib/providers/llm.ts`
-- [ ] T028 [P] Zod schemas `PronunciationTip`, `WritingFeedback`, `ChunkDraft`, `ChunkAudit` exactly as in contracts/llm-outputs.md in `web/src/lib/contracts/llm.ts`
-- [ ] T029 [P] `StorageProvider` (S3 client for Spaces: put, delete, deletePrefix, signedGetUrl, publicUrl) in `web/src/lib/providers/storage.ts`
-- [ ] T030 [P] `EmailProvider` (Resend) + base React Email layout in `web/src/lib/providers/email.ts` and `web/src/emails/layout.tsx`
-- [ ] T031 [P] `ScoringClient` with HMAC signing (`X-Signature`, `X-Timestamp`, `X-Request-Id`) and Zod schemas mirroring contracts/scoring-service.openapi.yaml (`ScoreResult`, `Unusable`) in `web/src/lib/providers/scoring-client.ts` and `web/src/lib/contracts/scoring.ts`
-- [ ] T032 [P] MSW handlers for AI Gateway, ElevenLabs, Resend, Stripe, Spaces, scoring service in `web/tests/mocks/handlers.ts`
-- [ ] T033 [P] Time-zone utilities `practiceDateFor(user, instant)` and `localHour(user, instant)` using date-fns-tz in `web/src/lib/domain/time.ts` with unit tests in `web/tests/unit/time.test.ts`
-- [ ] T034 Daily-limit domain: `getDailyLimit(user, subscription, settings)` (basic 1, standard 3, premium 5; app-managed `trialing` → 1; `past_due` → keeps the paid tier limit until Stripe cancels the subscription; `expired`/`none` after activation → 0; billing inactive → 1) and `reservePractice(tx, userId, practiceDate)` using `SELECT … FOR UPDATE` on user row in `web/src/lib/domain/limits.ts`; unit tests in `web/tests/unit/limits.test.ts`
-- [ ] T035 App shell: responsive layout with header nav, theme toggle, skip-link, toast region in `web/src/app/(learner)/layout.tsx` and `web/src/components/app-shell.tsx`
+- [X] T025 [P] Error/result types and error codes (`unauthenticated`, `forbidden`, `validation`, `limit_reached`, `not_found`, `conflict`, `unavailable`, `billing_inactive`) in `web/src/lib/errors.ts`
+- [X] T026 [P] Structured logger (pino) with request-id and redaction of body/email/token fields in `web/src/lib/logger.ts`
+- [X] T027 [P] `LlmProvider` interface + AI Gateway implementation using AI SDK `generateObject`, model ids from env, one retry on schema failure, usage recorded to `usage_counter` in `web/src/lib/providers/llm.ts`
+- [X] T028 [P] Zod schemas `PronunciationTip`, `WritingFeedback`, `ChunkDraft`, `ChunkAudit` exactly as in contracts/llm-outputs.md in `web/src/lib/contracts/llm.ts`
+- [X] T029 [P] `StorageProvider` (S3 client for Spaces: put, delete, deletePrefix, signedGetUrl, publicUrl) in `web/src/lib/providers/storage.ts`
+- [X] T030 [P] `EmailProvider` (Resend) + base React Email layout in `web/src/lib/providers/email.ts` and `web/src/emails/layout.tsx`
+- [X] T031 [P] `ScoringClient` with HMAC signing (`X-Signature`, `X-Timestamp`, `X-Request-Id`) and Zod schemas mirroring contracts/scoring-service.openapi.yaml (`ScoreResult`, `Unusable`) in `web/src/lib/providers/scoring-client.ts` and `web/src/lib/contracts/scoring.ts`
+- [X] T032 [P] MSW handlers for AI Gateway, ElevenLabs, Resend, Stripe, Spaces, scoring service in `web/tests/mocks/handlers.ts`
+- [X] T033 [P] Time-zone utilities `practiceDateFor(user, instant)` and `localHour(user, instant)` using date-fns-tz in `web/src/lib/domain/time.ts` with unit tests in `web/tests/unit/time.test.ts`
+- [X] T034 Daily-limit domain: `getDailyLimit(user, subscription, settings)` (basic 1, standard 3, premium 5; app-managed `trialing` → 1; `past_due` → keeps the paid tier limit until Stripe cancels the subscription; `expired`/`none` after activation → 0; billing inactive → 1) and `reservePractice(tx, userId, practiceDate)` using `SELECT … FOR UPDATE` on user row in `web/src/lib/domain/limits.ts`; unit tests in `web/tests/unit/limits.test.ts`
+- [X] T035 App shell: responsive layout with header nav, theme toggle, skip-link, toast region in `web/src/app/(learner)/layout.tsx` and `web/src/components/app-shell.tsx`
 
 ### 2d. Scoring service spike (validates SC-003 / SC-005 before UI is built)
 
