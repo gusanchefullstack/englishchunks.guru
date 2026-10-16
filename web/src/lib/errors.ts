@@ -62,3 +62,14 @@ export function errorResponse(err: unknown): Response {
   if (err instanceof AppError) return Response.json(err.toJSON(), { status: err.status });
   throw err;
 }
+
+/** Parses untrusted input; failures become a `validation` AppError instead of a 500. */
+export function parseInput<T>(
+  schema: { safeParse(v: unknown): { success: true; data: T } | { success: false } },
+  value: unknown,
+  message = "Please check your input.",
+): T {
+  const r = schema.safeParse(value);
+  if (!r.success) throw new AppError("validation", message);
+  return r.data;
+}

@@ -11,6 +11,7 @@ import { env } from "@/lib/env";
 import { AppError } from "@/lib/errors";
 import { logger } from "@/lib/logger";
 import { recordUsage } from "@/lib/domain/usage";
+import { e2eMode } from "@/lib/e2e";
 
 export type LlmRole = "feedback" | "audit";
 
@@ -36,7 +37,43 @@ const gatewayModels: ModelFactory = (role) => {
   return gateway(role === "feedback" ? e.AI_FEEDBACK_MODEL : e.AI_AUDIT_MODEL);
 };
 
+async function e2eModels(): Promise<ModelFactory> {
+  const { MockLanguageModelV4 } = await import("ai/test");
+  const model = new MockLanguageModelV4({
+    doGenerate: async (opts) => {
+      const isWriting = JSON.stringify(opts.prompt).includes("learner_sentence");
+      const out = isWriting
+        ? {
+            usesChunk: true,
+            usageGrade: 92,
+            grammarGrade: 88,
+            corrected: "",
+            explanation: "Clear and natural.",
+            flags: [],
+          }
+        : { message: "Lovely! Keep the rhythm smooth and relaxed." };
+      if (isWriting) {
+        const m = JSON.stringify(opts.prompt).match(
+          /<learner_sentence>\\n(.*?)\\n<\/learner_sentence>/,
+        );
+        (out as { corrected: string }).corrected = m?.[1] ?? "That makes sense.";
+      }
+      return {
+        content: [{ type: "text", text: JSON.stringify(out) }],
+        finishReason: { unified: "stop", raw: undefined },
+        usage: {
+          inputTokens: { total: 1, noCache: 1, cacheRead: undefined, cacheWrite: undefined },
+          outputTokens: { total: 1, text: 1, reasoning: undefined },
+        },
+        warnings: [],
+      };
+    },
+  });
+  return () => model;
+}
+
 let modelFactory: ModelFactory = gatewayModels;
+let e2eReady: Promise<void> | undefined;
 
 /** Test-only: inject mock models (e.g. MockLanguageModelV4). */
 export function setLlmModelFactory(next: ModelFactory | undefined) {
@@ -47,6 +84,10 @@ const MAX_ATTEMPTS = 2; // one retry on invalid output (contracts/llm-outputs.md
 
 export const llm: LlmProvider = {
   async generate({ role, schema, system, prompt, check }) {
+    if (e2eMode() && modelFactory === gatewayModels) {
+      e2eReady ??= e2eModels().then((f) => void (modelFactory = f));
+      await e2eReady;
+    }
     let lastReason = "";
     for (let attempt = 1; attempt <= MAX_ATTEMPTS; attempt++) {
       try {

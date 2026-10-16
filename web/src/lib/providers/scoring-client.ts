@@ -7,6 +7,7 @@ import {
   Unusable,
   type RecordingMimeType,
 } from "@/lib/contracts/scoring";
+import { e2eMode } from "@/lib/e2e";
 import { env } from "@/lib/env";
 import { AppError } from "@/lib/errors";
 import { logger } from "@/lib/logger";
@@ -42,6 +43,7 @@ export const scoringClient = {
     level: CefrLevel;
     requestId?: string;
   }): Promise<ScoreOutcome> {
+    if (e2eMode()) return fakeScore(input.expectedText, input.audio.size);
     const requestId = input.requestId ?? randomUUID();
     const form = new FormData();
     form.set("audio", input.audio, "recording");
@@ -73,6 +75,7 @@ export const scoringClient = {
 
   /** Deterministic American-English IPA via espeak-ng (never an LLM — Principle II). */
   async phonemize(texts: string[]): Promise<string[]> {
+    if (e2eMode()) return texts.map((t) => t.toLowerCase());
     const requestId = randomUUID();
     const res = await fetch(`${env().SCORING_URL}/v1/phonemize`, {
       method: "POST",
@@ -87,3 +90,26 @@ export const scoringClient = {
     return ipa;
   },
 };
+
+/** Deterministic E2E scoring: higher on later tries so improvement is visible. */
+function fakeScore(expectedText: string, bytes: number): ScoreOutcome {
+  const score = 60 + ((expectedText.length + Math.floor(bytes / 1000)) % 35);
+  return {
+    kind: "scored",
+    result: {
+      score,
+      components: {
+        phoneme_accuracy: score,
+        word_accuracy: Math.min(100, score + 8),
+        fluency: Math.max(0, score - 4),
+      },
+      sounds: [
+        { ipa: "ð", score: score - 20, count: 2 },
+        { ipa: "s", score: score - 10, count: 3 },
+      ],
+      weakest_sounds: ["ð", "s"],
+      transcript: expectedText.toLowerCase(),
+      model_versions: { scoring: "e2e-fake" },
+    },
+  };
+}

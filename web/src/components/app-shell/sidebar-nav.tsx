@@ -14,11 +14,15 @@ function isActive(pathname: string, href: string) {
 }
 
 export function SidebarNav() {
-  const pathname = usePathname();
+  return <SidebarLinks pathname={usePathname()} />;
+}
+
+/** Static render (no active state) used as the Suspense fallback while the URL is unknown. */
+export function SidebarLinks({ pathname }: { pathname: string | null }) {
   return (
     <nav aria-label="Main" className="grid gap-1.5">
       {NAV_ITEMS.map(({ href, label, icon: Icon, badge }) => {
-        const active = isActive(pathname, href);
+        const active = pathname ? isActive(pathname, href) : false;
         return (
           <Link
             key={href}
@@ -47,14 +51,17 @@ export function SidebarNav() {
 
 /** Bottom tab bar for phones and tablets (< 1024px). */
 export function MobileTabBar() {
-  const pathname = usePathname();
+  return <MobileTabLinks pathname={usePathname()} />;
+}
+
+export function MobileTabLinks({ pathname }: { pathname: string | null }) {
   return (
     <nav
       aria-label="Main"
       className="bg-card fixed inset-x-0 bottom-0 z-40 grid grid-cols-5 border-t pb-[env(safe-area-inset-bottom)] lg:hidden"
     >
       {NAV_ITEMS.map(({ href, label, icon: Icon }) => {
-        const active = isActive(pathname, href);
+        const active = pathname ? isActive(pathname, href) : false;
         return (
           <Link
             key={href}

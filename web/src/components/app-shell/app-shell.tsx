@@ -1,6 +1,6 @@
 import { Suspense, type ReactNode } from "react";
 import { Logo } from "./logo";
-import { MobileTabBar, SidebarNav } from "./sidebar-nav";
+import { MobileTabBar, MobileTabLinks, SidebarLinks, SidebarNav } from "./sidebar-nav";
 import { ThemeSwitch } from "./theme-switch";
 import { UserSummary, UserSummarySkeleton } from "./user-summary";
 
@@ -21,7 +21,9 @@ export function AppShell({ children }: { children: ReactNode }) {
         <div className="px-2 pb-8">
           <Logo />
         </div>
-        <SidebarNav />
+        <Suspense fallback={<SidebarLinks pathname={null} />}>
+          <SidebarNav />
+        </Suspense>
         <div className="pt-4">
           <ThemeSwitch />
         </div>
@@ -47,7 +49,9 @@ export function AppShell({ children }: { children: ReactNode }) {
         <div className="mx-auto w-full max-w-[1120px]">{children}</div>
       </main>
 
-      <MobileTabBar />
+      <Suspense fallback={<MobileTabLinks pathname={null} />}>
+        <MobileTabBar />
+      </Suspense>
     </div>
   );
 }

@@ -17,7 +17,8 @@ export function looksEnglish(s: string): boolean {
 export function checkTip(message: string, input: { allowedNumbers: string[] }): string | null {
   if (IPA_RE.test(message) || /\/[^/\s]+\//.test(message)) return "contains IPA symbols";
   const numbers = message.match(/\d+/g) ?? [];
-  if (numbers.some((n) => !input.allowedNumbers.includes(n))) return "contains a number not supplied by the app";
+  if (numbers.some((n) => !input.allowedNumbers.includes(n)))
+    return "contains a number not supplied by the app";
   if (!looksEnglish(message)) return "not in English";
   return null;
 }

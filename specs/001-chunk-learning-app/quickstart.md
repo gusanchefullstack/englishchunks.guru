@@ -18,7 +18,10 @@ How to run the app locally and prove each user story works. Implementation detai
 
 ```bash
 pnpm install                         # web workspace
-pnpm --filter web db:migrate         # Drizzle migrations (Neon dev branch or local Postgres)
+docker run -d --name ec-pg-dev -e POSTGRES_PASSWORD=dev -e POSTGRES_DB=englishchunks \
+  -p 54329:5432 postgres:17-alpine   # local Postgres (localhost URLs use the `pg` driver)
+export DATABASE_URL=postgres://postgres:dev@localhost:54329/englishchunks
+pnpm --filter web db:migrate         # Drizzle migrations (Neon branch or local Postgres)
 pnpm --filter web db:seed            # voices, sound hints, small dev chunk set, admin user
 cd scoring && uv sync && uv run python -m scoring.models.download   # fetch ONNX int8 models
 ```
@@ -37,7 +40,8 @@ pnpm --filter web dev                                          # web on http://l
 ```bash
 pnpm lint && pnpm typecheck
 pnpm --filter web test               # Vitest unit + integration (PGlite + MSW, offline)
-pnpm --filter web test:e2e           # Playwright with fake mic + axe accessibility scans
+pnpm --filter web test:e2e           # Playwright on :3100 in E2E mode (fake mic, fake LLM/TTS/
+                                     # storage/email/scoring; real app + DB) + axe scans
 cd scoring && uv run pytest          # scoring unit + contract tests
 pnpm secret-scan                     # gitleaks over the repo
 ```

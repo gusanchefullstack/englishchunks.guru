@@ -1,5 +1,6 @@
 import "server-only";
 import { Resend } from "resend";
+import { e2eMode, e2eOutbox } from "@/lib/e2e";
 import { env } from "@/lib/env";
 import { logger } from "@/lib/logger";
 
@@ -30,8 +31,18 @@ class ResendEmailProvider implements EmailProvider {
 
 let provider: EmailProvider | undefined;
 
+const outboxProvider: EmailProvider = {
+  send: async (m) =>
+    void e2eOutbox().push({
+      to: m.to,
+      subject: m.subject,
+      text: m.text,
+      at: new Date().toISOString(),
+    }),
+};
+
 export function emailProvider(): EmailProvider {
-  provider ??= new ResendEmailProvider();
+  provider ??= e2eMode() ? outboxProvider : new ResendEmailProvider();
   return provider;
 }
 

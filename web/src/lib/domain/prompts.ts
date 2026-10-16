@@ -28,10 +28,13 @@ export function buildTipPrompt(args: {
     "Do not write IPA symbols or slashes. Do not mention any number except the score you are given.",
     "Do not invent new pronunciation advice: gently encourage the learner to apply the hints provided.",
   ].join(" ");
-  const hintLines = args.hints.map((h) => `- Sound in words like "${h.exampleWords.join('", "')}": ${h.hint}`);
+  const hintLines = args.hints.map(
+    (h) => `- Sound in words like "${h.exampleWords.join('", "')}": ${h.hint}`,
+  );
   const prompt = [
     `Text practiced: "${args.itemText}"`,
-    `Score: ${args.score}` + (args.previousScore !== undefined ? ` (previous try: ${args.previousScore})` : ""),
+    `Score: ${args.score}` +
+      (args.previousScore !== undefined ? ` (previous try: ${args.previousScore})` : ""),
     "Hints to encourage (already shown to the learner):",
     ...hintLines,
   ].join("\n");

@@ -112,6 +112,9 @@ export const writingResult = pgTable(
     unique("writing_result_position_uq").on(t.sessionId, t.position),
     check("wr_position", sql`${t.position} between 1 and 3`),
     check("wr_original_len", sql`char_length(${t.original}) between 1 and 300`),
-    check("wr_grades", sql`${t.usageGrade} between 0 and 100 and ${t.grammarGrade} between 0 and 100`),
+    check(
+      "wr_grades",
+      sql`${t.usageGrade} between 0 and 100 and ${t.grammarGrade} between 0 and 100`,
+    ),
   ],
 );

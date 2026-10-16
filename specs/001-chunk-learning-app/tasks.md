@@ -126,33 +126,33 @@ each step yields its output, the daily score is saved, streak = 1, no audio pers
 
 ### Tests for User Story 1 ⚠️ (write first, must fail)
 
-- [ ] T052 [P] [US1] Integration test: session engine forward-only steps, resume same day, one `daily` session per user per `practice_date`, limit enforcement in `web/tests/integration/session-engine.test.ts`
-- [ ] T053 [P] [US1] Integration test: `POST /api/sessions/{id}/attempts` success, `422` unusable (not counted), `503` retry keeps state, audio never written to DB/storage/logs (spy on storage + logger) in `web/tests/integration/attempts.deletion.test.ts`
-- [ ] T054 [P] [US1] Integration test: writing feedback via mocked LLM, offensive text stored as `[removed]`, corrected identical when already correct in `web/tests/integration/writing.test.ts`
-- [ ] T055 [P] [US1] Integration test: TTS by `ref` only — shared clip generated once then reused, private sentence clip under `tts/u/<userId>/`, raw `text` param rejected in `web/tests/integration/tts.test.ts`
-- [ ] T056 [P] [US1] Unit tests: daily score weights, partial sessions, streak update incl. gap and midnight crossing in `web/tests/unit/daily-score.test.ts`
-- [ ] T057 [P] [US1] Unit tests: tip post-check rejects messages containing IPA symbols or numbers not in input in `web/tests/unit/tip-guard.test.ts`
-- [ ] T058 [P] [US1] Unit tests: tip and writing prompts include the learner's CEFR level and word budgets; outputs over 45 words (tip) or 25 words (explanation) or containing non-English text are rejected and retried (FR-016a) in `web/tests/unit/prompts.test.ts`
-- [ ] T059 [P] [US1] Contract test: `ScoringClient` Zod schemas match the OpenAPI document in `web/tests/contract/scoring.contract.test.ts`
-- [ ] T060 [P] [US1] E2E test: full daily session with fake mic and mocked services, plus axe scan of each step in `web/tests/e2e/daily-session.spec.ts`
+- [X] T052 [P] [US1] Integration test: session engine forward-only steps, resume same day, one `daily` session per user per `practice_date`, limit enforcement in `web/tests/integration/session-engine.test.ts`
+- [X] T053 [P] [US1] Integration test: `POST /api/sessions/{id}/attempts` success, `422` unusable (not counted), `503` retry keeps state, audio never written to DB/storage/logs (spy on storage + logger) in `web/tests/integration/attempts.deletion.test.ts`
+- [X] T054 [P] [US1] Integration test: writing feedback via mocked LLM, offensive text stored as `[removed]`, corrected identical when already correct in `web/tests/integration/writing.test.ts`
+- [X] T055 [P] [US1] Integration test: TTS by `ref` only — shared clip generated once then reused, private sentence clip under `tts/u/<userId>/`, raw `text` param rejected in `web/tests/integration/tts.test.ts`
+- [X] T056 [P] [US1] Unit tests: daily score weights, partial sessions, streak update incl. gap and midnight crossing in `web/tests/unit/daily-score.test.ts`
+- [X] T057 [P] [US1] Unit tests: tip post-check rejects messages containing IPA symbols or numbers not in input in `web/tests/unit/tip-guard.test.ts`
+- [X] T058 [P] [US1] Unit tests: tip and writing prompts include the learner's CEFR level and word budgets; outputs over 45 words (tip) or 25 words (explanation) or containing non-English text are rejected and retried (FR-016a) in `web/tests/unit/prompts.test.ts`
+- [X] T059 [P] [US1] Contract test: `ScoringClient` Zod schemas match the OpenAPI document in `web/tests/contract/scoring.contract.test.ts`
+- [X] T060 [P] [US1] E2E test: full daily session with fake mic and mocked services, plus axe scan of each step in `web/tests/e2e/daily-session.spec.ts`
 
 ### Implementation for User Story 1
 
-- [ ] T061 [P] [US1] Define `practice_session` (one `daily` per user per `practice_date`; `counts_toward_limit`; step scores and `daily_score` "0–100"; `partial`), `attempt` (unique (`session_id`,`step`,`item`); `score`, `word_accuracy`, `phoneme_accuracy`, `fluency` "0–100"; `sound_results` jsonb; `weakest_sounds` "2–3 IPA symbols"; `tip`; `hint_table_version`; **no audio column**), and `writing_result` (`position` "1–3"; `original` "1–300 chars; offensive text replaced by `[removed]` before storage"; `usage_grade`/`grammar_grade` "0–100"; `explanation` "≤ 1 sentence") in `web/src/db/schema/sessions.ts` + migration
-- [ ] T062 [P] [US1] Define `audio_clip` (`cache_key` PK; `owner_id` FK cascade, NULL for shared; `storage_key` `tts/shared/…` or `tts/u/<userId>/…`; `status` generating|ready|failed; `byte_size`) in `web/src/db/schema/audio.ts` + migration
-- [ ] T063 [US1] Daily chunk selection: chunk at learner level with `audit_status` passed|admin_approved and `status` active, preferring never-practiced, else least-recently practiced in `web/src/lib/domain/chunk-picker.ts`
-- [ ] T064 [US1] Session engine: `startDailySession`, `getSession`, `advanceStep` (forward-only, idempotent), `skipSpeaking` (partial), `completeSession` using `reservePractice` in `web/src/lib/domain/session-engine.ts`
-- [ ] T065 [US1] Server actions wrapping the session engine with `requireLearner()` in `web/src/server/actions/session.ts`
-- [ ] T066 [P] [US1] `TtsProvider` (ElevenLabs Flash v2.5) + TTS service resolving `ref` (`chunk:<id>`, `example:<id>`, `sentence:<writingResultId>` own only), row-lock de-dup, shared vs private storage in `web/src/lib/providers/tts.ts` and `web/src/lib/domain/tts-service.ts`
-- [ ] T067 [US1] Route `GET /api/tts?ref=…` → 302 to CDN (shared) or signed URL (private) in `web/src/app/api/tts/route.ts`
-- [ ] T068 [US1] Feedback composer: map `weakest_sounds` to fixed `sound_hint` rows, call `PronunciationTip` with the learner CEFR level, the fixed hints, and a ≤45-word budget (A1–A2 prompts require short, high-frequency words), apply post-check guard in `web/src/lib/domain/feedback.ts`
-- [ ] T069 [US1] Route `POST /api/sessions/[id]/attempts`: owner check, size/duration guard, stream audio in memory to `ScoringClient`, persist `attempt` (no audio), compose tip, return `AttemptResult` with `improvement` vs try 1 in `web/src/app/api/sessions/[id]/attempts/route.ts`
-- [ ] T070 [US1] Writing grading: `submitWriting` action (3 sentences, 1–300 chars each) calling `WritingFeedback` with the learner CEFR level and an explanation budget of ≤25 words, English only (FR-016a), handling `flags` in `web/src/lib/domain/writing.ts` and `web/src/server/actions/writing.ts`
-- [ ] T071 [US1] Daily score + streak computation (weights from `app_setting.score_weights`, partial handling, `practice_date` from session start) in `web/src/lib/domain/daily-score.ts`
-- [ ] T072 [P] [US1] Recorder hook choosing MIME via `isTypeSupported` (`audio/webm;codecs=opus`, then `audio/mp4`), max 15 s, reporting actual `mimeType`, microphone-denied state in `web/src/components/session/use-recorder.ts`
-- [ ] T073 [P] [US1] Accessible audio play button (replay from cache, error → show text + IPA + retry) in `web/src/components/session/play-button.tsx`
-- [ ] T074 [P] [US1] Step components: `LearnStep`, `SpeakStep` (try 1/2 with improvement), `WriteStep`, `ReadAloudStep`, `SummaryStep` in `web/src/components/session/`
-- [ ] T075 [US1] Session stepper page and `/today` entry (resume, limit reached message) in `web/src/app/(learner)/today/page.tsx` and `web/src/app/(learner)/practice/[sessionId]/page.tsx`
+- [X] T061 [P] [US1] Define `practice_session` (one `daily` per user per `practice_date`; `counts_toward_limit`; step scores and `daily_score` "0–100"; `partial`), `attempt` (unique (`session_id`,`step`,`item`); `score`, `word_accuracy`, `phoneme_accuracy`, `fluency` "0–100"; `sound_results` jsonb; `weakest_sounds` "2–3 IPA symbols"; `tip`; `hint_table_version`; **no audio column**), and `writing_result` (`position` "1–3"; `original` "1–300 chars; offensive text replaced by `[removed]` before storage"; `usage_grade`/`grammar_grade` "0–100"; `explanation` "≤ 1 sentence") in `web/src/db/schema/sessions.ts` + migration
+- [X] T062 [P] [US1] Define `audio_clip` (`cache_key` PK; `owner_id` FK cascade, NULL for shared; `storage_key` `tts/shared/…` or `tts/u/<userId>/…`; `status` generating|ready|failed; `byte_size`) in `web/src/db/schema/audio.ts` + migration
+- [X] T063 [US1] Daily chunk selection: chunk at learner level with `audit_status` passed|admin_approved and `status` active, preferring never-practiced, else least-recently practiced in `web/src/lib/domain/chunk-picker.ts`
+- [X] T064 [US1] Session engine: `startDailySession`, `getSession`, `advanceStep` (forward-only, idempotent), `skipSpeaking` (partial), `completeSession` using `reservePractice` in `web/src/lib/domain/session-engine.ts`
+- [X] T065 [US1] Server actions wrapping the session engine with `requireLearner()` in `web/src/server/actions/session.ts`
+- [X] T066 [P] [US1] `TtsProvider` (ElevenLabs Flash v2.5) + TTS service resolving `ref` (`chunk:<id>`, `example:<id>`, `sentence:<writingResultId>` own only), row-lock de-dup, shared vs private storage in `web/src/lib/providers/tts.ts` and `web/src/lib/domain/tts-service.ts`
+- [X] T067 [US1] Route `GET /api/tts?ref=…` → 302 to CDN (shared) or signed URL (private) in `web/src/app/api/tts/route.ts`
+- [X] T068 [US1] Feedback composer: map `weakest_sounds` to fixed `sound_hint` rows, call `PronunciationTip` with the learner CEFR level, the fixed hints, and a ≤45-word budget (A1–A2 prompts require short, high-frequency words), apply post-check guard in `web/src/lib/domain/feedback.ts`
+- [X] T069 [US1] Route `POST /api/sessions/[id]/attempts`: owner check, size/duration guard, stream audio in memory to `ScoringClient`, persist `attempt` (no audio), compose tip, return `AttemptResult` with `improvement` vs try 1 in `web/src/app/api/sessions/[id]/attempts/route.ts`
+- [X] T070 [US1] Writing grading: `submitWriting` action (3 sentences, 1–300 chars each) calling `WritingFeedback` with the learner CEFR level and an explanation budget of ≤25 words, English only (FR-016a), handling `flags` in `web/src/lib/domain/writing.ts` and `web/src/server/actions/writing.ts`
+- [X] T071 [US1] Daily score + streak computation (weights from `app_setting.score_weights`, partial handling, `practice_date` from session start) in `web/src/lib/domain/daily-score.ts`
+- [X] T072 [P] [US1] Recorder hook choosing MIME via `isTypeSupported` (`audio/webm;codecs=opus`, then `audio/mp4`), max 15 s, reporting actual `mimeType`, microphone-denied state in `web/src/components/session/use-recorder.ts`
+- [X] T073 [P] [US1] Accessible audio play button (replay from cache, error → show text + IPA + retry) in `web/src/components/session/play-button.tsx`
+- [X] T074 [P] [US1] Step components: `LearnStep`, `SpeakStep` (try 1/2 with improvement), `WriteStep`, `ReadAloudStep`, `SummaryStep` in `web/src/components/session/`
+- [X] T075 [US1] Session stepper page and `/today` entry (resume, limit reached message) in `web/src/app/(learner)/today/page.tsx` and `web/src/app/(learner)/practice/[sessionId]/page.tsx`
 
 **Checkpoint**: MVP — a seeded learner can complete a full daily session end to end.
 
