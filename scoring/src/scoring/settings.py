@@ -12,6 +12,11 @@ class Settings(BaseSettings):
 
     scoring_shared_secret: str = Field(min_length=32)
     models_dir: Path = Path("./models")
+    # Curated IPA hint table shared with the web app. Defaults to the repo copy; the Docker image
+    # sets SOUND_HINTS_PATH explicitly.
+    sound_hints_path: Path = (
+        Path(__file__).resolve().parents[3] / "web" / "src" / "content" / "sound-hints.json"
+    )
     max_audio_seconds: float = 15.0
     max_audio_bytes: int = 1_048_576
     signature_skew_seconds: int = 60

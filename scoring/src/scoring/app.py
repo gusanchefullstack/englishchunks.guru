@@ -10,12 +10,15 @@ Privacy (constitution IV, FR-019/FR-020):
 """
 
 import hmac
+import threading
 import time
+from collections.abc import AsyncIterator
+from contextlib import asynccontextmanager
 from hashlib import sha256
 from typing import Annotated
 
 import structlog
-from fastapi import Depends, FastAPI, Request
+from fastapi import Depends, FastAPI, HTTPException, Request
 from fastapi.responses import JSONResponse
 from pydantic import BaseModel, Field
 from starlette.formparsers import MultiPartParser
@@ -29,10 +32,31 @@ FORM_OVERHEAD = 16 * 1024
 MultiPartParser.spool_max_size = 4 * 1024 * 1024
 
 log = structlog.get_logger()
-app = FastAPI(title="EnglishChunks Scoring Service", version="1.0.0")
+_ready = threading.Event()
+
+
+def _preload() -> None:
+    try:
+        load_engines(str(get_settings().models_dir))
+        _ready.set()
+        log.info("models.ready")
+    except Exception as err:  # noqa: BLE001 — stay up and report "loading" via /healthz
+        log.error("models.failed", error=type(err).__name__)
+
+
+@asynccontextmanager
+async def lifespan(_: FastAPI) -> AsyncIterator[None]:
+    # Load models in the background so the port opens immediately and /healthz never blocks.
+    threading.Thread(target=_preload, name="model-preload", daemon=True).start()
+    yield
+
+
+app = FastAPI(title="EnglishChunks Scoring Service", version="1.0.0", lifespan=lifespan)
 
 
 def get_engines() -> Engines:
+    if not _ready.is_set():
+        raise HTTPException(status_code=503, detail="models loading")
     return load_engines(str(get_settings().models_dir))
 
 
@@ -57,11 +81,11 @@ def _error(status: int, message: str) -> JSONResponse:
 
 @app.get("/healthz")
 def healthz() -> dict[str, object]:
-    try:
-        e = get_engines()
-        return {"status": "ok", "models": {k: True for k in e.versions}}
-    except Exception:  # noqa: BLE001
-        return {"status": "loading", "models": {"vad": False, "asr": False, "phonemes": False}}
+    ready = _ready.is_set()
+    return {
+        "status": "ok" if ready else "loading",
+        "models": dict.fromkeys(("vad", "asr", "phonemes"), ready),
+    }
 
 
 @app.post("/v1/score", response_model=None)

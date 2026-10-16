@@ -6,12 +6,12 @@ curated hint for each sound (constitution II).
 """
 
 import json
+import os
 import unicodedata
 from functools import lru_cache
 from pathlib import Path
 from typing import TypedDict, cast
 
-_DEFAULT = Path(__file__).resolve().parents[3] / "web" / "src" / "content" / "sound-hints.json"
 _STRESS = {"ˈ", "ˌ"}
 
 
@@ -51,7 +51,11 @@ class HintMap:
         return None
 
 
+# Repo copy for local runs; the Docker image sets SOUND_HINTS_PATH.
+DEFAULT_PATH = Path(__file__).resolve().parents[3] / "web" / "src" / "content" / "sound-hints.json"
+
+
 @lru_cache
 def load_hint_map(path: str | None = None) -> HintMap:
-    p = Path(path) if path else _DEFAULT
+    p = Path(path or os.environ.get("SOUND_HINTS_PATH") or DEFAULT_PATH)
     return HintMap(cast(HintTable, json.loads(p.read_text(encoding="utf-8"))))

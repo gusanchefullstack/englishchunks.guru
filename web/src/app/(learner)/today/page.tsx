@@ -5,8 +5,8 @@ import { redirect } from "next/navigation";
 import { Suspense } from "react";
 import { SessionSkeleton } from "@/components/session/session-header";
 import { Card, Eyebrow, primaryBtn } from "@/components/session/ui";
-import { startDailySession } from "@/lib/domain/session-engine";
-import { AppError } from "@/lib/errors";
+import { StartTodayButton } from "@/components/session/start-today";
+import { getTodayStatus } from "@/lib/domain/session-engine";
 import { learnerOrRedirect } from "@/lib/page-guards";
 
 export const metadata: Metadata = { title: "Today" };
@@ -21,26 +21,35 @@ export default function TodayPage() {
 
 async function TodayContent() {
   const learner = await learnerOrRedirect();
-  let sessionId: string;
-  try {
-    const s = await startDailySession({
-      userId: learner.id,
-      level: learner.level,
-      timeZone: learner.timeZone,
-    });
-    sessionId = s.id;
-  } catch (err) {
-    if (err instanceof AppError && err.code === "limit_reached") {
-      return (
-        <LimitReached
-          resetsAt={String(err.details?.resetsAt ?? "")}
-          limit={Number(err.details?.limit ?? 0)}
-        />
-      );
-    }
-    throw err;
+  const status = await getTodayStatus({
+    userId: learner.id,
+    level: learner.level,
+    timeZone: learner.timeZone,
+  });
+  if (status.existingSessionId) redirect(`/practice/${status.existingSessionId}`);
+  if (status.remaining === 0) {
+    const { nextDayStart } = await import("@/lib/domain/time");
+    return (
+      <LimitReached resetsAt={nextDayStart(learner.timeZone).toISOString()} limit={status.limit} />
+    );
   }
-  redirect(`/practice/${sessionId}`);
+  return (
+    <section aria-labelledby="today-title" className="mx-auto max-w-xl text-center">
+      <Eyebrow>Your daily English ritual</Eyebrow>
+      <h1 id="today-title" className="mt-2 text-[34px] tracking-[-1px]">
+        Today&apos;s chunk is ready
+      </h1>
+      <Card className="mt-6">
+        <p>
+          One useful chunk. About twelve focused minutes: learn it, say it twice, write it, read it
+          aloud.
+        </p>
+        <div className="mt-5">
+          <StartTodayButton />
+        </div>
+      </Card>
+    </section>
+  );
 }
 
 function LimitReached({ resetsAt, limit }: { resetsAt: string; limit: number }) {

@@ -17,8 +17,10 @@ COPY web/src/content/sound-hints.json /app/web/src/content/sound-hints.json
 RUN uv sync --frozen --no-dev
 
 # Models are mounted at runtime (MODELS_DIR=/models) — not baked into the image.
-ENV MODELS_DIR=/models
+ENV MODELS_DIR=/models \
+    SOUND_HINTS_PATH=/app/web/src/content/sound-hints.json
 RUN useradd --system --uid 10001 scoring
 USER scoring
 EXPOSE 8001
-CMD ["uv", "run", "--no-sync", "uvicorn", "scoring.app:app", "--host", "0.0.0.0", "--port", "8001", "--workers", "1", "--no-access-log"]
+# Call the venv binary directly: works under a read-only root filesystem (no uv cache writes).
+CMD ["/app/.venv/bin/uvicorn", "scoring.app:app", "--host", "0.0.0.0", "--port", "8001", "--workers", "1", "--no-access-log"]
