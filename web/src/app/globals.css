@@ -1,0 +1,207 @@
+@import "tailwindcss";
+@import "tw-animate-css";
+@import "shadcn/tailwind.css";
+
+@custom-variant dark (&:is(.dark *));
+
+@theme inline {
+  --color-mint: var(--mint);
+  --color-sky: var(--sky);
+  --color-snow: var(--snow);
+  --color-lavender: var(--lavender);
+  --color-ink: var(--ink);
+  --color-brand-link: var(--brand-link);
+  --color-eyebrow: var(--eyebrow);
+  --color-nav-active: var(--nav-active);
+  --color-nav-active-foreground: var(--nav-active-foreground);
+  --color-tag-type: var(--tag-type);
+  --color-tag-type-foreground: var(--tag-type-foreground);
+  --color-tag-level: var(--tag-level);
+  --color-tag-level-foreground: var(--tag-level-foreground);
+  --color-coach: var(--coach);
+  --color-coach-foreground: var(--coach-foreground);
+  --color-streak: var(--streak);
+  --color-streak-border: var(--streak-border);
+  --color-streak-foreground: var(--streak-foreground);
+  --color-surface-subtle: var(--surface-subtle);
+  --color-ipa: var(--ipa);
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --font-sans: var(--font-nunito), ui-sans-serif, system-ui, sans-serif;
+  --font-mono: var(--font-geist-mono);
+  --font-heading: var(--font-nunito), ui-sans-serif, system-ui, sans-serif;
+  --color-sidebar-ring: var(--sidebar-ring);
+  --color-sidebar-border: var(--sidebar-border);
+  --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
+  --color-sidebar-accent: var(--sidebar-accent);
+  --color-sidebar-primary-foreground: var(--sidebar-primary-foreground);
+  --color-sidebar-primary: var(--sidebar-primary);
+  --color-sidebar-foreground: var(--sidebar-foreground);
+  --color-sidebar: var(--sidebar);
+  --color-chart-5: var(--chart-5);
+  --color-chart-4: var(--chart-4);
+  --color-chart-3: var(--chart-3);
+  --color-chart-2: var(--chart-2);
+  --color-chart-1: var(--chart-1);
+  --color-ring: var(--ring);
+  --color-input: var(--input);
+  --color-border: var(--border);
+  --color-destructive: var(--destructive);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-accent: var(--accent);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-muted: var(--muted);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-secondary: var(--secondary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-primary: var(--primary);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-popover: var(--popover);
+  --color-card-foreground: var(--card-foreground);
+  --color-card: var(--card);
+  --radius-sm: calc(var(--radius) * 0.6);
+  --radius-md: calc(var(--radius) * 0.8);
+  --radius-lg: var(--radius);
+  --radius-xl: calc(var(--radius) * 1.4);
+  --radius-2xl: calc(var(--radius) * 1.8);
+  --radius-3xl: calc(var(--radius) * 2.2);
+  --radius-4xl: calc(var(--radius) * 2.6);
+}
+
+/* Brand palette (constitution VI): https://coolors.co/5dfdcb-7cc6fe-f4faff-8789c0-08090a
+   Brand hues are light, so filled brand surfaces always carry --ink text (AA ≥ 4.5:1).
+   --brand-link is a darkened lavender for text-coloured links on light surfaces. */
+:root {
+  --mint: #5dfdcb;
+  --sky: #7cc6fe;
+  --snow: #f4faff;
+  --lavender: #8789c0;
+  --ink: #08090a;
+  --brand-link: #4e5096;
+
+  --background: var(--snow);
+  --foreground: var(--ink);
+  --card: #ffffff;
+  --card-foreground: var(--ink);
+  --popover: #ffffff;
+  --popover-foreground: var(--ink);
+  --primary: var(--mint);
+  --primary-foreground: var(--ink);
+  --secondary: var(--lavender);
+  --secondary-foreground: var(--ink);
+  --muted: #e6eef6;
+  --muted-foreground: #667179;
+  --accent: var(--sky);
+  --accent-foreground: var(--ink);
+  --destructive: #b42318;
+  --border: #dfe8ea;
+  --input: #b9c5d2;
+  --ring: var(--brand-link);
+  --chart-1: #4e5096;
+  --chart-2: #0f8f6a;
+  --chart-3: #2b7bbf;
+  --chart-4: #8789c0;
+  --chart-5: #08090a;
+  --radius: 0.75rem;
+  --eyebrow: #40736a;
+  --nav-active: #dcfff3;
+  --nav-active-foreground: #0b765a;
+  --tag-type: #efeffa;
+  --tag-type-foreground: #5c619b;
+  --tag-level: #e9f8f3;
+  --tag-level-foreground: #547269;
+  --coach: #171d1f;
+  --coach-foreground: #d6dddd;
+  --streak: #e7fff7;
+  --streak-border: #aeead8;
+  --streak-foreground: #126f58;
+  --surface-subtle: #f3f9fc;
+  --ipa: #5f6a70;
+  --sidebar: #ffffff;
+  --sidebar-foreground: var(--ink);
+  --sidebar-primary: var(--mint);
+  --sidebar-primary-foreground: var(--ink);
+  --sidebar-accent: var(--sky);
+  --sidebar-accent-foreground: var(--ink);
+  --sidebar-border: #dfe8ea;
+  --sidebar-ring: var(--brand-link);
+}
+
+.dark {
+  --brand-link: #b3b5e6;
+
+  --background: var(--ink);
+  --foreground: var(--snow);
+  --card: #14171c;
+  --card-foreground: var(--snow);
+  --popover: #14171c;
+  --popover-foreground: var(--snow);
+  --primary: var(--mint);
+  --primary-foreground: var(--ink);
+  --secondary: var(--lavender);
+  --secondary-foreground: var(--ink);
+  --muted: #1e222a;
+  --muted-foreground: #aab3c0;
+  --eyebrow: #8fe3c9;
+  --nav-active: #123a30;
+  --nav-active-foreground: #8ff5d4;
+  --tag-type: #262845;
+  --tag-type-foreground: #c4c6f0;
+  --tag-level: #15332b;
+  --tag-level-foreground: #a6e6d2;
+  --coach: #1e262a;
+  --coach-foreground: #d6dddd;
+  --streak: #10302a;
+  --streak-border: #1f5a4b;
+  --streak-foreground: #8ff5d4;
+  --surface-subtle: #1a1f26;
+  --ipa: #b4bcc6;
+  --accent: var(--sky);
+  --accent-foreground: var(--ink);
+  --destructive: #ff8a80;
+  --border: #2c313b;
+  --input: #3a404c;
+  --ring: var(--mint);
+  --chart-1: #5dfdcb;
+  --chart-2: #7cc6fe;
+  --chart-3: #b3b5e6;
+  --chart-4: #8789c0;
+  --chart-5: #f4faff;
+  --sidebar: #14171c;
+  --sidebar-foreground: var(--snow);
+  --sidebar-primary: var(--mint);
+  --sidebar-primary-foreground: var(--ink);
+  --sidebar-accent: var(--sky);
+  --sidebar-accent-foreground: var(--ink);
+  --sidebar-border: #2c313b;
+  --sidebar-ring: var(--mint);
+}
+
+@layer base {
+  * {
+    @apply border-border outline-ring/50;
+  }
+  body {
+    @apply bg-background text-foreground;
+  }
+  html {
+    @apply font-sans;
+  }
+}
+
+@layer base {
+  a:where(:not([class])) {
+    @apply text-brand-link underline underline-offset-4;
+  }
+  :focus-visible {
+    @apply outline-2 outline-offset-2 outline-ring;
+  }
+  @media (prefers-reduced-motion: reduce) {
+    *,
+    *::before,
+    *::after {
+      animation-duration: 0.01ms !important;
+      transition-duration: 0.01ms !important;
+    }
+  }
+}

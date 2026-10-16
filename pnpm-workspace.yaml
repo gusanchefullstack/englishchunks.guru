@@ -1,0 +1,7 @@
+packages:
+  - web
+onlyBuiltDependencies:
+  - sharp
+  - unrs-resolver
+  - esbuild
+  - "@tailwindcss/oxide"

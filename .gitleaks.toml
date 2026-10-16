@@ -1,0 +1,12 @@
+title = "englishchunks.guru secret scan"
+
+[extend]
+useDefault = true
+
+[allowlist]
+description = "Example env files hold placeholder names only"
+paths = [
+  '''(^|/)\.env\.example$''',
+  '''pnpm-lock\.yaml$''',
+  '''uv\.lock$''',
+]
