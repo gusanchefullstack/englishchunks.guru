@@ -268,7 +268,8 @@ expired → active              learner subscribes via Checkout
 ```
 
 Daily limit by tier: basic 1, standard 3, premium 5. App-managed `trialing` uses the Basic
-limit (1/day) — spec assumption, see plan. `expired` → 0.
+limit (1/day) — spec assumption, see plan. `past_due` keeps the tier's limit while Stripe
+retries payment; `expired` → 0.
 
 ## stripe_event
 

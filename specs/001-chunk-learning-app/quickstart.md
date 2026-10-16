@@ -63,6 +63,7 @@ pnpm secret-scan                     # gitleaks over the repo
 | V15 | SC-005 | `cd scoring && uv run pytest -m calibration` against the reference feature set | ≥85% of good/poor pairs ranked correctly |
 | V16 | SC-003 | `uv run python -m scoring.bench` on the Droplet with 50 sample clips | p95 scoring latency ≤ 5 s |
 | V17 | SC-011 | Playwright axe suite + keyboard-only run of V1 | Zero critical WCAG 2.2 AA violations; whole session doable by keyboard |
+| V18 | SC-004 | `pnpm --filter web exec tsx scripts/latency-check.ts --base <staging-url>` | p95 TTS first play ≤ 2 s, cached replay ≤ 0.5 s; writing feedback ≤ 6 s |
 
 ## Go-live checklist (before real charges)
 
