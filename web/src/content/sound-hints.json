@@ -1,0 +1,252 @@
+{
+  "version": 1,
+  "language": "en-US",
+  "sounds": [
+    {
+      "ipa": "iː",
+      "espeak": ["iː", "i"],
+      "hint": "Smile a little and hold the sound, like \"ee\". Your tongue is high and to the front.",
+      "examples": ["see", "need", "team"]
+    },
+    {
+      "ipa": "ɪ",
+      "espeak": ["ɪ", "ᵻ"],
+      "hint": "A short, relaxed \"i\". Don't smile as much as in \"see\" — \"sit\" is quicker than \"seat\".",
+      "examples": ["sit", "this", "business"]
+    },
+    {
+      "ipa": "eɪ",
+      "espeak": ["eɪ", "e"],
+      "hint": "Start with \"e\" and glide up to \"ee\": \"ay\". Let it move, don't keep it flat.",
+      "examples": ["day", "make", "great"]
+    },
+    {
+      "ipa": "ɛ",
+      "espeak": ["ɛ"],
+      "hint": "Open your mouth a little more than for \"i\": a short \"eh\".",
+      "examples": ["bed", "said", "friend"]
+    },
+    {
+      "ipa": "æ",
+      "espeak": ["æ", "a"],
+      "hint": "Drop your jaw wide and push your tongue forward: \"cat\", not \"cut\".",
+      "examples": ["cat", "that", "have"]
+    },
+    {
+      "ipa": "ɑː",
+      "espeak": ["ɑː", "ɑ", "ɒ"],
+      "hint": "Open your mouth wide and relax your tongue low, like saying \"ah\" for a doctor.",
+      "examples": ["father", "hot", "stop"]
+    },
+    {
+      "ipa": "ʌ",
+      "espeak": ["ʌ"],
+      "hint": "A short, relaxed \"uh\" from the middle of your mouth. Keep your lips loose.",
+      "examples": ["cup", "but", "love"]
+    },
+    {
+      "ipa": "ɔː",
+      "espeak": ["ɔː", "ɔ"],
+      "hint": "Round your lips a little and open your mouth: \"aw\".",
+      "examples": ["thought", "call", "talk"]
+    },
+    {
+      "ipa": "oʊ",
+      "espeak": ["oʊ", "əʊ", "o"],
+      "hint": "Start with round lips on \"o\" and close them more toward \"w\": \"oh-w\".",
+      "examples": ["go", "know", "phone"]
+    },
+    {
+      "ipa": "ʊ",
+      "espeak": ["ʊ"],
+      "hint": "A short \"oo\" with relaxed lips — \"book\", not \"boot\".",
+      "examples": ["book", "good", "could"]
+    },
+    {
+      "ipa": "uː",
+      "espeak": ["uː", "u"],
+      "hint": "Round your lips tightly and hold a long \"oo\".",
+      "examples": ["food", "you", "true"]
+    },
+    {
+      "ipa": "aɪ",
+      "espeak": ["aɪ"],
+      "hint": "Start with an open \"ah\" and glide to \"ee\": \"eye\".",
+      "examples": ["time", "my", "right"]
+    },
+    {
+      "ipa": "aʊ",
+      "espeak": ["aʊ"],
+      "hint": "Start with \"ah\" and close your lips toward \"oo\": \"ow\".",
+      "examples": ["now", "how", "about"]
+    },
+    {
+      "ipa": "ɔɪ",
+      "espeak": ["ɔɪ"],
+      "hint": "Start with round \"aw\" and glide to \"ee\": \"oy\".",
+      "examples": ["boy", "choice", "enjoy"]
+    },
+    {
+      "ipa": "ə",
+      "espeak": ["ə", "ɐ"],
+      "hint": "The weak \"uh\" sound. Say it very short and soft — unstressed syllables are quick in English.",
+      "examples": ["about", "the", "sofa"]
+    },
+    {
+      "ipa": "ɚ",
+      "espeak": ["ɚ", "ɝ", "ɜː", "ɜ", "əɹ"],
+      "hint": "Curl your tongue back a little and say \"er\" without opening wide.",
+      "examples": ["her", "work", "better"]
+    },
+    {
+      "ipa": "p",
+      "espeak": ["p"],
+      "hint": "Close your lips, then release with a small puff of air. Hold a paper: it should move.",
+      "examples": ["put", "happy", "stop"]
+    },
+    {
+      "ipa": "b",
+      "espeak": ["b"],
+      "hint": "Close your lips and use your voice — no puff of air.",
+      "examples": ["but", "job", "maybe"]
+    },
+    {
+      "ipa": "t",
+      "espeak": ["t"],
+      "hint": "Touch the ridge behind your top teeth with your tongue tip and release with air.",
+      "examples": ["take", "time", "right"]
+    },
+    {
+      "ipa": "ɾ",
+      "espeak": ["ɾ"],
+      "hint": "In American English, \"t\" between vowels sounds like a quick, soft \"d\": \"wa-der\".",
+      "examples": ["water", "better", "city"]
+    },
+    {
+      "ipa": "d",
+      "espeak": ["d"],
+      "hint": "Same place as \"t\", but use your voice: a gentle \"d\".",
+      "examples": ["day", "made", "decide"]
+    },
+    {
+      "ipa": "k",
+      "espeak": ["k"],
+      "hint": "Lift the back of your tongue to the roof of your mouth and release with air.",
+      "examples": ["make", "call", "question"]
+    },
+    {
+      "ipa": "ɡ",
+      "espeak": ["ɡ", "g"],
+      "hint": "Same place as \"k\", but use your voice.",
+      "examples": ["go", "big", "again"]
+    },
+    {
+      "ipa": "f",
+      "espeak": ["f"],
+      "hint": "Touch your top teeth to your bottom lip and blow air out.",
+      "examples": ["for", "life", "phone"]
+    },
+    {
+      "ipa": "v",
+      "espeak": ["v"],
+      "hint": "Same as \"f\" but use your voice — you should feel your lip buzz. Don't use \"b\".",
+      "examples": ["very", "have", "love"]
+    },
+    {
+      "ipa": "θ",
+      "espeak": ["θ"],
+      "hint": "Put your tongue tip lightly between your teeth and blow air — no voice.",
+      "examples": ["think", "thanks", "both"]
+    },
+    {
+      "ipa": "ð",
+      "espeak": ["ð"],
+      "hint": "Tongue tip lightly between your teeth, then use your voice. Not \"d\" or \"z\".",
+      "examples": ["that", "the", "other"]
+    },
+    {
+      "ipa": "s",
+      "espeak": ["s"],
+      "hint": "Keep your teeth close and push air over your tongue tip: a clear hiss.",
+      "examples": ["sense", "say", "nice"]
+    },
+    {
+      "ipa": "z",
+      "espeak": ["z"],
+      "hint": "Same as \"s\" but with voice — it buzzes. Many plurals end in \"z\".",
+      "examples": ["is", "makes", "easy"]
+    },
+    {
+      "ipa": "ʃ",
+      "espeak": ["ʃ"],
+      "hint": "Round your lips a little and push air: \"sh\", like asking for quiet.",
+      "examples": ["she", "should", "nation"]
+    },
+    {
+      "ipa": "ʒ",
+      "espeak": ["ʒ"],
+      "hint": "Like \"sh\" but with voice, as in the middle of \"measure\".",
+      "examples": ["measure", "usually", "decision"]
+    },
+    {
+      "ipa": "h",
+      "espeak": ["h"],
+      "hint": "Just breathe out softly from your throat before the vowel. Don't drop it.",
+      "examples": ["have", "how", "behind"]
+    },
+    {
+      "ipa": "tʃ",
+      "espeak": ["tʃ"],
+      "hint": "Start with \"t\" and release into \"sh\" in one quick sound: \"ch\".",
+      "examples": ["chunk", "much", "question"]
+    },
+    {
+      "ipa": "dʒ",
+      "espeak": ["dʒ"],
+      "hint": "Start with \"d\" and release into the voiced \"zh\": \"j\".",
+      "examples": ["job", "just", "change"]
+    },
+    {
+      "ipa": "m",
+      "espeak": ["m"],
+      "hint": "Close your lips and hum through your nose.",
+      "examples": ["make", "time", "remember"]
+    },
+    {
+      "ipa": "n",
+      "espeak": ["n"],
+      "hint": "Tongue tip behind your top teeth, sound through your nose.",
+      "examples": ["no", "sense", "know"]
+    },
+    {
+      "ipa": "ŋ",
+      "espeak": ["ŋ"],
+      "hint": "Back of the tongue up, sound through your nose. Don't add a hard \"g\" at the end.",
+      "examples": ["thing", "going", "long"]
+    },
+    {
+      "ipa": "l",
+      "espeak": ["l", "ɫ"],
+      "hint": "Touch your tongue tip behind your top teeth and let air flow around the sides.",
+      "examples": ["like", "feel", "all"]
+    },
+    {
+      "ipa": "ɹ",
+      "espeak": ["ɹ", "r"],
+      "hint": "Pull your tongue back without touching the roof of your mouth. Don't roll or tap it.",
+      "examples": ["right", "sorry", "very"]
+    },
+    {
+      "ipa": "w",
+      "espeak": ["w"],
+      "hint": "Round your lips like \"oo\", then open quickly. It's not \"v\".",
+      "examples": ["we", "work", "away"]
+    },
+    {
+      "ipa": "j",
+      "espeak": ["j"],
+      "hint": "Start like \"ee\" and move quickly into the next vowel: the \"y\" in \"yes\".",
+      "examples": ["yes", "you", "use"]
+    }
+  ]
+}
