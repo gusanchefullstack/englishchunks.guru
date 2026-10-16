@@ -1,0 +1,150 @@
+openapi: 3.1.0
+info:
+  title: EnglishChunks Scoring Service
+  version: 1.0.0
+  description: |
+    Self-hosted speech scoring (Silero VAD + Parakeet + wav2vec2 phonemes) and deterministic
+    phonemization (espeak-ng). Called only by the web app's server, never by browsers.
+
+    Privacy contract (constitution Principle IV, spec FR-019/FR-020):
+    - Audio is processed in memory only; it is never written to disk, logs, or storage.
+    - Audio buffers are released before the response is sent, on success and on failure.
+    - Request bodies are never logged.
+
+    Authentication: every request except /healthz carries
+    `X-Signature: sha256=<hex HMAC-SHA256(SCORING_SHARED_SECRET, X-Timestamp + "." + X-Request-Id)>`,
+    `X-Timestamp` (unix seconds, ±60 s skew allowed) and `X-Request-Id` (UUID, propagated to logs).
+servers:
+  - url: https://scoring.englishchunks.guru
+paths:
+  /healthz:
+    get:
+      summary: Liveness and model readiness
+      security: []
+      responses:
+        "200":
+          description: Ready
+          content:
+            application/json:
+              schema:
+                type: object
+                required: [status, models]
+                properties:
+                  status: { type: string, enum: [ok, loading] }
+                  models:
+                    type: object
+                    additionalProperties: { type: boolean }
+  /v1/score:
+    post:
+      summary: Score one recording against an expected text
+      security: [{ hmac: [] }]
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              required: [audio, expected_text, level]
+              properties:
+                audio:
+                  type: string
+                  format: binary
+                  description: |
+                    Opus/WebM, MP4/AAC (iOS Safari), or WAV; max 15 s, max 1 MB.
+                    Decoded from an in-memory buffer only (never written to disk).
+                mime_type:
+                  type: string
+                  enum: [audio/webm, audio/mp4, audio/wav, audio/ogg]
+                  description: The recorder's actual mimeType (codec params stripped).
+                expected_text: { type: string, minLength: 1, maxLength: 300 }
+                level: { type: string, enum: [A1, A2, B1, B2, C1, C2] }
+      responses:
+        "200":
+          description: Scored
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/ScoreResult" }
+        "422":
+          description: Recording unusable (not counted as an attempt)
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/Unusable" }
+        "401": { description: Bad or expired signature }
+        "413": { description: Audio too large or too long }
+        "503": { description: Models loading or overloaded; client may retry }
+  /v1/phonemize:
+    post:
+      summary: Deterministic American-English IPA for text (used for chunk/example IPA)
+      security: [{ hmac: [] }]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [texts]
+              properties:
+                texts:
+                  type: array
+                  maxItems: 100
+                  items: { type: string, minLength: 1, maxLength: 300 }
+      responses:
+        "200":
+          description: IPA per input text, same order
+          content:
+            application/json:
+              schema:
+                type: object
+                required: [ipa]
+                properties:
+                  ipa:
+                    type: array
+                    items: { type: string }
+components:
+  securitySchemes:
+    hmac:
+      type: apiKey
+      in: header
+      name: X-Signature
+  schemas:
+    ScoreResult:
+      type: object
+      required: [score, components, sounds, weakest_sounds, transcript, model_versions]
+      properties:
+        score: { type: integer, minimum: 0, maximum: 100 }
+        components:
+          type: object
+          required: [phoneme_accuracy, word_accuracy, fluency]
+          properties:
+            phoneme_accuracy: { type: integer, minimum: 0, maximum: 100 }
+            word_accuracy: { type: integer, minimum: 0, maximum: 100 }
+            fluency: { type: integer, minimum: 0, maximum: 100 }
+        sounds:
+          type: array
+          description: Per-sound results, keyed by the app's IPA hint-table symbols.
+          items:
+            type: object
+            required: [ipa, score, count]
+            properties:
+              ipa: { type: string }
+              score: { type: integer, minimum: 0, maximum: 100 }
+              count: { type: integer, minimum: 1 }
+        weakest_sounds:
+          type: array
+          minItems: 0
+          maxItems: 3
+          items: { type: string }
+        transcript:
+          type: string
+          description: Recognized words (text only, no audio).
+        model_versions:
+          type: object
+          additionalProperties: { type: string }
+    Unusable:
+      type: object
+      required: [reason]
+      properties:
+        reason:
+          type: string
+          enum: [no_speech, too_short, too_noisy, wrong_content, decode_failed]
+        message: { type: string }
