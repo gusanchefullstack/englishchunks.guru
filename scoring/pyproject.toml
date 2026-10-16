@@ -24,7 +24,7 @@ dependencies = [
 [project.optional-dependencies]
 export = [
     "onnx>=1.23.2",
-    "optimum>=2.3.0",
+    "onnxscript>=0.7.2",
     "torch>=2.14.1",
     "transformers>=5.20.1",
 ]
@@ -36,11 +36,15 @@ build-backend = "uv_build"
 [dependency-groups]
 dev = [
     "httpx>=0.28.1",
+    "jsonschema>=4.26.0",
     "mypy>=2.4.0",
+    "pyarrow>=26.0.0",
     "pytest>=9.1.1",
     "pytest-asyncio>=1.4.0",
+    "pyyaml>=6.0.3",
     "ruff>=0.17.1",
-    "schemathesis>=4.31.1",
+    "types-jsonschema>=4.26.0.20261006",
+    "types-pyyaml>=6.0.12.20260906",
 ]
 
 [tool.pytest.ini_options]
@@ -62,3 +66,12 @@ ignore = ["S101"]
 [tool.mypy]
 strict = true
 python_version = "3.12"
+
+[[tool.mypy.overrides]]
+module = ["onnxruntime.*", "sherpa_onnx.*", "phonemizer.*", "transformers.*", "torch.*"]
+ignore_missing_imports = true
+
+[[tool.mypy.overrides]]
+# One-off export script using untyped torch/transformers APIs (export extra only).
+module = ["scoring.models.download"]
+disallow_untyped_calls = false

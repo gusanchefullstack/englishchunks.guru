@@ -1,0 +1,21 @@
+[Unit]
+Description=EnglishChunks scoring service
+After=network-online.target docker.service
+Requires=docker.service
+
+[Service]
+Restart=always
+RestartSec=5
+# Audio never touches disk; a tmpfs /tmp is defense in depth (constitution IV).
+ExecStartPre=-/usr/bin/docker rm -f ec-scoring
+ExecStart=/usr/bin/docker run --rm --name ec-scoring \
+  --env-file /etc/ec-scoring.env \
+  -v /opt/ec-scoring/models:/models:ro \
+  --tmpfs /tmp:rw,noexec,nosuid,size=64m \
+  --read-only \
+  -p 127.0.0.1:8001:8001 \
+  ec-scoring:latest
+ExecStop=/usr/bin/docker stop ec-scoring
+
+[Install]
+WantedBy=multi-user.target

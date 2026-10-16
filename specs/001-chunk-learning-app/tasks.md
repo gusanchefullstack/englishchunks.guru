@@ -95,22 +95,22 @@ story work begins until this phase is complete.
 
 ### 2d. Scoring service spike (validates SC-003 / SC-005 before UI is built)
 
-- [ ] T036 [P] Contract test for `/healthz`, `/v1/score`, `/v1/phonemize` using schemathesis against `specs/001-chunk-learning-app/contracts/scoring-service.openapi.yaml` in `scoring/tests/contract/test_openapi.py`
-- [ ] T037 [P] Deletion test `test_no_audio_persisted`: score success and forced failure, assert no new files in tmp dirs/cwd, no audio bytes in captured logs, buffers released in `scoring/tests/test_no_audio_persisted.py`
-- [ ] T038 [P] Unit tests for alignment and score combination with synthetic phoneme sequences in `scoring/tests/unit/test_align.py` and `scoring/tests/unit/test_combine.py`
-- [ ] T039 Model download script fetching Silero VAD ONNX, sherpa-onnx Parakeet TDT 0.6B v2 int8, and wav2vec2-lv-60-espeak-cv-ft (export to ONNX + int8 dynamic quantization) into `MODELS_DIR` in `scoring/src/scoring/models/download.py`
-- [ ] T040 In-memory audio decode with PyAV from `BytesIO` (webm/opus, mp4/aac, wav, ogg) → 16 kHz mono float32; reject > `MAX_AUDIO_SECONDS` (15 s) or > `MAX_AUDIO_BYTES` (1 MB); never write to disk in `scoring/src/scoring/audio.py`
-- [ ] T041 [P] Silero VAD trimming; return `no_speech`/`too_short` when < 0.3 s speech in `scoring/src/scoring/vad.py`
-- [ ] T042 [P] Parakeet ASR via sherpa-onnx returning words + timestamps in `scoring/src/scoring/asr.py`
-- [ ] T043 [P] wav2vec2 ONNX CTC phoneme logits + espeak-ng `en-us` expected phonemes in `scoring/src/scoring/phonemes.py`
-- [ ] T044 NumPy CTC forced alignment, GOP-style per-phone posterior, and edit-distance substitution/deletion flags in `scoring/src/scoring/align.py`
-- [ ] T045 espeak → app IPA symbol mapping read from copied `sound-hints.json` in `scoring/src/scoring/hint_map.py`
-- [ ] T046 Score combination (0.5 phoneme + 0.3 word + 0.2 fluency, weights from settings), `weakest_sounds` (2–3 lowest, min 2 occurrences or 1 if fewer), `wrong_content` detection (word accuracy < 30) in `scoring/src/scoring/combine.py`
-- [ ] T047 FastAPI app with HMAC verification (±60 s skew), `/healthz`, `/v1/score` (multipart incl. `mime_type`), `/v1/phonemize` (≤100 texts), buffers released in `finally`, structlog without bodies in `scoring/src/scoring/app.py`
+- [X] T036 [P] Contract test for `/healthz`, `/v1/score`, `/v1/phonemize` validating responses with jsonschema against `specs/001-chunk-learning-app/contracts/scoring-service.openapi.yaml` in `scoring/tests/contract/test_openapi.py`
+- [X] T037 [P] Deletion test `test_no_audio_persisted`: score success and forced failure, assert no new files in tmp dirs/cwd, no audio bytes in captured logs, buffers released in `scoring/tests/test_no_audio_persisted.py`
+- [X] T038 [P] Unit tests for alignment and score combination with synthetic phoneme sequences in `scoring/tests/unit/test_align.py` and `scoring/tests/unit/test_combine.py`
+- [X] T039 Model download script fetching Silero VAD ONNX, sherpa-onnx Parakeet TDT 0.6B v2 int8, and wav2vec2-lv-60-espeak-cv-ft (export to ONNX + int8 dynamic quantization) into `MODELS_DIR` in `scoring/src/scoring/models/download.py`
+- [X] T040 In-memory audio decode with PyAV from `BytesIO` (webm/opus, mp4/aac, wav, ogg) → 16 kHz mono float32; reject > `MAX_AUDIO_SECONDS` (15 s) or > `MAX_AUDIO_BYTES` (1 MB); never write to disk in `scoring/src/scoring/audio.py`
+- [X] T041 [P] Silero VAD trimming; return `no_speech`/`too_short` when < 0.3 s speech in `scoring/src/scoring/engines.py`
+- [X] T042 [P] Parakeet ASR via sherpa-onnx returning words + timestamps in `scoring/src/scoring/engines.py`
+- [X] T043 [P] wav2vec2 ONNX CTC phoneme logits + espeak-ng `en-us` expected phonemes in `scoring/src/scoring/engines.py`
+- [X] T044 NumPy CTC forced alignment, GOP-style per-phone posterior, and edit-distance substitution/deletion flags in `scoring/src/scoring/align.py`
+- [X] T045 espeak → app IPA symbol mapping read from copied `sound-hints.json` in `scoring/src/scoring/hint_map.py`
+- [X] T046 Score combination (0.5 phoneme + 0.3 word + 0.2 fluency, weights from settings), `weakest_sounds` (2–3 lowest, min 2 occurrences or 1 if fewer), `wrong_content` detection (word accuracy < 30) in `scoring/src/scoring/combine.py` (+ `pipeline.py`)
+- [X] T047 FastAPI app with HMAC verification (±60 s skew), `/healthz`, `/v1/score` (multipart incl. `mime_type`), `/v1/phonemize` (≤100 texts), buffers released in `finally`, structlog without bodies in `scoring/src/scoring/app.py`
 - [ ] T048 Latency benchmark over 50 sample clips reporting p50/p95 in `scoring/src/scoring/bench.py`; record results (incl. real iOS Safari MP4 and Android Chrome WebM clips) in `scoring/BENCHMARKS.md`
-- [ ] T049 Calibration suite (pytest marker `calibration`) over reference feature set built outside the app (owner/volunteer consented clips + speechocean762), asserting ≥85% correct good/poor pair ranking in `scoring/tests/calibration/test_pairs.py`
-- [ ] T050 [P] CI workflow re-running the calibration suite on the public speechocean762 subset whenever `scoring/src/scoring/{asr,phonemes,align,combine}.py`, model ids, or quantization settings change, failing below 85% pair accuracy, in `.github/workflows/scoring-calibration.yml`; the consented volunteer set is run manually before each scoring release (constitution III)
-- [ ] T051 Deployment assets: `scoring/deploy/Dockerfile` (python:3.12-slim, espeak-ng, models baked or volume), `scoring/deploy/scoring.service` (systemd, tmpfs `/tmp`), HTTPS via Caddy config `scoring/deploy/Caddyfile`
+- [X] T049 Calibration suite (pytest marker `calibration`) over reference feature set built outside the app (owner/volunteer consented clips + speechocean762), asserting ≥85% correct good/poor pair ranking in `scoring/tests/calibration/test_pairs.py`
+- [X] T050 [P] CI workflow re-running the calibration suite on the public speechocean762 subset whenever `scoring/src/scoring/{asr,phonemes,align,combine}.py`, model ids, or quantization settings change, failing below 85% pair accuracy, in `.github/workflows/scoring-calibration.yml`; the consented volunteer set is run manually before each scoring release (constitution III)
+- [X] T051 Deployment assets: `scoring/deploy/Dockerfile` (python:3.12-slim, espeak-ng, models baked or volume), `scoring/deploy/scoring.service` (systemd, tmpfs `/tmp`), HTTPS via Caddy config `scoring/deploy/Caddyfile`
 
 **Checkpoint**: DB, auth core, providers, and a validated scoring service exist. If SC-003
 (p95 ≤ 5 s) fails on 4 GB, resize Droplet to 8 GB before continuing.
