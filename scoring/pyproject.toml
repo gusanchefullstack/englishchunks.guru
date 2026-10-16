@@ -1,0 +1,64 @@
+[project]
+name = "scoring"
+version = "0.1.0"
+description = "Self-hosted speech scoring for EnglishChunks.guru (VAD + ASR + phoneme GOP)"
+readme = "README.md"
+authors = [
+    { name = "Gustavo Sanchez Galarza", email = "gustavosanchezgalarza@gmail.com" }
+]
+requires-python = ">=3.12"
+dependencies = [
+    "av>=19.0.1",
+    "fastapi>=0.143.3",
+    "numpy>=2.5.4",
+    "onnxruntime>=1.31.0",
+    "phonemizer>=3.4.0",
+    "pydantic-settings>=2.16.0",
+    "python-multipart>=0.0.32",
+    "sherpa-onnx>=1.13.8",
+    "sherpa-onnx-core==1.13.8",
+    "structlog>=26.1.0",
+    "uvicorn[standard]>=0.54.0",
+]
+
+[project.optional-dependencies]
+export = [
+    "onnx>=1.23.2",
+    "optimum>=2.3.0",
+    "torch>=2.14.1",
+    "transformers>=5.20.1",
+]
+
+[build-system]
+requires = ["uv_build>=0.12.13,<0.13.0"]
+build-backend = "uv_build"
+
+[dependency-groups]
+dev = [
+    "httpx>=0.28.1",
+    "mypy>=2.4.0",
+    "pytest>=9.1.1",
+    "pytest-asyncio>=1.4.0",
+    "ruff>=0.17.1",
+    "schemathesis>=4.31.1",
+]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+markers = [
+    "calibration: scoring-quality suite over the reference set (opt-in, constitution III)",
+    "models: tests that need downloaded ONNX models",
+]
+addopts = "-m 'not calibration and not models'"
+
+[tool.ruff]
+line-length = 100
+target-version = "py312"
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "B", "UP", "S", "N"]
+ignore = ["S101"]
+
+[tool.mypy]
+strict = true
+python_version = "3.12"

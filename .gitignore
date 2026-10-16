@@ -1,0 +1,41 @@
+# dependencies
+node_modules/
+.pnpm-store/
+# builds
+.next/
+out/
+dist/
+build/
+coverage/
+*.tsbuildinfo
+next-env.d.ts
+# env & secrets
+.env
+.env.*
+!.env.example
+# python
+__pycache__/
+*.pyc
+.venv/
+venv/
+*.egg-info/
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+# models & data (never commit model weights or audio)
+models/
+*.onnx
+*.wav
+!web/tests/e2e/fixtures/audio/*.wav
+# test output
+playwright-report/
+test-results/
+# os / editor
+.DS_Store
+Thumbs.db
+*.swp
+*.tmp
+*.log
+.vscode/
+.idea/
+.vercel

@@ -1,0 +1,12 @@
+{
+  "name": "englishchunks-guru",
+  "private": true,
+  "packageManager": "pnpm@10.34.7",
+  "engines": { "node": ">=22" },
+  "scripts": {
+    "lint": "pnpm --filter web lint",
+    "typecheck": "pnpm --filter web typecheck",
+    "test": "pnpm --filter web test",
+    "secret-scan": "gitleaks detect --no-banner --redact --config .gitleaks.toml"
+  }
+}
