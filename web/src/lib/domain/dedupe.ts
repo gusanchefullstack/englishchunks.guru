@@ -28,6 +28,9 @@ export function lemma(word: string): string {
     had: "have",
     does: "do",
     did: "do",
+    doing: "do",
+    going: "go",
+    being: "be",
   };
   if (irregular[word]) return irregular[word];
   if (word.endsWith("ies") && word.length > 4) return `${word.slice(0, -3)}y`;

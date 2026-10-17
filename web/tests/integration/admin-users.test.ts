@@ -159,6 +159,16 @@ describe("admin chunk editing (T123)", () => {
     expect(exampleContainsChunk("spill the beans", "Tell me the secret now.")).toBe(false);
   });
 
+  it("accepts dialogue quotes, short -ing forms and e-dropping verbs (library seeding false positives)", () => {
+    expect(exampleContainsChunk("you're welcome", "'Thanks for the help!' 'You're welcome!'")).toBe(
+      true,
+    );
+    expect(exampleContainsChunk("do the dishes", "I'm doing the dishes right now.")).toBe(true);
+    expect(exampleContainsChunk("make a decision", "She's making a decision today.")).toBe(true);
+    expect(exampleContainsChunk("take a break", "We're taking a break.")).toBe(true);
+    expect(exampleContainsChunk("make a decision", "She took a break.")).toBe(false);
+  });
+
   it("refuses to save a chunk whose example doesn't contain it", async () => {
     const admin = await createLearner(db, { role: "admin" });
     await expect(

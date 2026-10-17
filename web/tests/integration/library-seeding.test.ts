@@ -52,4 +52,18 @@ describe("library seeding pipeline (T146, FR-040)", () => {
     expect(books!.auditStatus).toBe("failed"); // goes to the admin audit-failed queue
     expect(JSON.stringify(books!.auditNotes)).toContain("Time to study now.");
   });
+
+  it("keeps the curated seed level over the models' opinion (deterministic pedagogy)", async () => {
+    const ex = ["It's a moot point now.", "That's a moot point.", "Whether he agrees is a moot point."];
+    const m = mockLlm([
+      draft("a moot point", ex), // draft says B2
+      { ...pass, verdict: "fail", levelOk: false, suggestedLevel: "C1", issues: ["Level should be C1."] },
+    ]);
+    await seedLibrary([{ text: "a moot point", level: "C2" }], { concurrency: 1 });
+    m.restore();
+    const [row] = await db.select().from(chunk).where(eq(chunk.text, "a moot point"));
+    expect(row!.level).toBe("C2");
+    expect(row!.auditStatus).toBe("failed"); // the disagreement still goes to admin review
+    expect(JSON.stringify(row!.auditNotes)).toContain("suggestedLevel");
+  });
 });
