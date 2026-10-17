@@ -5,10 +5,12 @@ import { markAllRead } from "@/lib/domain/notifications";
 import { decideSubmission } from "@/lib/domain/submission-review";
 import { checkDuplicate, submitChunk as submit } from "@/lib/domain/submissions";
 import { AppError, toResult } from "@/lib/errors";
+import { rateLimit } from "@/lib/rate-limit";
 
 export async function checkChunkDuplicate(text: string) {
   return toResult(async () => {
-    await requireLearner();
+    const u = await requireLearner();
+    await rateLimit("dup-check", 60, 60, u.id);
     return checkDuplicate(String(text ?? "").slice(0, 80));
   });
 }
