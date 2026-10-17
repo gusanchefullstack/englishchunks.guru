@@ -99,11 +99,11 @@ uv run --extra export python -m scoring.models.download --wav2vec2   # export + 
 cd scoring && uv run uvicorn scoring.app:app --port 8001
 curl localhost:8001/healthz   # {"status":"ok","models":{"vad":true,"asr":true,"phonemes":true}}
 
-# Terminal 2 — web app on :3000
+# Terminal 2 — web app on :3001
 pnpm --filter web dev
 ```
 
-Open http://localhost:3000, create an account (confirm you're 16+), click the link in the verification email, choose your level, and start today's chunk.
+Open http://localhost:3001, create an account (confirm you're 16+), click the link in the verification email, choose your level, and start today's chunk.
 
 ## Configuration
 
