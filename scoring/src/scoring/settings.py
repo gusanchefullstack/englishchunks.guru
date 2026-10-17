@@ -27,7 +27,8 @@ class Settings(BaseSettings):
     # Latency (SC-003, no extra cost): run ASR and the phoneme model at the same time; both
     # release the GIL. Thread counts per model are tunable for the Droplet's vCPUs.
     parallel_models: bool = True
-    asr_threads: int = 2
+    # Measured on the 2-vCPU Droplet: parallel ASR 1 + phonemes 2 is fastest (-10% vs sequential).
+    asr_threads: int = 1
     phoneme_threads: int = 2
 
 
