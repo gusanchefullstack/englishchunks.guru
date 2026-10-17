@@ -24,6 +24,11 @@ class Settings(BaseSettings):
     weight_phoneme: float = 0.5
     weight_word: float = 0.3
     weight_fluency: float = 0.2
+    # Latency (SC-003, no extra cost): run ASR and the phoneme model at the same time; both
+    # release the GIL. Thread counts per model are tunable for the Droplet's vCPUs.
+    parallel_models: bool = True
+    asr_threads: int = 2
+    phoneme_threads: int = 2
 
 
 @lru_cache

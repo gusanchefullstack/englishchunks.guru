@@ -32,12 +32,22 @@ FORM_OVERHEAD = 16 * 1024
 MultiPartParser.spool_max_size = 4 * 1024 * 1024
 
 log = structlog.get_logger()
+
+
+def _load(settings: Settings) -> Engines:
+    return load_engines(
+        str(settings.models_dir),
+        asr_threads=settings.asr_threads,
+        phoneme_threads=settings.phoneme_threads,
+    )
+
+
 _ready = threading.Event()
 
 
 def _preload() -> None:
     try:
-        load_engines(str(get_settings().models_dir))
+        _load(get_settings())
         _ready.set()
         log.info("models.ready")
     except Exception as err:  # noqa: BLE001 — stay up and report "loading" via /healthz
@@ -57,7 +67,7 @@ app = FastAPI(title="EnglishChunks Scoring Service", version="1.0.0", lifespan=l
 def get_engines() -> Engines:
     if not _ready.is_set():
         raise HTTPException(status_code=503, detail="models loading")
-    return load_engines(str(get_settings().models_dir))
+    return _load(get_settings())
 
 
 def verify_signature(request: Request, settings: Settings) -> str | None:

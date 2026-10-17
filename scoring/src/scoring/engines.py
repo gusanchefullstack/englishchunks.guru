@@ -136,13 +136,13 @@ class ParakeetAsr:
 
 
 class Wav2Vec2Phonemes:
-    def __init__(self, folder: Path) -> None:
+    def __init__(self, folder: Path, threads: int = 2) -> None:
         import onnxruntime as ort
         from phonemizer.backend import EspeakBackend
         from phonemizer.separator import Separator
 
         opts = ort.SessionOptions()
-        opts.intra_op_num_threads = 2
+        opts.intra_op_num_threads = threads
         self.session = ort.InferenceSession(
             str(folder / "model.int8.onnx"), opts, providers=["CPUExecutionProvider"]
         )
@@ -187,12 +187,12 @@ class Wav2Vec2Phonemes:
 
 
 @lru_cache
-def load_engines(models_dir: str) -> Engines:
+def load_engines(models_dir: str, *, asr_threads: int = 2, phoneme_threads: int = 2) -> Engines:
     root = Path(models_dir)
     return Engines(
         vad=SileroVad(root / "silero_vad.onnx"),
-        asr=ParakeetAsr(root / "parakeet"),
-        phonemes=Wav2Vec2Phonemes(root / "wav2vec2"),
+        asr=ParakeetAsr(root / "parakeet", threads=asr_threads),
+        phonemes=Wav2Vec2Phonemes(root / "wav2vec2", threads=phoneme_threads),
         versions={
             "vad": "silero-vad-v5",
             "asr": "parakeet-tdt-0.6b-v2-int8",
