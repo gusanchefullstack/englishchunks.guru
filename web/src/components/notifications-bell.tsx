@@ -61,7 +61,7 @@ export function NotificationsBellView({ items, unread }: { items: Item[]; unread
           id={panelId}
           role="region"
           aria-label="Notifications"
-          className="bg-popover absolute top-11 left-0 z-50 w-72 rounded-2xl border p-3 shadow-lg"
+          className="bg-popover absolute top-11 right-0 z-50 w-72 max-w-[calc(100vw-2rem)] rounded-2xl border p-3 shadow-lg lg:right-auto lg:left-0"
         >
           {items.length ? (
             <ul className="grid gap-1">

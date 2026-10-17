@@ -208,3 +208,9 @@
     }
   }
 }
+
+/* IPA needs glyphs Nunito lacks (stress marks, length marks): use the system UI font. */
+[lang="en-fonipa"] {
+  font-family: ui-sans-serif, system-ui, -apple-system, "Segoe UI", "Noto Sans", sans-serif;
+  letter-spacing: 0;
+}

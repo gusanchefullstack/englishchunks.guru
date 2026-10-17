@@ -17,9 +17,9 @@ export function ThemeSwitch() {
   );
   const dark = mounted && resolvedTheme === "dark";
   return (
-    <label className="bg-background flex h-11 items-center gap-2 rounded-[10px] border px-3 text-xs font-bold">
+    <label className="bg-background flex h-11 items-center gap-1.5 rounded-[10px] border px-2.5 text-xs font-bold">
       {dark ? <Moon aria-hidden className="size-4" /> : <Sun aria-hidden className="size-4" />}
-      <span className="flex-1">{dark ? "Dark mode" : "Light mode"}</span>
+      <span className="flex-1 whitespace-nowrap">{dark ? "Dark mode" : "Light mode"}</span>
       <Switch
         checked={dark}
         onCheckedChange={(on) => setTheme(on ? "dark" : "light")}

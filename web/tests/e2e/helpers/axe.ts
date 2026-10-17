@@ -3,6 +3,11 @@ import { expect, type Page } from "@playwright/test";
 
 /** Fails on critical or serious WCAG 2.2 AA violations (SC-011, constitution VI). */
 export async function expectNoA11yViolations(page: Page) {
+  // Scan the settled UI: a button mid-way through its disabled→enabled opacity fade
+  // otherwise reads as a contrast failure that no user ever sees at rest.
+  await page.addStyleTag({
+    content: "*,*::before,*::after{transition:none!important;animation:none!important}",
+  });
   const results = await new AxeBuilder({ page })
     .withTags(["wcag2a", "wcag2aa", "wcag21a", "wcag21aa", "wcag22aa"])
     .analyze();
