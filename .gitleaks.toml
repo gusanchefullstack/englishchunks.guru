@@ -10,3 +10,5 @@ paths = [
   '''pnpm-lock\.yaml$''',
   '''uv\.lock$''',
 ]
+# Literal placeholder used when billing is off (not a key): web/src/lib/providers/billing.ts
+regexes = ['''rk_test_placeholder''']

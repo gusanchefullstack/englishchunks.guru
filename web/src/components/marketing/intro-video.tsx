@@ -31,7 +31,7 @@ export function IntroVideo() {
   ];
   return (
     <ol
-      className="bg-coach text-snow grid gap-4 rounded-[20px] p-6 sm:grid-cols-2 lg:grid-cols-4"
+      className="bg-coach text-snow grid gap-4 rounded-[20px] p-6 sm:grid-cols-2"
       aria-label="How a daily session works"
     >
       {steps.map(({ icon: Icon, title, text }, i) => (

@@ -19,17 +19,19 @@ export function AppShell({ children }: { children: ReactNode }) {
       </a>
 
       <aside className="bg-sidebar sticky top-0 hidden h-dvh flex-col border-r px-5 pt-7 pb-5 lg:flex">
-        <div className="flex items-center justify-between pb-8 pl-2">
+        <div className="px-2 pb-8">
           <Logo />
-          <Suspense fallback={<span className="size-10" />}>
-            <NotificationsBell />
-          </Suspense>
         </div>
         <Suspense fallback={<SidebarLinks pathname={null} />}>
           <SidebarNav />
         </Suspense>
-        <div className="pt-4">
-          <ThemeSwitch />
+        <div className="flex items-center gap-2 pt-4">
+          <div className="min-w-0 flex-1">
+            <ThemeSwitch />
+          </div>
+          <Suspense fallback={<span className="size-10" />}>
+            <NotificationsBell />
+          </Suspense>
         </div>
         <div className="mt-auto pt-6">
           <Suspense fallback={<UserSummarySkeleton />}>
