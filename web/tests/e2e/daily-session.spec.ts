@@ -32,6 +32,9 @@ test("learner completes the full daily session (US1, V1)", async ({ page }) => {
       await record(page);
       await expect(page.getByText(/mina's tip/i)).toBeVisible({ timeout: 15_000 });
       if (tryNo === 2) await expect(page.getByText(/since try 1/i)).toBeVisible();
+      // Streamed feedback: the score arrives first, then Mina's tip replaces the placeholder.
+      await expect(page.getByText(/keep the rhythm smooth/i)).toBeVisible();
+      await expect(page.getByText(/mina is writing a tip/i)).toHaveCount(0);
       if (i === 0 && tryNo === 1) await expectNoA11yViolations(page);
       if (i < 3) await page.getByRole("button", { name: /next recording/i }).click();
     }

@@ -67,6 +67,29 @@ describe("recordAttempt (US1, FR-013, FR-019)", () => {
     expect(row).toMatchObject({ score: 78, weakestSounds: ["ð", "s"], expectedText: c!.text });
   });
 
+  it("reports the score before the LLM tip, then stores the tip (streamed feedback)", async () => {
+    const { ctx, s } = await readyLearner();
+    const llmCallsBefore = llm.calls();
+    let early: { score: number; tip: string | null; llmCalls: number } | undefined;
+    const out = await recordAttempt(
+      ctx,
+      s.id,
+      { step: "speak_1", item: "chunk", mimeType: "audio/webm" },
+      recording(),
+      {
+        onScored: (r) => {
+          early = { score: r.score, tip: r.tip, llmCalls: llm.calls() - llmCallsBefore };
+        },
+      },
+    );
+    // The learner sees the score and the curated hints without waiting for the LLM.
+    expect(early).toEqual({ score: 78, tip: null, llmCalls: 0 });
+    if (out.kind !== "scored") throw new Error();
+    expect(out.tip).toBe("Lovely! Keep your tongue soft between your teeth.");
+    const [row] = await db.select().from(attempt).where(eq(attempt.sessionId, s.id));
+    expect(row!.tip).toBe(out.tip);
+  });
+
   it("never persists or logs the audio — success and failure (SC-008)", async () => {
     const { ctx, s } = await readyLearner();
     const logged: string[] = [];

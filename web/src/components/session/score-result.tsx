@@ -1,3 +1,4 @@
+import { Loader2 } from "lucide-react";
 import { Progress } from "@/components/ui/progress";
 import type { Scored } from "./types";
 import { scoreLabel } from "./types";
@@ -29,9 +30,14 @@ export function ScoreResult({ result }: { result: Scored }) {
         >
           M
         </span>
-        <p className="text-sm">
+        <p className="text-sm" aria-busy={result.tip === null}>
           <span className="font-bold">Mina&apos;s tip: </span>
-          {result.tip}
+          {result.tip ?? (
+            <span className="text-muted-foreground inline-flex items-center gap-1.5">
+              <Loader2 aria-hidden className="size-3.5 animate-spin" />
+              Mina is writing a tip…
+            </span>
+          )}
         </p>
       </div>
       {result.weakestSounds.length ? (
