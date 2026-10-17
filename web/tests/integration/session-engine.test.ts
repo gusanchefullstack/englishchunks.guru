@@ -230,20 +230,18 @@ describe("points on completion (FR-031)", () => {
     const s = await startDailySession(ctx);
     await advanceStep(ctx, s.id, "learn");
     expect((await skipSpeaking(ctx, s.id)).step).toBe("write");
-    await db
-      .insert(writingResult)
-      .values(
-        [1, 2, 3].map((position) => ({
-          sessionId: s.id,
-          position,
-          original: "o",
-          corrected: "c",
-          usageGrade: 90,
-          grammarGrade: 90,
-          usesChunk: true,
-          explanation: "Good.",
-        })),
-      );
+    await db.insert(writingResult).values(
+      [1, 2, 3].map((position) => ({
+        sessionId: s.id,
+        position,
+        original: "o",
+        corrected: "c",
+        usageGrade: 90,
+        grammarGrade: 90,
+        usesChunk: true,
+        explanation: "Good.",
+      })),
+    );
     await advanceStep(ctx, s.id, "write");
     await skipSpeaking(ctx, s.id);
     await completeSession(ctx, s.id);

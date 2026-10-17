@@ -56,17 +56,15 @@ describe("daily reminders (FR-033)", () => {
   it("skips learners who already practiced today", async () => {
     const u = await createLearner(db, { timeZone: "Europe/Madrid", reminderHour: 19 });
     const [c] = await db.select().from(chunk).limit(1);
-    await db
-      .insert(practiceSession)
-      .values({
-        userId: u.id,
-        chunkId: c!.id,
-        origin: "daily",
-        practiceDate: "2026-10-16",
-        step: "done",
-        status: "completed",
-        dailyScore: 80,
-      });
+    await db.insert(practiceSession).values({
+      userId: u.id,
+      chunkId: c!.id,
+      origin: "daily",
+      practiceDate: "2026-10-16",
+      step: "done",
+      status: "completed",
+      dailyScore: 80,
+    });
     await sendDueReminders(at1900Madrid);
     expect(mail.sent.filter((m) => m.to === u.email)).toHaveLength(0);
   });
