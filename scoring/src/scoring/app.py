@@ -122,13 +122,20 @@ async def score(
         data = await upload.read()
         await upload.close()
         await form.close()
+        timings: dict[str, float] = {}
         result = score_recording(
-            data, expected_text=expected_text, level=level, engines=engines, settings=settings
+            data,
+            expected_text=expected_text,
+            level=level,
+            engines=engines,
+            settings=settings,
+            timings=timings,
         )
+        ms = round((time.perf_counter() - started) * 1000)
         if isinstance(result, Unusable):
-            log.info("score.unusable", request_id=rid, reason=result.reason)
+            log.info("score.unusable", request_id=rid, reason=result.reason, ms=ms, **timings)
             return JSONResponse({"reason": result.reason}, status_code=422)
-        log.info("score.ok", request_id=rid, ms=round((time.perf_counter() - started) * 1000))
+        log.info("score.ok", request_id=rid, ms=ms, **timings)
         return JSONResponse(result)
     except TooLargeError:
         return _error(413, "audio too long")

@@ -4,6 +4,7 @@ from pathlib import Path
 from typing import Any
 
 import jsonschema
+import structlog.testing
 import yaml
 from fastapi.testclient import TestClient
 
@@ -38,6 +39,17 @@ def test_score_200_matches_score_result(client: TestClient) -> None:
     body = res.json()
     assert 0 <= body["score"] <= 100
     assert 0 <= len(body["weakest_sounds"]) <= 3
+
+
+def test_score_logs_stage_timings_without_content(client: TestClient) -> None:
+    with structlog.testing.capture_logs() as logs:
+        res = client.post("/v1/score", headers=signed_headers(), **score_form())
+    assert res.status_code == 200, res.text
+    ok = next(e for e in logs if e["event"] == "score.ok")
+    stages = {"decode_ms", "vad_ms", "asr_ms", "phonemes_ms", "align_ms", "audio_s", "speech_s"}
+    assert stages <= ok.keys()
+    # durations and lengths only: never the transcript or the expected text
+    assert "That makes sense" not in repr(ok)
 
 
 def test_score_422_matches_unusable(
