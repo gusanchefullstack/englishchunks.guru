@@ -225,16 +225,16 @@ and daily reminder emails.
 
 ### Tests for User Story 4 ⚠️
 
-- [ ] T101 [P] [US4] Integration test: `searchChunks` text (tsvector + trigram) and filters by level/type/register, pagination of 20, only practicable chunks in `web/tests/integration/library-search.test.ts`
-- [ ] T102 [P] [US4] Integration test: `startLibrarySession` shares the daily limit with daily sessions; `limit_reached` includes reset time in `web/tests/integration/library-practice.test.ts`
-- [ ] T103 [P] [US4] E2E test: search "look forward to", filter B1 + verb pattern, launch blocked after daily session on Basic; axe scan in `web/tests/e2e/library.spec.ts`
+- [X] T101 [P] [US4] Integration test: `searchChunks` text (tsvector + trigram) and filters by level/type/register, pagination of 20, only practicable chunks in `web/tests/integration/library-search.test.ts`
+- [X] T102 [P] [US4] Integration test: `startLibrarySession` shares the daily limit with daily sessions; `limit_reached` includes reset time in `web/tests/integration/library-practice.test.ts`
+- [X] T103 [P] [US4] E2E test: search "get used to" (dev seed has no B1 "look forward to"), filter B1 + verb pattern, launch blocked after daily session on Basic; axe scan in `web/tests/e2e/library.spec.ts`
 
 ### Implementation for User Story 4
 
-- [ ] T104 [US4] Library search service in `web/src/lib/domain/library.ts` and `searchChunks` action in `web/src/server/actions/library.ts`
-- [ ] T105 [US4] `startLibrarySession` in `web/src/lib/domain/session-engine.ts` (origin `library`, `reservePractice`) and action in `web/src/server/actions/session.ts`
-- [ ] T106 [P] [US4] Library list page with search box and filter controls (URL state) in `web/src/app/(learner)/library/page.tsx`
-- [ ] T107 [P] [US4] Chunk detail page (meaning, usage, IPA, examples with play, "Practice this" with remaining count / limit message) in `web/src/app/(learner)/library/[chunkId]/page.tsx`
+- [X] T104 [US4] Library search service in `web/src/lib/domain/library.ts` and `searchChunks` action in `web/src/server/actions/library.ts`
+- [X] T105 [US4] `startLibrarySession` in `web/src/lib/domain/session-engine.ts` (origin `library`, `reservePractice`) and action in `web/src/server/actions/session.ts`
+- [X] T106 [P] [US4] Library list page with search box and filter controls (URL state) in `web/src/app/(learner)/library/page.tsx`
+- [X] T107 [P] [US4] Chunk detail page (meaning, usage, IPA, examples with play, "Practice this" with remaining count / limit message) in `web/src/app/(learner)/library/[chunkId]/page.tsx`
 
 **Checkpoint**: Learners can choose what to practice within their plan limit.
 

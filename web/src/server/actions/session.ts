@@ -26,6 +26,13 @@ export async function startTodayAndGo(): Promise<{ error: string } | undefined> 
   redirect(`/practice/${res.data.id}`);
 }
 
+/** Form action for "Practice this" on a library chunk. */
+export async function practiceChunkAndGo(chunkId: string): Promise<{ error: string } | undefined> {
+  const res = await startLibrarySession(chunkId);
+  if (!res.ok) return { error: res.error.message };
+  redirect(`/practice/${res.data.id}`);
+}
+
 export async function startLibrarySession(chunkId: string) {
   return toResult(async () => engine.startLibrarySession(await ctx(), parseInput(Id, chunkId)));
 }

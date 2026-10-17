@@ -12,15 +12,13 @@ afterAll(() => close());
 
 const now = new Date("2026-10-16T12:00:00Z"); // Friday; ISO week starts Mon 2026-10-12
 async function give(userId: string, amount: number, at: string) {
-  await db
-    .insert(pointsLedger)
-    .values({
-      userId,
-      reason: "admin_adjustment",
-      amount,
-      refId: crypto.randomUUID(),
-      earnedAt: new Date(at),
-    });
+  await db.insert(pointsLedger).values({
+    userId,
+    reason: "admin_adjustment",
+    amount,
+    refId: crypto.randomUUID(),
+    earnedAt: new Date(at),
+  });
 }
 
 describe("ranking (FR-032)", () => {
