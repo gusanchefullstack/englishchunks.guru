@@ -347,10 +347,10 @@ trial for later sign-ups; Stripe hosted Checkout/Portal; verified idempotent web
 
 **Purpose**: Content, quality, and launch readiness across stories
 
-- [ ] T146 Library seeding pipeline: Gemma `ChunkDraft` from curated seed list → `gpt-oss-20b` `ChunkAudit` → phonemize → import passed chunks, failed to admin queue; target ~1,000 across A1–C2, all 7 types, 3 registers in `web/scripts/seed-library.ts` with seed list `web/scripts/seed-list.csv`
+- [X] T146 Library seeding pipeline: Gemma `ChunkDraft` from curated seed list → `gpt-oss-20b` `ChunkAudit` → phonemize → import passed chunks, failed to admin queue; target ~1,000 across A1–C2, all 7 types, 3 registers in `web/scripts/seed-library.ts` with seed list `web/scripts/seed-list.csv`
 - [X] T147 [P] Keyboard-only and screen-reader pass of the full daily session; fix issues found (SC-011) across `web/src/components/session/`
 - [X] T148 [P] Performance pass: LCP ≤ 2.5 s on mid-range mobile for `/`, `/today`, `/progress` (image sizing, font loading, server components) across `web/src/app/`
-- [ ] T149 [P] Latency check script against staging measuring p95 TTS first play (≤ 2 s) and cached replay (≤ 0.5 s) (SC-004), and writing-feedback response (≤ 6 s), in `web/scripts/latency-check.ts`; results recorded in `web/docs/latency.md`
+- [X] T149 [P] Latency check script against staging measuring p95 TTS first play (≤ 2 s) and cached replay (≤ 0.5 s) (SC-004), and writing-feedback response (≤ 6 s), in `web/scripts/latency-check.ts`; results recorded in `web/docs/latency.md`
 - [X] T150 [P] Security hardening: CSP and security headers in `web/next.config.ts`, rate limits on attempts/writing/submission actions in `web/src/lib/rate-limit.ts`
 - [ ] T151 [P] Root `README.md` (setup, env vars, architecture, open-source rationale) — use the create-readme conventions
 - [ ] T152 Deploy: Vercel project (Hobby) for `web/`, Droplet provisioning runbook `scoring/deploy/RUNBOOK.md`, Neon production branch; run quickstart V1–V17 against staging
