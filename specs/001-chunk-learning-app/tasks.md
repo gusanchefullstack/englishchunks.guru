@@ -274,18 +274,18 @@ and daily reminder emails.
 
 ### Tests for User Story 6 ⚠️
 
-- [ ] T118 [P] [US6] Integration test: every admin action rejects non-admins (`forbidden`); list filters by plan/status/level; suspended user cannot sign in; audit log rows written in `web/tests/integration/admin-users.test.ts`
-- [ ] T119 [P] [US6] Integration test: user detail shows payment method summary only (type, brand, last4, expiry) in `web/tests/integration/admin-user-detail.test.ts`
-- [ ] T120 [P] [US6] E2E test: learner gets 403 on `/admin/*`; admin filters, edits level, suspends; axe scan in `web/tests/e2e/admin.spec.ts`
+- [X] T118 [P] [US6] Integration test: every admin action rejects non-admins (`forbidden`); list filters by plan/status/level; suspended user cannot sign in; audit log rows written in `web/tests/integration/admin-users.test.ts`
+- [X] T119 [P] [US6] Integration test: user detail shows payment method summary only (type, brand, last4, expiry) in `web/tests/integration/admin-user-detail.test.ts`
+- [X] T120 [P] [US6] E2E test: learner gets 404 (not 403, so the area isn't revealed) on `/admin/*`; admin filters, edits level, suspends; axe scan in `web/tests/e2e/admin.spec.ts`
 
 ### Implementation for User Story 6
 
-- [ ] T121 [US6] Admin audit logging helper in `web/src/lib/domain/audit.ts`
-- [ ] T122 [US6] Admin user actions (`adminListUsers`, `adminGetUser`, `adminCreateUser`, `adminUpdateUser`, `adminSuspendUser`, `adminDeleteUser` reusing account-deletion) in `web/src/server/actions/admin-users.ts`
-- [ ] T123 [US6] Admin chunk actions (`adminUpsertChunk` recomputing IPA via phonemize; exactly 3 examples each containing the chunk; `adminRetireChunk`) in `web/src/server/actions/admin-chunks.ts`
-- [ ] T124 [P] [US6] Admin layout with `requireAdmin()` guard and nav in `web/src/app/admin/layout.tsx`; dashboard with daily `usage_counter` metrics in `web/src/app/admin/page.tsx`
-- [ ] T125 [P] [US6] Users list (username, email, level, plan, subscription status, sign-up date, last activity; search + filters) and user detail pages in `web/src/app/admin/users/page.tsx` and `web/src/app/admin/users/[id]/page.tsx`
-- [ ] T126 [P] [US6] Chunks management page incl. audit-failed review queue in `web/src/app/admin/chunks/page.tsx`
+- [X] T121 [US6] Admin audit logging helper in `web/src/lib/domain/audit.ts`
+- [X] T122 [US6] Admin user actions (`adminListUsers`, `adminGetUser`, `adminCreateUser`, `adminUpdateUser`, `adminSuspendUser`, `adminDeleteUser` reusing account-deletion) in `web/src/server/actions/admin-users.ts`
+- [X] T123 [US6] Admin chunk actions (`adminUpsertChunk` recomputing IPA via phonemize; exactly 3 examples each containing the chunk; `adminRetireChunk`) in `web/src/server/actions/admin-chunks.ts`
+- [X] T124 [P] [US6] Admin layout with `requireAdmin()` guard and nav in `web/src/app/admin/layout.tsx`; dashboard with daily `usage_counter` metrics in `web/src/app/admin/page.tsx`
+- [X] T125 [P] [US6] Users list (username, email, level, plan, subscription status, sign-up date, last activity; search + filters) and user detail pages in `web/src/app/admin/users/page.tsx` and `web/src/app/admin/users/[id]/page.tsx`
+- [X] T126 [P] [US6] Chunks management page incl. audit-failed review queue in `web/src/app/admin/chunks/page.tsx`
 
 **Checkpoint**: The service can be operated by an admin.
 
