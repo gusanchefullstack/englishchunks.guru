@@ -1,0 +1,265 @@
+text,level,type,register
+# Curated seed list for the chunk library (T146 / FR-040). Grow toward ~1,000; the pipeline
+# de-duplicates against the library and the auditor model reviews every generated record.
+# --- Social phrases (polywords) ---
+good morning,A1,polyword,casual
+nice to meet you,A1,polyword,casual
+how are you doing,A1,polyword,casual
+excuse me,A1,polyword,casual
+I'm sorry,A1,polyword,casual
+you're welcome,A1,polyword,casual
+no worries,A2,polyword,casual
+take care,A1,polyword,casual
+see you soon,A1,polyword,casual
+good luck,A1,polyword,casual
+well done,A1,polyword,casual
+what's up,A2,polyword,casual
+long time no see,A2,polyword,casual
+nice to see you again,A2,polyword,casual
+it's up to you,A2,polyword,casual
+never mind,A2,polyword,casual
+same here,A2,polyword,casual
+fair enough,B1,polyword,casual
+fingers crossed,B1,polyword,casual
+my pleasure,A2,polyword,professional
+no way,A2,polyword,casual
+sounds good,A2,polyword,casual
+I'm on my way,A2,polyword,casual
+just a moment,A1,polyword,professional
+here you go,A1,polyword,casual
+after you,A2,polyword,casual
+bless you,A1,polyword,casual
+safe travels,B1,polyword,casual
+enjoy your meal,A2,polyword,casual
+I'm afraid not,B1,polyword,professional
+I couldn't agree more,B2,polyword,professional
+I see what you mean,B1,polyword,professional
+that's a good point,B1,polyword,professional
+let me think about it,A2,polyword,casual
+I'll get back to you,B1,polyword,professional
+thanks for your patience,B1,polyword,professional
+sorry to bother you,B1,polyword,professional
+it was nothing,B1,polyword,casual
+don't mention it,B1,polyword,casual
+I'm all ears,B2,polyword,casual
+# --- Collocations ---
+do homework,A1,collocation,casual
+have breakfast,A1,collocation,casual
+take a shower,A1,collocation,casual
+make a mistake,A2,collocation,casual
+make friends,A2,collocation,casual
+do the dishes,A2,collocation,casual
+catch a bus,A2,collocation,casual
+take a photo,A1,collocation,casual
+pay the bill,A2,collocation,casual
+make money,A2,collocation,professional
+save time,A2,collocation,casual
+waste time,A2,collocation,casual
+keep a secret,B1,collocation,casual
+break a promise,B1,collocation,casual
+make an effort,B1,collocation,professional
+take a risk,B1,collocation,professional
+do business,B1,collocation,professional
+make progress,B1,collocation,professional
+reach an agreement,B2,collocation,professional
+meet a deadline,B1,collocation,professional
+miss a deadline,B1,collocation,professional
+take responsibility,B2,collocation,professional
+raise a question,B2,collocation,academic
+draw a conclusion,B2,collocation,academic
+pay attention to detail,B2,collocation,professional
+heavy traffic,A2,collocation,casual
+strong coffee,A2,collocation,casual
+fast food,A1,collocation,casual
+a quick question,A2,collocation,professional
+a big decision,A2,collocation,casual
+deeply concerned,C1,collocation,professional
+highly recommended,B2,collocation,professional
+bitterly disappointed,C1,collocation,casual
+utterly ridiculous,C1,collocation,casual
+a sense of humor,B1,collocation,casual
+a matter of time,B2,collocation,casual
+a waste of money,B1,collocation,casual
+a lack of experience,B2,collocation,professional
+widely accepted,C1,collocation,academic
+conduct research,C1,collocation,academic
+place emphasis on,C1,collocation,academic
+pose a threat,C1,collocation,academic
+bear the cost,C2,collocation,professional
+an acute shortage,C2,collocation,academic
+a sweeping statement,C2,collocation,academic
+# --- Idioms ---
+a piece of cake,A2,idiom,casual
+it's raining cats and dogs,B1,idiom,casual
+under the weather,B1,idiom,casual
+break the ice,B1,idiom,casual
+hit the books,B1,idiom,casual
+call it a day,B1,idiom,professional
+on the same page,B1,idiom,professional
+once in a blue moon,B1,idiom,casual
+cost an arm and a leg,B1,idiom,casual
+get cold feet,B2,idiom,casual
+let the cat out of the bag,B2,idiom,casual
+the ball is in your court,B2,idiom,professional
+hit the nail on the head,B2,idiom,professional
+beat around the bush,B2,idiom,casual
+a blessing in disguise,B2,idiom,casual
+cut corners,B2,idiom,professional
+get the hang of it,B1,idiom,casual
+in hot water,B2,idiom,casual
+keep an eye on,B1,idiom,casual
+miss the boat,B2,idiom,casual
+on the fence,B2,idiom,casual
+pull someone's leg,B2,idiom,casual
+see eye to eye,B2,idiom,professional
+sit on the fence,C1,idiom,casual
+the last straw,B2,idiom,casual
+think outside the box,B2,idiom,professional
+up in the air,B2,idiom,professional
+when pigs fly,B2,idiom,casual
+back to square one,B2,idiom,professional
+bite off more than you can chew,C1,idiom,casual
+burn the midnight oil,C1,idiom,professional
+cross that bridge when we come to it,C1,idiom,professional
+go the extra mile,B2,idiom,professional
+hit the ground running,C1,idiom,professional
+jump on the bandwagon,C1,idiom,casual
+learn the ropes,B2,idiom,professional
+make ends meet,B2,idiom,casual
+read between the lines,C1,idiom,academic
+steal someone's thunder,C2,idiom,casual
+the elephant in the room,C1,idiom,professional
+throw in the towel,C1,idiom,casual
+a drop in the ocean,C1,idiom,casual
+add insult to injury,C2,idiom,casual
+cut to the chase,C1,idiom,professional
+get a second wind,C2,idiom,casual
+leave no stone unturned,C2,idiom,academic
+move the goalposts,C2,idiom,professional
+the tip of the iceberg,C1,idiom,academic
+a stone's throw away,C1,idiom,casual
+by the skin of your teeth,C2,idiom,casual
+# --- Vague language ---
+or so,A2,vague_language,casual
+and stuff,A2,vague_language,casual
+sort of,A2,vague_language,casual
+kind of,A2,vague_language,casual
+a bit,A1,vague_language,casual
+a couple of,A2,vague_language,casual
+more or less,B1,vague_language,casual
+and so on,B1,vague_language,academic
+and things like that,B1,vague_language,casual
+or whatever,B1,vague_language,casual
+roughly speaking,B2,vague_language,academic
+give or take,B2,vague_language,casual
+something along those lines,C1,vague_language,professional
+and what have you,C1,vague_language,casual
+in a way,B1,vague_language,casual
+to some extent,B2,vague_language,academic
+loads of,A2,vague_language,casual
+a bunch of,A2,vague_language,casual
+here and there,B1,vague_language,casual
+now and then,B1,vague_language,casual
+# --- Sentence frames ---
+I'd like to,A1,sentence_frame,casual
+Can I have,A1,sentence_frame,casual
+Would you like to,A2,sentence_frame,casual
+I'm going to,A1,sentence_frame,casual
+How about,A2,sentence_frame,casual
+Why don't we,A2,sentence_frame,casual
+It takes me … to,A2,sentence_frame,casual
+I'm not sure if,B1,sentence_frame,casual
+It depends on,B1,sentence_frame,casual
+I was wondering if,B1,sentence_frame,professional
+Would you mind,B1,sentence_frame,professional
+What I mean is,B1,sentence_frame,casual
+The thing is,B1,sentence_frame,casual
+I'm used to,B1,sentence_frame,casual
+It's worth,B2,sentence_frame,casual
+There's no point in,B2,sentence_frame,casual
+I can't help,B2,sentence_frame,casual
+It's not that … it's just that,B2,sentence_frame,casual
+The more … the more,B2,sentence_frame,academic
+What strikes me is,C1,sentence_frame,academic
+It goes without saying that,C1,sentence_frame,professional
+Not only … but also,B2,sentence_frame,academic
+I'd rather … than,B1,sentence_frame,casual
+If I were you,B1,sentence_frame,casual
+It's high time,C1,sentence_frame,casual
+I'm looking forward to,B1,sentence_frame,professional
+Let me know if,A2,sentence_frame,professional
+I'm writing to,B1,sentence_frame,professional
+Please find attached,B1,sentence_frame,professional
+Thank you for,A2,sentence_frame,professional
+# --- Verb patterns / phrasal verbs ---
+look for,A1,verb_pattern,casual
+wake up,A1,verb_pattern,casual
+get up,A1,verb_pattern,casual
+turn on,A1,verb_pattern,casual
+turn off,A1,verb_pattern,casual
+look after,A2,verb_pattern,casual
+find out,A2,verb_pattern,casual
+give up,A2,verb_pattern,casual
+pick up,A2,verb_pattern,casual
+run out of,B1,verb_pattern,casual
+put off,B1,verb_pattern,professional
+carry on,B1,verb_pattern,casual
+figure out,B1,verb_pattern,casual
+set up,B1,verb_pattern,professional
+turn down,B1,verb_pattern,professional
+look forward to,B1,verb_pattern,professional
+be good at,A2,verb_pattern,casual
+be interested in,A2,verb_pattern,casual
+depend on,B1,verb_pattern,professional
+apologize for,B1,verb_pattern,professional
+insist on,B2,verb_pattern,professional
+succeed in,B2,verb_pattern,professional
+encourage someone to,B2,verb_pattern,professional
+remind someone to,B1,verb_pattern,casual
+avoid doing,B1,verb_pattern,casual
+consider doing,B2,verb_pattern,professional
+manage to,B1,verb_pattern,casual
+tend to,B1,verb_pattern,academic
+end up,B2,verb_pattern,casual
+come across,B2,verb_pattern,casual
+bring up,B2,verb_pattern,professional
+point out,B2,verb_pattern,professional
+deal with,B1,verb_pattern,professional
+look into,B2,verb_pattern,professional
+rule out,C1,verb_pattern,professional
+account for,C1,verb_pattern,academic
+draw on,C1,verb_pattern,academic
+stem from,C1,verb_pattern,academic
+lay out,C1,verb_pattern,professional
+iron out,C2,verb_pattern,professional
+# --- Discourse markers ---
+first of all,A2,discourse_marker,casual
+in my opinion,A2,discourse_marker,casual
+for example,A1,discourse_marker,academic
+to be honest,B1,discourse_marker,casual
+actually,A2,discourse_marker,casual
+anyway,A2,discourse_marker,casual
+as I said,B1,discourse_marker,casual
+in fact,B1,discourse_marker,academic
+on top of that,B1,discourse_marker,casual
+in other words,B1,discourse_marker,academic
+as far as I know,B1,discourse_marker,casual
+in the end,B1,discourse_marker,casual
+all in all,B2,discourse_marker,casual
+as a matter of fact,B2,discourse_marker,casual
+that being said,B2,discourse_marker,professional
+on the whole,B2,discourse_marker,academic
+mind you,C1,discourse_marker,casual
+for what it's worth,C1,discourse_marker,casual
+by and large,C1,discourse_marker,academic
+needless to say,C1,discourse_marker,professional
+to put it another way,C1,discourse_marker,academic
+in light of,C1,discourse_marker,academic
+be that as it may,C2,discourse_marker,academic
+at any rate,C2,discourse_marker,casual
+in a nutshell,B2,discourse_marker,casual
+to cut a long story short,B2,discourse_marker,casual
+as a result,B1,discourse_marker,academic
+in addition,B1,discourse_marker,academic
+on the contrary,B2,discourse_marker,academic
+having said that,B2,discourse_marker,professional
