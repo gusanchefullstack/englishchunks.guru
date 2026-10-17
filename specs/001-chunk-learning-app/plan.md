@@ -101,6 +101,7 @@ web/                              # Next.js 16 app (Vercel) — UI + TypeScript 
 ├── src/
 │   ├── app/
 │   │   ├── (marketing)/page.tsx          # landing (US7)
+│   │   ├── (marketing)/privacy, terms    # public legal pages (FR-073; Google OAuth consent screen)
 │   │   ├── (auth)/sign-up|sign-in|verify-email|reset-password|waitlist/
 │   │   ├── (learner)/today|practice/[sessionId]|progress|library|submit-chunk|my-submissions|profile|billing/
 │   │   ├── admin/users|chunks|submissions|waitlist|settings/
