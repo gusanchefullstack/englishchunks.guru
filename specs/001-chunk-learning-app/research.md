@@ -18,6 +18,10 @@ Each entry records the decision, why it was chosen, and what else was considered
 - **Alternatives**: Gemma 4 31B (better quality, higher cost — kept as config fallback);
   self-hosting Gemma on the Droplet (CPU too slow for interactive feedback); closed models
   (violate Principle I).
+- **Production note (2026-10-17)**: the gateway routes Gemma to a provider without JSON-schema
+  response formats, so the schema is also stated in the system prompt (`withSchema` in
+  `providers/llm.ts`); the AI SDK still validates. The tip is streamed after the score (NDJSON
+  attempts route) so the 2–3 s LLM call doesn't delay results.
 
 ## R2. Chunk-library generation and audit models
 
@@ -42,6 +46,10 @@ Each entry records the decision, why it was chosen, and what else was considered
   int8 cuts memory roughly 4× and avoids the ~2 GB torch dependency.
 - **Alternatives**: GPU Droplet (cost); serverless GPU (cold starts, sends audio to third
   parties); running on Vercel Functions (model size and memory limits).
+- **Production note (2026-10-17)**: `s-2vcpu-4gb` isn't offered in SFO3, so the Droplet is
+  `s-2vcpu-4gb-amd` ($28/mo). ASR and the phoneme model run in parallel (both release the GIL;
+  `PARALLEL_MODELS`, `ASR_THREADS=1`, `PHONEME_THREADS=2`), −10% server time; no 8 GB resize
+  needed (scoring/BENCHMARKS.md).
 
 ## R4. Voice activity detection
 
