@@ -7,13 +7,22 @@ export default function AuthLayout({ children }: LayoutProps<"/">) {
   return (
     <div className="grid min-h-dvh lg:grid-cols-[44%_1fr]">
       <aside className="bg-coach text-snow relative hidden flex-col justify-between overflow-hidden p-12 lg:flex">
+        {/* Reversed lockup for the dark panel: no light pill; a faint ring keeps the dark mark
+            visible (ink on coach is only 1.2:1); wordmark in snow, ".guru" in lavender (5.2:1). */}
         <Link
           href="/"
-          className="bg-card text-foreground inline-flex w-fit items-center gap-2 rounded-xl px-3 py-2"
+          aria-label="EnglishChunks.guru home"
+          className="inline-flex w-fit items-center gap-2.5 rounded-xl py-1 pr-2 hover:opacity-90"
         >
-          <Image src="/logo-mark.svg" alt="" width={32} height={32} />
-          <span className="font-bold">
-            englishchunks<span className="text-brand-link text-xs">.guru</span>
+          <Image
+            src="/logo-mark.svg"
+            alt=""
+            width={36}
+            height={36}
+            className="rounded-[10px] ring-1 ring-white/20"
+          />
+          <span className="text-snow text-[17px] font-bold tracking-tight">
+            englishchunks<span className="text-lavender text-[11px]">.guru</span>
           </span>
         </Link>
         <div>
