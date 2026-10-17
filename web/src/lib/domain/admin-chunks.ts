@@ -18,7 +18,8 @@ export function exampleContainsChunk(chunkText: string, example: string) {
     .filter((w) => w !== "_slot_" && w.length > 0);
   const have = dedupeKey(example).split(" ");
   let i = 0;
-  for (const w of have) if (w === want[i]) i++;
+  // `${w}e`: e-dropping forms ("making" → "mak", "used" → "us") still match "make"/"use".
+  for (const w of have) if (w === want[i] || `${w}e` === want[i]) i++;
   return i === want.length;
 }
 

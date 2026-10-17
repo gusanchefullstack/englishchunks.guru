@@ -69,14 +69,20 @@ export async function seedOne(seed: Seed, existingKeys: Set<string>): Promise<Se
           text: draft.text,
           normalizedText: normalizeChunkText(draft.text),
           type: draft.type,
-          level: audit.suggestedLevel && !audit.levelOk ? audit.suggestedLevel : draft.level,
+          // A curated level wins; a model's disagreement still sends the chunk to admin review.
+          level: seed.level ?? (audit.suggestedLevel && !audit.levelOk ? audit.suggestedLevel : draft.level),
           registers: draft.registers,
           meaning: draft.meaning,
           usageNote: draft.usageNote,
           ipa: ipa[0]!,
           source: "curated",
           auditStatus: passed ? "passed" : "failed", // failed → admin "audit failed" queue, not practicable
-          auditNotes: { verdict: audit.verdict, issues, auditor: process.env.AI_AUDIT_MODEL ?? "openai/gpt-oss-20b" },
+          auditNotes: {
+            verdict: audit.verdict,
+            issues,
+            ...(audit.levelOk ? {} : { suggestedLevel: audit.suggestedLevel ?? draft.level }),
+            auditor: process.env.AI_AUDIT_MODEL ?? "openai/gpt-oss-20b",
+          },
         })
         .returning({ id: chunk.id });
       await tx.insert(chunkExample).values(draft.examples.map((e, i) => ({ chunkId: c!.id, position: i + 1, text: e.text, register: e.register, ipa: ipa[i + 1]! })));

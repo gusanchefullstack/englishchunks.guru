@@ -1,7 +1,7 @@
 import { and, eq } from "drizzle-orm";
 import { afterAll, beforeAll, describe, expect, it } from "vitest";
 import type { Db } from "@/db/client";
-import { appSetting, attempt, practiceSession, user, writingResult } from "@/db/schema";
+import { appSetting, attempt, chunk, practiceSession, user, writingResult } from "@/db/schema";
 import { AppError } from "@/lib/errors";
 import {
   advanceStep,
@@ -66,6 +66,18 @@ describe("session engine (US1)", () => {
     const levelIds = (await chunksAtLevel(db, "B1")).map((c) => c.id);
     expect(levelIds).toContain(s1.chunkId);
     expect(s1).toMatchObject({ origin: "daily", step: "learn", practiceDate: "2026-10-16" });
+  });
+
+  it("falls back to the nearest level when the learner's level has no practicable chunks", async () => {
+    await db.update(chunk).set({ status: "retired" }).where(eq(chunk.level, "C2"));
+    try {
+      const u = await createLearner(db, { level: "C2" });
+      const s = await startDailySession(ctxFor(u, at("2026-10-16T10:00:00Z")));
+      const c1Ids = (await chunksAtLevel(db, "C1")).map((c) => c.id);
+      expect(c1Ids).toContain(s.chunkId);
+    } finally {
+      await db.update(chunk).set({ status: "active" }).where(eq(chunk.level, "C2"));
+    }
   });
 
   it("prefers chunks the learner has not practiced", async () => {

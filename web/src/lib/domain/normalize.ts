@@ -26,7 +26,8 @@ export function normalizeChunkText(input: string): string {
   s = s.replace(/\b(someone|somebody|something)\b/g, "_slot_");
   s = s
     .split(/\s+/)
-    .map((w) => CONTRACTIONS[w.replace(/[^a-z']/g, "")] ?? w)
+    // Quote marks around a word ('You're welcome!') must not hide the contraction.
+    .map((w) => CONTRACTIONS[w.replace(/[^a-z']/g, "").replace(/^'+|'+$/g, "")] ?? w)
     .join(" ");
   s = s.replace(/[^a-z_\s-]/g, " ").replace(/-/g, " ");
   return s.replace(/\s+/g, " ").trim();
