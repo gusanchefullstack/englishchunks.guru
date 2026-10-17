@@ -1,11 +1,24 @@
 import { describe, expect, it } from "vitest";
 import { AppError } from "@/lib/errors";
 import type { PlanTier, SubscriptionStatus } from "@/db/schema";
-import { getDailyLimit, limitReachedError } from "@/lib/domain/limits";
+import {
+  ADMIN_DAILY_LIMIT,
+  getDailyLimit,
+  limitReachedError,
+  TIER_LIMITS,
+} from "@/lib/domain/limits";
 
 const sub = (tier: PlanTier, status: SubscriptionStatus) => ({ tier, status });
 
 describe("getDailyLimit", () => {
+  it("exempts admins (testing the app), with or without billing or a plan", () => {
+    for (const billingActive of [false, true])
+      expect(
+        getDailyLimit({ billingActive, subscription: null, earlyTester: false, isAdmin: true }),
+      ).toBe(ADMIN_DAILY_LIMIT);
+    expect(ADMIN_DAILY_LIMIT).toBeGreaterThan(TIER_LIMITS.premium);
+  });
+
   it("is 1 for everyone while billing is inactive (FR-061)", () => {
     expect(getDailyLimit({ billingActive: false, subscription: null, earlyTester: false })).toBe(1);
     expect(

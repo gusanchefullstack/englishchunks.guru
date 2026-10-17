@@ -211,6 +211,17 @@ describe("session engine (US1)", () => {
     });
   });
 
+  it("does not apply the daily limit to admins (they test the app)", async () => {
+    const admin = await createLearner(db, { role: "admin" });
+    const ctx = ctxFor(admin, at("2026-10-16T10:00:00Z"));
+    await startDailySession(ctx);
+    const { startLibrarySession, getTodayStatus } = await import("@/lib/domain/session-engine");
+    const [c1, c2] = await chunksAtLevel(db, "A2");
+    await expect(startLibrarySession(ctx, c1!.id)).resolves.toMatchObject({ origin: "library" });
+    await expect(startLibrarySession(ctx, c2!.id)).resolves.toMatchObject({ origin: "library" });
+    expect((await getTodayStatus(ctx)).remaining).toBeGreaterThan(0);
+  });
+
   it("does not count a session that failed because a service was down", async () => {
     const u = await createLearner(db);
     const ctx = ctxFor(u, at("2026-10-16T10:00:00Z"));
