@@ -46,7 +46,15 @@ export function RecordPanel({
       const res = await fetch(`/api/sessions/${sessionId}/attempts`, {
         method: "POST",
         body: form,
+        headers: { accept: "application/x-ndjson, application/json" },
       });
+      if (res.headers.get("content-type")?.includes("application/x-ndjson") && res.body) {
+        await readStreamedResult(res.body, (r) => {
+          setUploading(false); // the score is in; Mina's tip follows
+          onResult(r);
+        });
+        return;
+      }
       const body = await res.json();
       if (res.status === 200 || res.status === 422) {
         if (body.kind === "unusable") setMessage(unusableMessage(body.reason));
@@ -133,5 +141,41 @@ function unusableMessage(reason: string) {
       return "That didn't sound like the sentence. Listen once more and try again.";
     default:
       return "We couldn't read that recording. Please try again.";
+  }
+}
+
+const TIP_FALLBACK = "Nice try! Focus on the sounds below, then try again.";
+
+/** Line 1: the score (tip: null). Line 2: { kind: "tip" }. Missing tip → plain message. */
+async function readStreamedResult(
+  stream: ReadableStream<Uint8Array>,
+  onResult: (r: AttemptResult) => void,
+) {
+  const reader = stream.getReader();
+  const decoder = new TextDecoder();
+  let buffer = "";
+  let scored: Extract<AttemptResult, { kind: "scored" }> | undefined;
+  try {
+    for (;;) {
+      const { value, done } = await reader.read();
+      if (done) break;
+      buffer += decoder.decode(value, { stream: true });
+      let nl;
+      while ((nl = buffer.indexOf("\n")) >= 0) {
+        const line = JSON.parse(buffer.slice(0, nl)) as
+          | Extract<AttemptResult, { kind: "scored" }>
+          | { kind: "tip"; tip: string };
+        buffer = buffer.slice(nl + 1);
+        if (line.kind === "scored") {
+          scored = line;
+          onResult(line);
+        } else if (scored) {
+          scored = { ...scored, tip: line.tip };
+          onResult(scored);
+        }
+      }
+    }
+  } finally {
+    if (scored && scored.tip === null) onResult({ ...scored, tip: TIP_FALLBACK });
   }
 }

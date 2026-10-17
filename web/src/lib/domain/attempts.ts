@@ -14,7 +14,7 @@ import { MAX_AUDIO_BYTES, recordingMimeTypes, type ScoreResult } from "@/lib/con
 import { AppError } from "@/lib/errors";
 import { scoringClient } from "@/lib/providers/scoring-client";
 import { CAPS, consume } from "./caps";
-import { composeFeedback } from "./feedback";
+import { fallbackTip, lookupHints, writeTip } from "./feedback";
 import type { HintInput } from "./prompts";
 import { setCountsTowardLimit, type SessionCtx } from "./session-engine";
 import { recordUsage } from "./usage";
@@ -36,6 +36,9 @@ export type AttemptResult =
       improvement: number | null;
     }
   | { kind: "unusable"; reason: string };
+
+/** The score and curated hints, sent before the LLM tip is ready (tip: null). */
+export type EarlyScored = Omit<Extract<AttemptResult, { kind: "scored" }>, "tip"> & { tip: null };
 
 const SPEAK_ITEMS = ["chunk", "example_1", "example_2", "example_3"] as const;
 const READ_ITEMS = ["sentence_1", "sentence_2", "sentence_3"] as const;
@@ -74,6 +77,7 @@ export async function recordAttempt(
   sessionId: string,
   input: AttemptInput,
   audio: Blob,
+  opts: { onScored?: (early: EarlyScored) => void } = {},
 ): Promise<AttemptResult> {
   if (audio.size === 0) throw new AppError("validation", "The recording is empty.");
   if (audio.size > MAX_AUDIO_BYTES)
@@ -126,13 +130,7 @@ export async function recordAttempt(
       );
     previousScore = prev?.score;
   }
-  const fb = await composeFeedback({
-    level: ctx.level,
-    itemText: expectedText,
-    score: r.score,
-    weakestSounds: r.weakest_sounds,
-    previousScore,
-  });
+  const { hints, hintTableVersion } = await lookupHints(r.weakest_sounds);
 
   const values = {
     sessionId: s.id,
@@ -145,8 +143,8 @@ export async function recordAttempt(
     fluency: r.components.fluency,
     soundResults: r.sounds,
     weakestSounds: r.weakest_sounds.slice(0, 3),
-    tip: fb.tip,
-    hintTableVersion: fb.hintTableVersion,
+    tip: fallbackTip(hints), // replaced by the LLM tip below
+    hintTableVersion,
   };
   // Re-recording while the step is current ("Try again") replaces the item's score.
   await d
@@ -154,7 +152,7 @@ export async function recordAttempt(
     .values(values)
     .onConflictDoUpdate({ target: [attempt.sessionId, attempt.step, attempt.item], set: values });
 
-  return {
+  const early: EarlyScored = {
     kind: "scored",
     score: r.score,
     components: {
@@ -162,8 +160,25 @@ export async function recordAttempt(
       words: r.components.word_accuracy,
       flow: r.components.fluency,
     },
-    weakestSounds: fb.hints,
-    tip: fb.tip,
+    weakestSounds: hints,
+    tip: null,
     improvement: previousScore === undefined ? null : r.score - previousScore,
   };
+  // The score is final and stored; the learner can see it while the LLM writes the tip.
+  opts.onScored?.(early);
+
+  const tip = await writeTip({
+    level: ctx.level,
+    itemText: expectedText,
+    score: r.score,
+    hints,
+    previousScore,
+  });
+  await d
+    .update(attempt)
+    .set({ tip })
+    .where(
+      and(eq(attempt.sessionId, s.id), eq(attempt.step, input.step), eq(attempt.item, input.item)),
+    );
+  return { ...early, tip };
 }
