@@ -88,6 +88,7 @@
   --popover-foreground: var(--ink);
   --primary: var(--mint);
   --primary-foreground: var(--ink);
+  --primary-hover: #2ee8b0;
   --secondary: var(--lavender);
   --secondary-foreground: var(--ink);
   --muted: #e6eef6;
@@ -140,6 +141,7 @@
   --popover-foreground: var(--snow);
   --primary: var(--mint);
   --primary-foreground: var(--ink);
+  --primary-hover: #2ee8b0;
   --secondary: var(--lavender);
   --secondary-foreground: var(--ink);
   --muted: #1e222a;
@@ -205,6 +207,49 @@
     *::after {
       animation-duration: 0.01ms !important;
       transition-duration: 0.01ms !important;
+    }
+  }
+}
+
+/*
+ * Hover feedback for every clickable surface. Tailwind v4 no longer gives buttons
+ * cursor:pointer, and most buttons here are styled with plain class strings, so the states
+ * live in one place instead of 30+ call sites. Selected/pressed/disabled controls keep their look.
+ */
+@layer base {
+  :where(button, [role="button"], summary, select, label[for], [type="checkbox"], [type="radio"]):not(
+      :disabled,
+      [aria-disabled="true"]
+    ) {
+    cursor: pointer;
+  }
+}
+
+@layer utilities {
+  :is(a, button):is(.bg-primary, .bg-card, .border) {
+    transition-property: background-color, border-color, color, opacity;
+    transition-duration: 150ms;
+  }
+  @media (hover: hover) {
+    :is(a, button):not(
+        :disabled,
+        [aria-disabled="true"],
+        [aria-pressed="true"],
+        [aria-current],
+        [aria-checked="true"],
+        [data-state="active"],
+        [data-state="on"],
+        [data-state="checked"]
+      ):hover {
+      &.bg-primary {
+        background-color: var(--primary-hover);
+      }
+      &:is(.bg-card, .border):not(.bg-primary) {
+        background-color: var(--muted);
+      }
+    }
+    a:is(:not([class]), .underline):hover {
+      text-decoration-thickness: 2px;
     }
   }
 }
