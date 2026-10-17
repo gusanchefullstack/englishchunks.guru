@@ -23,6 +23,16 @@ until an admin activates it.
 - Q: What language should tips, grammar explanations and corrections be written in? → A: Always English, using simplified wording matched to the learner's CEFR level (no translation into the mother tongue).
 - Q: While the app is free during testing, can anyone sign up, or only people you invite? → A: Open sign-up up to an admin-adjustable account cap (default 200); beyond it, visitors join a waitlist that admins can admit from.
 
+### Session 2026-10-17
+
+- Q: Feedback lists "the 2–3 lowest-scoring sounds" — should a well-pronounced sound be
+  flagged when everything was good? → A: No. Only sounds scoring below 85 qualify, at most 3;
+  a clean recording may get no sound hints (FR-014).
+- Q: Do admins follow the daily practice limits? → A: No. Admins (who test the app) get 99
+  practices a day; learners keep their plan limits (FR-060).
+- Q: Are a privacy policy and terms of use required? → A: Yes. Public pages, linked from the
+  landing footer and sign-up, kept in sync with how data is actually handled (FR-073).
+
 ## User Scenarios & Testing *(mandatory)*
 
 ### User Story 1 - Complete the daily chunk session (Priority: P1)
@@ -332,8 +342,8 @@ limit becomes three.
 - **FR-013**: Speak steps MUST let the learner record the chunk and each example (try 1, then
   try 2) and return a 0–100 score per recording combining word accuracy, fluency, and per-sound
   accuracy.
-- **FR-014**: Feedback MUST identify the 2–3 lowest-scoring sounds and present, for each, the
-  fixed hint from the app's curated sound-hint table (~40 English sounds), wrapped in a short,
+- **FR-014**: Feedback MUST identify up to 3 of the lowest-scoring sounds that score below 85 (none
+  when every sound is good) and present, for each, the fixed hint from the app's curated sound-hint table (~40 English sounds), wrapped in a short,
   encouraging, personalized message. Generated text MUST NOT change scores or hints.
 - **FR-015**: After try 2, System MUST show per-item and overall improvement versus try 1.
 - **FR-016**: Write step MUST accept three learner sentences and return, for each, a usage grade,
@@ -400,6 +410,7 @@ limit becomes three.
 **Plans & billing**
 
 - **FR-060**: System MUST enforce daily practice limits per plan: Basic 1, Standard 3, Premium 5.
+  Admins are exempt (99 per day) so they can test the app.
 - **FR-061**: While billing is inactive, all learners MUST be on Basic at no cost, no payment
   details may be requested, and Standard/Premium MUST be shown as "coming soon".
 - **FR-062**: When billing is active, learners MUST be able to subscribe monthly (Basic $7,
@@ -419,6 +430,9 @@ limit becomes three.
   plans, and lead to sign-up.
 - **FR-071**: All pages MUST work on mobile, tablet, and desktop and meet WCAG 2.2 AA.
 - **FR-072**: The visual design MUST follow the project's Figma designs and color palette.
+- **FR-073**: The site MUST publish a privacy policy and terms of use as public pages, linked
+  from the landing footer and the sign-up form, that accurately describe what data is
+  collected, which processors receive it, retention, and how to delete an account.
 
 ### Key Entities
 

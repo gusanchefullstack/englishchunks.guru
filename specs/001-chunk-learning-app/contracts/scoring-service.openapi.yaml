@@ -131,6 +131,7 @@ components:
               count: { type: integer, minimum: 1 }
         weakest_sounds:
           type: array
+          description: Up to 3 lowest-scoring sounds that score below 85 (empty when all are good; FR-014).
           minItems: 0
           maxItems: 3
           items: { type: string }
