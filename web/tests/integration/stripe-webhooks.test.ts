@@ -29,14 +29,12 @@ afterAll(async () => {
 
 async function learnerWithCustomer(customer: string, earlyTester = false) {
   const u = await createLearner(db, { earlyTester });
-  await db
-    .insert(subscription)
-    .values({
-      userId: u.id,
-      stripeCustomerId: customer,
-      status: "trialing",
-      trialEndsAt: new Date(Date.now() + 86_400_000),
-    });
+  await db.insert(subscription).values({
+    userId: u.id,
+    stripeCustomerId: customer,
+    status: "trialing",
+    trialEndsAt: new Date(Date.now() + 86_400_000),
+  });
   return u;
 }
 

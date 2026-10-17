@@ -1,7 +1,9 @@
 import { afterAll, beforeAll, describe, expect, it, vi } from "vitest";
 import { createTestDb } from "../helpers/db";
 
-vi.mock("next/headers", () => ({ headers: async () => new Headers({ "x-forwarded-for": "203.0.113.7, 10.0.0.1" }) }));
+vi.mock("next/headers", () => ({
+  headers: async () => new Headers({ "x-forwarded-for": "203.0.113.7, 10.0.0.1" }),
+}));
 
 let close: () => Promise<void>;
 beforeAll(async () => ({ close } = await createTestDb()));
@@ -20,6 +22,8 @@ describe("rateLimit (T150)", () => {
     const { rateLimit } = await import("@/lib/rate-limit");
     await rateLimit("per-user", 1, 60, "user-a");
     await expect(rateLimit("per-user", 1, 60, "user-b")).resolves.toBeUndefined();
-    await expect(rateLimit("per-user", 1, 60, "user-a")).rejects.toMatchObject({ code: "limit_reached" });
+    await expect(rateLimit("per-user", 1, 60, "user-a")).rejects.toMatchObject({
+      code: "limit_reached",
+    });
   });
 });
