@@ -10,6 +10,8 @@ export default defineConfig({
   testDir: "tests/e2e",
   globalSetup: "./tests/e2e/global-setup.ts",
   timeout: 90_000,
+  // The e2e server is `next dev`: first visits compile routes, so allow for cold starts.
+  expect: { timeout: 15_000 },
   fullyParallel: false,
   forbidOnly: !!process.env.CI,
   retries: process.env.CI ? 1 : 0,

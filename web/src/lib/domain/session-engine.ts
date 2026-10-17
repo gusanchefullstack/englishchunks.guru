@@ -16,6 +16,7 @@ import { AppError } from "@/lib/errors";
 import { isPracticable, pickDailyChunk } from "./chunk-picker";
 import { computeDailyScore, mean, nextStreak } from "./daily-score";
 import { getDailyLimit, reservePractice } from "./limits";
+import { awardSession } from "./points";
 import { practiceDateFor } from "./time";
 
 export type SessionCtx = { userId: string; level: CefrLevel; timeZone: string; now?: Date };
@@ -25,13 +26,6 @@ const ORDER: SessionStep[] = ["learn", "speak_1", "speak_2", "write", "read_alou
 const next = (s: SessionStep) => ORDER[ORDER.indexOf(s) + 1] ?? "done";
 const SPEAK_ITEMS = 4; // chunk + 3 examples
 const SENTENCES = 3;
-
-/** Hooks run after a session completes (US3 registers points/streak milestones). */
-type CompletedHook = (tx: Tx, s: PracticeSession) => Promise<void>;
-const completedHooks: CompletedHook[] = [];
-export function onSessionCompleted(hook: CompletedHook) {
-  completedHooks.push(hook);
-}
 
 async function limitFor(tx: Tx, userId: string) {
   // Sequential on purpose: a transaction is a single connection.
@@ -297,7 +291,7 @@ export async function completeSession(
       .set({ currentStreak: streak.current, longestStreak: streak.longest, lastPracticeDate })
       .where(eq(user.id, ctx.userId));
 
-    for (const hook of completedHooks) await hook(tx, done!);
+    await awardSession(tx, done!, streak.current);
     return done!;
   });
 }

@@ -11,11 +11,18 @@ export async function getShellSummary(userId: string) {
       name: user.name,
       level: user.level,
       currentStreak: user.currentStreak,
+      lastPracticeDate: user.lastPracticeDate,
+      timeZone: user.timeZone,
       image: user.image,
     })
     .from(user)
     .where(eq(user.id, userId));
-  return row ?? null;
+  if (!row) return null;
+  const { displayStreak } = await import("./ranking");
+  return {
+    ...row,
+    currentStreak: displayStreak(row.currentStreak, row.lastPracticeDate, row.timeZone),
+  };
 }
 
 export function initials(name: string) {

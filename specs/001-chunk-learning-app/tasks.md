@@ -196,22 +196,22 @@ and daily reminder emails.
 
 ### Tests for User Story 3 ⚠️
 
-- [ ] T088 [P] [US3] Unit tests: points amounts (session `round(daily_score / 10)`; milestones 3/7/30/100 days → 5/15/50/150; accepted submission 20) and idempotency on (user_id, reason, ref_id) in `web/tests/unit/points.test.ts`
-- [ ] T089 [P] [US3] Integration test: ranking by band (A1–A2, B1–B2, C1–C2) and overall, weekly (ISO week UTC) and all-time, excludes `ranking_visible = false` and non-active users but shows own position in `web/tests/integration/ranking.test.ts`
-- [ ] T090 [P] [US3] Integration test: hourly cron sends ≤1 reminder/user/day only at local `reminder_hour` and only if no practice today; unsubscribe GET and RFC 8058 POST disable reminders without sign-in in `web/tests/integration/reminders.test.ts`
-- [ ] T091 [P] [US3] E2E test: seeded 14-day history renders chart, streaks, band ranking toggle; axe scan in `web/tests/e2e/progress.spec.ts`
+- [X] T088 [P] [US3] Unit tests: points amounts (session `round(daily_score / 10)`; milestones 3/7/30/100 days → 5/15/50/150; accepted submission 20) and idempotency on (user_id, reason, ref_id) in `web/tests/unit/points.test.ts`
+- [X] T089 [P] [US3] Integration test: ranking by band (A1–A2, B1–B2, C1–C2) and overall, weekly (ISO week UTC) and all-time, excludes `ranking_visible = false` and non-active users but shows own position in `web/tests/integration/ranking.test.ts`
+- [X] T090 [P] [US3] Integration test: hourly cron sends ≤1 reminder/user/day only at local `reminder_hour` and only if no practice today; unsubscribe GET and RFC 8058 POST disable reminders without sign-in in `web/tests/integration/reminders.test.ts`
+- [X] T091 [P] [US3] E2E test: seeded 14-day history renders chart, streaks, band ranking toggle; axe scan in `web/tests/e2e/progress.spec.ts`
 
 ### Implementation for User Story 3
 
-- [ ] T092 [P] [US3] Define `points_ledger` (unique (user_id, reason, ref_id)) and `notification` (`channel`, `read_at`, `sent_on` with unique (user_id, type='reminder', sent_on)) in `web/src/db/schema/engagement.ts` + migration
-- [ ] T093 [US3] Points service (award + update `total_points`) and hook into `completeSession` for session and streak-milestone awards in `web/src/lib/domain/points.ts`
-- [ ] T094 [US3] Ranking queries (band derived from current level, weekly/all-time, own position) in `web/src/lib/domain/ranking.ts`
-- [ ] T095 [P] [US3] Progress data loader (7/30/90-day scores, current/longest streak, total points, try-1→try-2 trend) in `web/src/lib/domain/progress.ts`
-- [ ] T096 [P] [US3] Progress UI with Recharts (accessible table fallback, `aria` descriptions), streak and points cards, ranking list with band/overall and week/all-time toggles in `web/src/app/(learner)/progress/page.tsx` and `web/src/components/progress/`
-- [ ] T097 [P] [US3] Reminder email template with streak and signed unsubscribe link + `List-Unsubscribe` / `List-Unsubscribe-Post` headers in `web/src/emails/reminder.tsx`
-- [ ] T098 [US3] Cron route `POST /api/cron/hourly` (Bearer `CRON_SECRET`; due reminders; also expires waitlist invites once US7 exists) in `web/src/app/api/cron/hourly/route.ts`
-- [ ] T099 [US3] Unsubscribe route (GET confirm page + POST one-click, HMAC token) in `web/src/app/api/unsubscribe/route.ts`
-- [ ] T100 [P] [US3] Droplet timer calling the hourly cron: `scoring/deploy/cron-hourly.service` and `scoring/deploy/cron-hourly.timer`
+- [X] T092 [P] [US3] Define `points_ledger` (unique (user_id, reason, ref_id)) and `notification` (`channel`, `read_at`, `sent_on` with unique (user_id, type='reminder', sent_on)) in `web/src/db/schema/engagement.ts` + migration
+- [X] T093 [US3] Points service (award + update `total_points`) and hook into `completeSession` for session and streak-milestone awards in `web/src/lib/domain/points.ts`
+- [X] T094 [US3] Ranking queries (band derived from current level, weekly/all-time, own position) in `web/src/lib/domain/ranking.ts`
+- [X] T095 [P] [US3] Progress data loader (7/30/90-day scores, current/longest streak, total points, try-1→try-2 trend) in `web/src/lib/domain/progress.ts`
+- [X] T096 [P] [US3] Progress UI with Recharts (accessible table fallback, `aria` descriptions), streak and points cards, ranking list with band/overall and week/all-time toggles in `web/src/app/(learner)/progress/page.tsx` and `web/src/components/progress/`
+- [X] T097 [P] [US3] Reminder email template with streak and signed unsubscribe link + `List-Unsubscribe` / `List-Unsubscribe-Post` headers in `web/src/emails/reminder.tsx`
+- [X] T098 [US3] Cron route `POST /api/cron/hourly` (Bearer `CRON_SECRET`; due reminders; also expires waitlist invites once US7 exists) in `web/src/app/api/cron/hourly/route.ts`
+- [X] T099 [US3] Unsubscribe route (GET confirm page + POST one-click, HMAC token) in `web/src/app/api/unsubscribe/route.ts`
+- [X] T100 [P] [US3] Droplet timer calling the hourly cron: `scoring/deploy/cron-hourly.service` and `scoring/deploy/cron-hourly.timer`
 
 **Checkpoint**: Learners see progress and ranking; reminders arrive at most once per day.
 

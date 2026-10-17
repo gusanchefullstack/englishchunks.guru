@@ -22,6 +22,13 @@
       "when": 1792194673106,
       "tag": "0002_action_counter",
       "breakpoints": true
+    },
+    {
+      "idx": 3,
+      "version": "7",
+      "when": 1792196128131,
+      "tag": "0003_engagement",
+      "breakpoints": true
     }
   ]
 }

@@ -10,6 +10,7 @@ import { ResetPassword } from "@/emails/reset-password";
 import { renderEmail } from "@/emails/render";
 import { VerifyEmail } from "@/emails/verify-email";
 import { beforeAuth, stampAgeConfirmation } from "@/lib/auth-hooks";
+import { e2eMode } from "@/lib/e2e";
 import { emailProvider } from "@/lib/providers/email";
 
 const USERNAME_RE = /^[a-z0-9_]{3,24}$/;
@@ -83,7 +84,8 @@ function createAuth() {
         },
       },
     },
-    rateLimit: { enabled: true, window: 60, max: 30, storage: "database" },
+    // Rate limiting stays on everywhere except the offline E2E mode (never in production).
+    rateLimit: { enabled: !e2eMode(), window: 60, max: 30, storage: "database" },
     plugins: [
       username({
         minUsernameLength: 3,
