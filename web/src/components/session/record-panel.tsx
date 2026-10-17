@@ -27,6 +27,8 @@ export function RecordPanel({
   const [message, setMessage] = useState("");
 
   async function toggle() {
+    // Busy states keep the button focusable (aria-disabled) so keyboard focus isn't lost.
+    if (uploading || rec.state === "requesting") return;
     if (rec.state === "recording") return rec.stop();
     setMessage("");
     const clip = await rec.start();
@@ -68,10 +70,11 @@ export function RecordPanel({
       <button
         type="button"
         onClick={toggle}
-        disabled={uploading || rec.state === "requesting"}
+        aria-disabled={uploading || rec.state === "requesting"}
+        aria-busy={uploading || rec.state === "requesting"}
         aria-pressed={recording}
         className={cn(
-          "inline-flex items-center justify-center gap-2 rounded-full font-bold transition-colors disabled:opacity-60",
+          "inline-flex items-center justify-center gap-2 rounded-full font-bold transition-colors aria-disabled:opacity-60",
           compact ? "bg-card min-h-11 border px-4 text-sm" : "size-20",
           !compact &&
             (recording ? "bg-destructive text-white" : "bg-primary text-primary-foreground"),
