@@ -3,7 +3,8 @@ import type { Db } from "@/db/client";
 import { usageCounter } from "@/db/schema";
 import { PronunciationTip } from "@/lib/contracts/llm";
 import { AppError } from "@/lib/errors";
-import { llm } from "@/lib/providers/llm";
+import { MockLanguageModelV4 } from "ai/test";
+import { llm, setLlmModelFactory } from "@/lib/providers/llm";
 import { createTestDb } from "../helpers/db";
 import { mockLlm } from "../helpers/llm";
 
@@ -48,6 +49,44 @@ describe("LlmProvider", () => {
     // Gemma via the AI Gateway ignored responseFormat and invented its own keys ("tip").
     expect(m.prompts[0]).toContain("JSON Schema");
     expect(m.prompts[0]).toContain('\\"message\\"');
+  });
+
+  it("times out a slow model and answers from the fallback model (feedback role)", async () => {
+    const used: string[] = [];
+    const reply = (text: string) => ({
+      content: [{ type: "text" as const, text }],
+      finishReason: { unified: "stop" as const, raw: undefined },
+      usage: {
+        inputTokens: { total: 1, noCache: 1, cacheRead: undefined, cacheWrite: undefined },
+        outputTokens: { total: 1, text: 1, reasoning: undefined },
+      },
+      warnings: [],
+    });
+    const hanging = new MockLanguageModelV4({
+      doGenerate: (opts) =>
+        new Promise((_, reject) => {
+          used.push("primary");
+          opts.abortSignal?.addEventListener("abort", () => reject(opts.abortSignal!.reason));
+        }),
+    });
+    const fast = new MockLanguageModelV4({
+      doGenerate: async () => (used.push("fallback"), reply(JSON.stringify({ message: "Quick!" }))),
+    });
+    setLlmModelFactory((_role, attempt) => (attempt === 1 ? hanging : fast));
+    restore = () => setLlmModelFactory(undefined);
+    const t0 = Date.now();
+    await expect(llm.generate({ ...req, timeoutMs: 200 })).resolves.toEqual({ message: "Quick!" });
+    expect(Date.now() - t0).toBeLessThan(2000);
+    expect(used).toEqual(["primary", "fallback"]);
+  });
+
+  it("never falls back to another model when asked (library drafts must stay independent of the auditor)", async () => {
+    const attempts: number[] = [];
+    const m = mockLlm([{ message: Array(60).fill("word").join(" ") }, { message: "Short." }]);
+    setLlmModelFactory((role, attempt) => (attempts.push(attempt), m.model));
+    restore = () => setLlmModelFactory(undefined);
+    await expect(llm.generate({ ...req, noFallback: true })).resolves.toEqual({ message: "Short." });
+    expect(attempts).toEqual([1, 1]); // the retry asks for the primary model again
   });
 
   it("applies the semantic check and retries", async () => {

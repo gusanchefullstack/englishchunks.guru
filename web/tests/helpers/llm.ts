@@ -21,5 +21,5 @@ export function mockLlm(outputs: unknown[]) {
     },
   });
   setLlmModelFactory(() => model);
-  return { prompts, calls: () => i, restore: () => setLlmModelFactory(undefined) };
+  return { model, prompts, calls: () => i, restore: () => setLlmModelFactory(undefined) };
 }

@@ -79,15 +79,28 @@ Common rules:
 
 | Method & path | Access | Request | Response |
 |---------------|--------|---------|----------|
-| `POST /api/sessions/{id}/attempts` | owner | `multipart/form-data`: `audio` (≤1 MB, ≤15 s), `step`, `item` | `200 AttemptResult` `{ score, components, weakestSounds:[{ipa, hint, exampleWords}], tip, improvement? }` · `422 { reason }` (retry, not counted) · `503` (retry). Audio is streamed in memory to the scoring service and discarded. |
+| `POST /api/sessions/{id}/attempts` | owner | `multipart/form-data`: `audio` (≤1 MB, ≤15 s), `step`, `item`, `mimeType`. Optional `Accept: application/x-ndjson` (see below). | `200 AttemptResult` `{ kind: "scored", score, components, weakestSounds:[{ipa, hint, exampleWords}], tip, improvement }` · `422 { kind: "unusable", reason }` (retry, not counted) · `503` (retry). Audio is streamed in memory to the scoring service and discarded. |
 | `GET /api/tts?ref=…` | learner | `ref` = `chunk:<id>`, `example:<id>`, or `sentence:<writingResultId>` (own sentences only); voice from profile. Raw text is never accepted in the URL. | `302` to CDN URL (shared) or short-lived signed URL (private sentence audio); generates on first request (FR-012) |
 | `POST /api/profile/avatar` | learner | `multipart/form-data`: `image` (jpeg/png/webp/heic, ≤5 MB) | `{ imageUrl }` (512×512 WebP, metadata stripped) |
 | `POST /api/billing/checkout` | learner | `{ tier }` | `{ url }` Stripe Checkout; `409 billing_inactive` if off |
 | `POST /api/billing/portal` | learner with customer | — | `{ url }` Stripe Customer Portal |
 | `POST /api/webhooks/stripe` | Stripe | raw body + `Stripe-Signature` | `200` after idempotent processing; `400` on bad signature |
 | `POST /api/cron/hourly` | Droplet timer | `Authorization: Bearer CRON_SECRET` | sends due reminders (≤1/user/day), expires invites |
-| `POST /api/cron/daily` | Vercel Cron | `Authorization: Bearer CRON_SECRET` | housekeeping (abandon stale sessions, usage rollup) |
+| `GET` or `POST /api/cron/daily` | Vercel Cron | `Authorization: Bearer CRON_SECRET` | housekeeping (abandon stale sessions, usage rollup) |
 | `GET /api/unsubscribe?token=…` and `POST` (RFC 8058 one-click) | public | signed token | turns reminders off without sign-in |
+
+### Streamed attempt result (`Accept: application/x-ndjson`)
+
+So learners don't wait for the LLM (SC-003), the session UI asks for a stream. The response is
+`200` with `Content-Type: application/x-ndjson`, one JSON object per line:
+
+1. The scored result as soon as scoring finishes: `{ kind: "scored", …, tip: null }`. The
+   attempt is already stored (with a plain fallback tip) and the curated hints are final.
+2. Mina's tip once the LLM answers: `{ kind: "tip", tip }`; the stored attempt is updated.
+
+If the stream ends without line 2 (LLM unavailable), the client keeps a plain message. Errors and
+unusable recordings never start a stream: they answer as plain JSON with their usual status
+codes. Without that `Accept` header the route returns the single `AttemptResult` above.
 | `/api/auth/*` | public | Better Auth | sign-up (requires `ageConfirmed: true`, cap/invite check), sign-in, Google OAuth, verify, reset |
 
 ## Sign-up gate (FR-007, FR-055)

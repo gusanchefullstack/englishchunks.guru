@@ -2,6 +2,8 @@
 
 A web app that teaches English **chunks** — the ready-made phrases native speakers use, like *“that makes sense”* or *“get used to”* — to learners from A1 to C2, with one daily session: hear it, say it twice, write it, read it aloud, and get pronunciation scores and friendly tips from **open-source AI running on infrastructure we control**.
 
+**Live:** https://englishchunks.guru
+
 ![CI](https://img.shields.io/github/actions/workflow/status/gusanchefullstack/englishchunks.guru/ci.yml?branch=main&label=CI)
 ![Scoring calibration](https://img.shields.io/badge/calibration-89.1%25%20pair%20accuracy-1dd6a4)
 ![Next.js](https://img.shields.io/badge/Next.js-16-08090a)
@@ -196,9 +198,11 @@ englishchunks.guru/
 | Scoring latency (SC-003, p95 ≤ 5 s) | — | `uv run python -m scoring.bench` |
 | Lint · types · secrets | ESLint · tsc · ruff · mypy · gitleaks | `pnpm lint && pnpm typecheck && pnpm secret-scan` |
 
-Current results: 177 web tests, 14 e2e tests, 27 scoring tests; calibration 89.1 % over 66,189 pairs; scoring p95 0.51 s (laptop).
+Current results: 184 web tests, 17 e2e tests, 30 scoring tests; calibration 89.1 % over 66,189 pairs; scoring server p95 1.68 s on the production Droplet (see [`scoring/BENCHMARKS.md`](./scoring/BENCHMARKS.md)).
 
 ## Deployment
+
+Every change goes through a pull request to `main`; CI (lint, types, unit/integration, Playwright e2e with axe, scoring tests, secret scan) must pass, and merging deploys production automatically. The scoring service is updated separately per its runbook.
 
 - **Web** → Vercel (Hobby while testing; Pro before charging money). Set every variable above in the project, including Spaces ones (used by the CSP at build). `vercel.json` schedules the daily cron.
 - **Scoring** → DigitalOcean Droplet (start 4 GB / 2 vCPU): `docker build -f scoring/deploy/Dockerfile -t ec-scoring .`, mount models read-only, run with `scoring/deploy/scoring.service` (read-only root, tmpfs `/tmp` with `exec` for espeak), Caddy for TLS, and `cron-hourly.timer` to call `/api/cron/hourly` (reminders, invite expiry). See [`scoring/deploy/RUNBOOK.md`](./scoring/deploy/RUNBOOK.md).
@@ -214,6 +218,9 @@ Current results: 177 web tests, 14 e2e tests, 27 scoring tests; calibration 89.1
 - **Testing seams that unit tests miss**: MSW 3 renamed `onUnhandledRequest` to `onUnhandledFrame` (the old option silently let tests hit the real network); a real Chrome MediaRecorder recording and the Docker image each exposed bugs that every fake had hidden.
 - **Accessibility**: disabling a button while it's busy drops keyboard focus to `<body>` — use `aria-disabled`/`aria-busy` instead; brand colors needed an AA-safe palette and validated chart colors.
 - **Stripe Billing**: one Product per plan, hosted Checkout + Customer Portal, signature-verified idempotent webhooks resolved by Customer ID, and since the 2025 “basil” API the billing period lives on subscription items.
+- **Structured output across providers**: through the AI Gateway, Gemma runs on a provider without JSON-schema response formats, so the SDK silently dropped the schema and the model invented its own keys. Stating the schema in the system prompt fixed it — and mocked tests could never have caught it.
+- **Perceived latency vs. compute**: running ASR and the phoneme model in parallel only saved ~10 % on 2 vCPUs, but streaming the score before the LLM tip (NDJSON from a route handler) removed the 2–3 s the learner actually felt — with zero extra infrastructure cost.
+- **Tailwind v4 defaults**: buttons no longer get `cursor: pointer`, so a single global hover layer (pointer, deeper primary, muted fill) beat editing 30+ class strings.
 
 ## Roadmap
 
@@ -223,8 +230,9 @@ Current results: 177 web tests, 14 e2e tests, 27 scoring tests; calibration 89.1
 - [x] Chunk library, suggestions with duplicate detection, admin review
 - [x] Admin console, account cap + waitlist, landing page
 - [x] Plans with Stripe Billing (off until activated)
-- [ ] Run the library seeding pipeline to ~1,000 audited chunks
-- [ ] Deploy (Vercel + Droplet + Neon) and run the staging latency/performance checks
+- [x] Deploy (Vercel + Droplet + Neon) — live at https://englishchunks.guru
+- [ ] Grow the audited library to ~1,000 chunks (177 practicable at launch)
+- [ ] Record end-to-end latency on production (scoring and audio playback)
 - [ ] Real-device recordings (iOS Safari, Android Chrome) in the scoring benchmark
 - [ ] Premium “Guru conversation”
 - [ ] Interface in the learner's mother tongue

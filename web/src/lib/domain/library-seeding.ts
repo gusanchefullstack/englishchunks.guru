@@ -49,6 +49,9 @@ export async function seedOne(seed: Seed, existingKeys: Set<string>): Promise<Se
       role: "feedback",
       schema: ChunkDraft,
       system: DRAFT_SYSTEM,
+      // Batch work: wait for the drafting model; never redraft with the auditor's model.
+      noFallback: true,
+      timeoutMs: 45_000,
       prompt: `Chunk: "${seed.text}"${hint ? `\nSuggested: ${hint}` : ""}`,
     });
     const audit = await llm.generate({
