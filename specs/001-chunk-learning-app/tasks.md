@@ -167,21 +167,21 @@ reset password, and delete their account.
 
 ### Tests for User Story 2 ⚠️
 
-- [ ] T076 [P] [US2] Integration test: sign-up requires `ageConfirmed`, unverified accounts cannot practice, Google sign-in with an email already used by a password account is refused until the password is proven, then linked, single-use 1 h reset tokens in `web/tests/integration/auth-flow.test.ts`
-- [ ] T077 [P] [US2] Integration test: avatar upload — magic-byte MIME check, >5 MB rejected, output 512×512 WebP with no EXIF in `web/tests/integration/avatar.test.ts`
-- [ ] T078 [P] [US2] Integration test: `deleteAccount` removes user rows, avatar, `tts/u/<userId>/` objects, cancels Stripe sub (mock), keeps accepted chunks with `submitted_by` NULL in `web/tests/integration/delete-account.test.ts`
-- [ ] T079 [P] [US2] E2E test: sign up → verify (captured email) → level → profile edits → sign out → reset password → sign in, with axe scans in `web/tests/e2e/onboarding.spec.ts`
+- [X] T076 [P] [US2] Integration test: sign-up requires `ageConfirmed`, unverified accounts cannot practice, Google sign-in with an email already used by a password account is refused until the password is proven, then linked, single-use 1 h reset tokens in `web/tests/integration/auth-flow.test.ts`
+- [X] T077 [P] [US2] Integration test: avatar upload — magic-byte MIME check, >5 MB rejected, output 512×512 WebP with no EXIF in `web/tests/integration/avatar.test.ts`
+- [X] T078 [P] [US2] Integration test: `deleteAccount` removes user rows, avatar, `tts/u/<userId>/` objects, cancels Stripe sub (mock), keeps accepted chunks with `submitted_by` NULL in `web/tests/integration/delete-account.test.ts`
+- [X] T079 [P] [US2] E2E test: sign up → verify (captured email) → level → profile edits → sign out → reset password → sign in, with axe scans in `web/tests/e2e/onboarding.spec.ts`
 
 ### Implementation for User Story 2
 
-- [ ] T080 [P] [US2] Verification and password-reset email templates in `web/src/emails/verify-email.tsx` and `web/src/emails/reset-password.tsx`, wired into Better Auth hooks in `web/src/lib/auth.ts`
-- [ ] T081 [US2] Sign-up hook enforcing `ageConfirmed === true` (sets `age_confirmed_at`) and default `time_zone` from client in `web/src/lib/auth-hooks.ts`
-- [ ] T082 [P] [US2] Auth pages: sign-up (email, username, password, "I am 16 or older" checkbox, Google button), sign-in, verify-email, reset-password in `web/src/app/(auth)/`
-- [ ] T083 [US2] Level onboarding page + `setLevel` action (CEFR or beginner→A2, intermediate→B1, advanced→C1; applies from next daily chunk) in `web/src/app/(learner)/onboarding/level/page.tsx` and `web/src/server/actions/profile.ts`; redirect learners without level from `requireLearner()`
-- [ ] T084 [US2] `updateProfile` action (`displayName` 1–40, `motherTongue` ISO 639-1, `timeZone` IANA, `voiceId` active voice, `theme`, `rankingVisible`, `remindersEnabled`, `reminderHour` 0–23) in `web/src/server/actions/profile.ts`
-- [ ] T085 [US2] Avatar route with sharp (auto-orient, strip metadata, center-crop 512×512, WebP; jpeg/png/webp/heic ≤ 5 MB) in `web/src/app/api/profile/avatar/route.ts`
-- [ ] T086 [US2] `deleteAccount` action (confirm "DELETE"; cancel Stripe sub if any; delete avatar and `tts/u/<userId>/` prefix; hard delete cascade; sign out) in `web/src/lib/domain/account-deletion.ts` and `web/src/server/actions/profile.ts`
-- [ ] T087 [US2] Profile page: picture, display name, mother tongue, level, time zone, voice picker with preview, theme, ranking visibility, reminders toggle/time, danger zone delete in `web/src/app/(learner)/profile/page.tsx`
+- [X] T080 [P] [US2] Verification and password-reset email templates in `web/src/emails/verify-email.tsx` and `web/src/emails/reset-password.tsx`, wired into Better Auth hooks in `web/src/lib/auth.ts`
+- [X] T081 [US2] Sign-up hook enforcing `ageConfirmed === true` (sets `age_confirmed_at`) and default `time_zone` from client in `web/src/lib/auth-hooks.ts`
+- [X] T082 [P] [US2] Auth pages: sign-up (email, username, password, "I am 16 or older" checkbox, Google button), sign-in, verify-email, reset-password in `web/src/app/(auth)/`
+- [X] T083 [US2] Level onboarding page + `setLevel` action (CEFR or beginner→A2, intermediate→B1, advanced→C1; applies from next daily chunk) in `web/src/app/(learner)/onboarding/level/page.tsx` and `web/src/server/actions/profile.ts`; redirect learners without level from `requireLearner()`
+- [X] T084 [US2] `updateProfile` action (`displayName` 1–40, `motherTongue` ISO 639-1, `timeZone` IANA, `voiceId` active voice, `theme`, `rankingVisible`, `remindersEnabled`, `reminderHour` 0–23) in `web/src/server/actions/profile.ts`
+- [X] T085 [US2] Avatar route with sharp (auto-orient, strip metadata, center-crop 512×512, WebP; jpeg/png/webp/heic ≤ 5 MB) in `web/src/app/api/profile/avatar/route.ts`
+- [X] T086 [US2] `deleteAccount` action (confirm "DELETE"; cancel Stripe sub if any; delete avatar and `tts/u/<userId>/` prefix; hard delete cascade; sign out) in `web/src/lib/domain/account-deletion.ts` and `web/src/server/actions/profile.ts`
+- [X] T087 [US2] Profile page: picture, display name, mother tongue, level, time zone, voice picker with preview, theme, ranking visibility, reminders toggle/time, danger zone delete in `web/src/app/(learner)/profile/page.tsx`
 
 **Checkpoint**: New users can onboard themselves and reach the US1 session.
 

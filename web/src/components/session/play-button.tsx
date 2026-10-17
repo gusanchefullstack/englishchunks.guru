@@ -11,12 +11,14 @@ import { cn } from "@/lib/utils";
  */
 export function PlayButton({
   audioRef,
+  voice,
   label = "Listen",
   showLabel = true,
   size = "md",
   className,
 }: {
   audioRef: string;
+  voice?: string;
   label?: string;
   showLabel?: boolean;
   size?: "sm" | "md";
@@ -27,7 +29,8 @@ export function PlayButton({
 
   async function play() {
     if (!el.current) {
-      el.current = new Audio(`/api/tts?ref=${encodeURIComponent(audioRef)}`);
+      const v = voice ? `&voice=${encodeURIComponent(voice)}` : "";
+      el.current = new Audio(`/api/tts?ref=${encodeURIComponent(audioRef)}${v}`);
       el.current.onended = () => setStatus("idle");
       el.current.onerror = () => {
         el.current = null;

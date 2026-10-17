@@ -6,7 +6,11 @@ import { admin, username } from "better-auth/plugins";
 import { db } from "@/db/client";
 import { account, rateLimit, session, user, verification } from "@/db/schema";
 import { env } from "@/lib/env";
-import { emailProvider, escapeHtml } from "@/lib/providers/email";
+import { ResetPassword } from "@/emails/reset-password";
+import { renderEmail } from "@/emails/render";
+import { VerifyEmail } from "@/emails/verify-email";
+import { beforeAuth, stampAgeConfirmation } from "@/lib/auth-hooks";
+import { emailProvider } from "@/lib/providers/email";
 
 const USERNAME_RE = /^[a-z0-9_]{3,24}$/;
 
@@ -27,11 +31,12 @@ function createAuth() {
       resetPasswordTokenExpiresIn: 60 * 60,
       revokeSessionsOnPasswordReset: true,
       sendResetPassword: async ({ user: u, url }) => {
+        const { html, text } = await renderEmail(ResetPassword({ name: u.name, url }));
         await emailProvider().send({
           to: u.email,
           subject: "Reset your EnglishChunks.guru password",
-          text: `Use this link to choose a new password (valid for 1 hour, one use only): ${url}`,
-          html: `<p>Use this link to choose a new password (valid for 1 hour, one use only):</p><p><a href="${escapeHtml(url)}">Reset my password</a></p>`,
+          html,
+          text,
         });
       },
     },
@@ -40,11 +45,12 @@ function createAuth() {
       autoSignInAfterVerification: true,
       expiresIn: 60 * 60 * 24,
       sendVerificationEmail: async ({ user: u, url }) => {
+        const { html, text } = await renderEmail(VerifyEmail({ name: u.name, url }));
         await emailProvider().send({
           to: u.email,
           subject: "Confirm your email for EnglishChunks.guru",
-          text: `Welcome! Confirm your email to start your first chunk: ${url}`,
-          html: `<p>Welcome! Confirm your email to start your first chunk.</p><p><a href="${escapeHtml(url)}">Confirm my email</a></p>`,
+          html,
+          text,
         });
       },
     },
@@ -67,6 +73,14 @@ function createAuth() {
         level: { type: "string", required: false, input: false },
         ageConfirmedAt: { type: "date", required: false, input: false },
         earlyTester: { type: "boolean", required: false, input: false },
+      },
+    },
+    hooks: { before: beforeAuth },
+    databaseHooks: {
+      user: {
+        create: {
+          before: async (u, ctx) => ({ data: stampAgeConfirmation(u, ctx?.path) }),
+        },
       },
     },
     rateLimit: { enabled: true, window: 60, max: 30, storage: "database" },

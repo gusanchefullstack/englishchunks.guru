@@ -10,6 +10,7 @@ const base: SessionUser = {
   role: "learner",
   banned: false,
   level: "B1",
+  ageConfirmedAt: new Date(),
 };
 
 function codeOf(fn: () => unknown) {
@@ -33,6 +34,11 @@ describe("authorizeLearner", () => {
   });
   it("rejects suspended users", () => {
     expect(codeOf(() => authorizeLearner({ ...base, banned: true }))).toBe("forbidden");
+  });
+  it("requires age confirmation before practice (FR-007, Google sign-ups)", () => {
+    expect(codeOf(() => authorizeLearner({ ...base, ageConfirmedAt: null }))).toBe(
+      "needs_onboarding",
+    );
   });
   it("requires a level unless onboarding is allowed (FR-003)", () => {
     expect(codeOf(() => authorizeLearner({ ...base, level: null }))).toBe("needs_onboarding");

@@ -14,6 +14,7 @@ export type SessionUser = {
   banned?: boolean | null;
   level?: string | null;
   timeZone?: string | null;
+  ageConfirmedAt?: Date | string | null;
 };
 
 export type Learner = SessionUser & { level: CefrLevel; timeZone: string };
@@ -26,6 +27,10 @@ export function authorizeLearner(
   if (!u) throw new AppError("unauthenticated", "Please sign in.");
   if (u.banned) throw new AppError("forbidden", "This account is suspended.");
   if (!u.emailVerified) throw new AppError("forbidden", "Please confirm your email first.");
+  // Google sign-ups confirm their age during onboarding (FR-007).
+  if (!u.ageConfirmedAt && !opts.allowNoLevel) {
+    throw new AppError("needs_onboarding", "Please confirm you are 16 or older.");
+  }
   if (!u.level && !opts.allowNoLevel) {
     throw new AppError("needs_onboarding", "Choose your English level to start.");
   }

@@ -12,8 +12,18 @@ export async function learnerOrRedirect(): Promise<Learner> {
     if (err instanceof AppError) {
       if (err.code === "unauthenticated") redirect("/sign-in");
       if (err.code === "needs_onboarding") redirect("/onboarding/level");
-      if (err.code === "forbidden" && u && !u.emailVerified) redirect("/verify-email");
+      if (err.code === "forbidden" && u && !u.emailVerified)
+        redirect(`/verify-email?email=${encodeURIComponent(u.email)}`);
     }
     throw err;
   }
+}
+
+/** For onboarding pages: signed in and verified, level not required yet. */
+export async function verifiedOrRedirect() {
+  const u = await getSessionUser();
+  if (!u) redirect("/sign-in");
+  if (!u.emailVerified) redirect(`/verify-email?email=${encodeURIComponent(u.email)}`);
+  if (u.banned) redirect("/sign-in");
+  return u;
 }
