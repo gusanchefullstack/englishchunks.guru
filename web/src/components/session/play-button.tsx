@@ -1,7 +1,7 @@
 "use client";
 
 import { Loader2, RotateCcw, Volume2 } from "lucide-react";
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { cn } from "@/lib/utils";
 
 /**
@@ -25,12 +25,28 @@ export function PlayButton({
   className?: string;
 }) {
   const el = useRef<HTMLAudioElement | null>(null);
+  const loadedSrc = useRef<string | null>(null);
   const [status, setStatus] = useState<"idle" | "loading" | "playing" | "error">("idle");
+  const v = voice ? `&voice=${encodeURIComponent(voice)}` : "";
+  const src = `/api/tts?ref=${encodeURIComponent(audioRef)}${v}`;
+
+  // The same button can be reused for another item (Speak step): stop the old audio when the
+  // item changes or the button unmounts, so it never keeps playing the previous text.
+  useEffect(
+    () => () => {
+      el.current?.pause();
+    },
+    [src],
+  );
 
   async function play() {
+    if (el.current && loadedSrc.current !== src) {
+      el.current.pause();
+      el.current = null;
+    }
     if (!el.current) {
-      const v = voice ? `&voice=${encodeURIComponent(voice)}` : "";
-      el.current = new Audio(`/api/tts?ref=${encodeURIComponent(audioRef)}${v}`);
+      loadedSrc.current = src;
+      el.current = new Audio(src);
       el.current.onended = () => setStatus("idle");
       el.current.onerror = () => {
         el.current = null;
