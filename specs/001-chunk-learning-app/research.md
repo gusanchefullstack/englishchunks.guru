@@ -22,6 +22,12 @@ Each entry records the decision, why it was chosen, and what else was considered
   response formats, so the schema is also stated in the system prompt (`withSchema` in
   `providers/llm.ts`); the AI SDK still validates. The tip is streamed after the score (NDJSON
   attempts route) so the 2–3 s LLM call doesn't delay results.
+- **Reliability (2026-10-17)**: Gemma's gateway providers answer in 2–8 s but have a 30+ s tail;
+  with no timeout and SDK retries stacked on ours, writing feedback reached a 146 s p95. Every
+  LLM call now has a per-attempt limit with SDK retries off: feedback tries Gemma for 5 s, then
+  retries once on `openai/gpt-oss-20b` (open-weight, ~1–5 s) for up to 12 s; if both fail the
+  learner gets "try again" (session kept, FR edge case). Grades and tips are validated by the
+  same Zod contracts whichever model answers.
 
 ## R2. Chunk-library generation and audit models
 
@@ -33,6 +39,11 @@ Each entry records the decision, why it was chosen, and what else was considered
   deterministically by espeak-ng (R6), never by an LLM.
 - **Rationale**: Spec FR-040 and constitution Principle II require an independent audit; a
   different model family reduces correlated errors; both are open-weight and low cost.
+- **Independence guard (2026-10-17)**: the feedback fallback must never apply to drafts —
+  otherwise a slow Gemma draft would be redrafted by gpt-oss and then audited by gpt-oss. Library
+  drafts call the LLM with `noFallback` (same model on retry, 45 s limit); audits use 45 s too.
+  Example registers are normalized (`academic`/`formal` → `professional`, FR-011) so academic
+  seeds don't fail the draft contract.
 - **Alternatives**: Manual curation only (too slow for ~1,000); same model self-audit (correlated
   errors); public idiom datasets (licensing unclear, inconsistent levels — used only as
   inspiration for the seed list).

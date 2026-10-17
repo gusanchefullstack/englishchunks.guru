@@ -453,3 +453,9 @@ Task: "Play button in web/src/components/session/play-button.tsx"
 - [X] T160 Record the public `/privacy` and `/terms` pages (`web/src/app/(marketing)/privacy`, `terms`; linked from footer and sign-up; required for the Google OAuth consent screen) in spec.md/plan.md via `/speckit-specify`, and have the owner review the wording per FR-070 / Constitution IV (unrequested)
 - [X] T161 Record the scoring latency changes (parallel ASR + phoneme models, `PARALLEL_MODELS`/`ASR_THREADS`/`PHONEME_THREADS` settings, per-stage timing logs) in `specs/001-chunk-learning-app/research.md` and `scoring/BENCHMARKS.md` with the Droplet numbers (p50 1486→1333 ms, p95 1893→1680 ms) per SC-003 / plan: scoring decisions (partial)
 - [X] T162 Refresh `README.md` facts that drifted after launch (184 web tests, 17 e2e, 30 scoring tests; live URL https://englishchunks.guru; private repo; deploy flow via PR → main) per T151 (partial)
+
+## Phase 13: Convergence
+
+- [X] T163 Record the LLM reliability decision in `specs/001-chunk-learning-app/research.md` (R1/R2) and `plan.md`: per-attempt timeouts (feedback 5 s then 12 s, audit 45 s), SDK retries off, feedback falling back to `openai/gpt-oss-20b`, library drafts never falling back (auditor independence) — implemented in `web/src/lib/providers/llm.ts` and `web/src/lib/domain/library-seeding.ts` per plan: R1 decision / Constitution II (partial)
+- [X] T164 Diagnose why the seed "lend credence to" fails every pipeline run ("Feedback is taking a break") although a direct Gemma draft is valid — trace the audit/import step in `web/src/lib/domain/library-seeding.ts`, fix the cause, and import it per FR-040 (partial)
+- [X] T165 Update the README "Current results" test counts (now 186 web tests) per T162 (partial)

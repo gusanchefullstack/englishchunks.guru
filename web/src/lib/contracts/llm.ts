@@ -37,7 +37,15 @@ export const ChunkDraft = z.object({
   usageNote: z.string().min(1).max(400),
   examples: z
     .array(
-      z.object({ text: z.string().min(1).max(200), register: z.enum(["casual", "professional"]) }),
+      z.object({
+        text: z.string().min(1).max(200),
+        // FR-011: examples are casual or professional. Models sometimes label a formal example
+        // "academic"; that is the professional side of the app's two labels.
+        register: z.preprocess(
+          (v) => (typeof v === "string" && /^(academic|formal)$/i.test(v) ? "professional" : v),
+          z.enum(["casual", "professional"]),
+        ),
+      }),
     )
     .length(3),
 });
