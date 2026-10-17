@@ -55,9 +55,12 @@ export async function gateAccountCreation(
 }
 
 export async function afterAccountCreated(
-  u: { email: string },
+  u: { id: string; email: string },
   ctx: { body?: unknown } | null | undefined,
 ) {
   if ((ctx?.body as { inviteToken?: string } | undefined)?.inviteToken)
     await markInviteUsed(u.email);
+  // FR-063: after billing activation, new learners start a 7-day app-managed trial.
+  const { startTrialIfBillingActive } = await import("@/lib/domain/subscription");
+  await startTrialIfBillingActive(u.id);
 }

@@ -6,6 +6,7 @@ import { renderEmail } from "@/emails/render";
 import { requireAdmin } from "@/lib/authz";
 import { logAdmin } from "@/lib/domain/audit";
 import { inviteEntries, setAccountCap } from "@/lib/domain/signup-gate";
+import { setBillingActive } from "@/lib/domain/subscription";
 import { env } from "@/lib/env";
 import { AppError, parseInput, toResult } from "@/lib/errors";
 import { emailProvider } from "@/lib/providers/email";
@@ -38,5 +39,17 @@ export async function adminInviteFromWaitlist(entryIds: string[]) {
     await logAdmin(admin.id, "waitlist.invite", null, { count: invites.length });
     if (!invites.length) throw new AppError("conflict", "Nobody to invite.");
     return invites.length;
+  });
+}
+
+/** FR-054: switch real billing on/off. Requires typing ACTIVATE / DEACTIVATE. */
+export async function adminSetBilling(active: boolean, confirm: string) {
+  return toResult(async () => {
+    const admin = await requireAdmin();
+    if (confirm !== (active ? "ACTIVATE" : "DEACTIVATE")) {
+      throw new AppError("validation", `Type ${active ? "ACTIVATE" : "DEACTIVATE"} to confirm.`);
+    }
+    await setBillingActive(admin.id, active);
+    return active;
   });
 }
