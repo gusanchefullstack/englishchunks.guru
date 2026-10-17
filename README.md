@@ -7,7 +7,7 @@ A web app that teaches English **chunks** — the ready-made phrases native spea
 ![Next.js](https://img.shields.io/badge/Next.js-16-08090a)
 ![Python](https://img.shields.io/badge/Python-3.12-3776AB)
 ![WCAG](https://img.shields.io/badge/WCAG-2.2%20AA-8789c0)
-![License](https://img.shields.io/badge/license-to%20be%20decided-lightgrey)
+![License](https://img.shields.io/badge/license-MIT-blue)
 
 ## Table of Contents
 
@@ -238,7 +238,7 @@ Current results: 177 web tests, 14 e2e tests, 27 scoring tests; calibration 89.1
 
 ## License
 
-**To be decided** — no license file has been added yet, so the code is currently all rights reserved. Model licenses: Silero VAD (MIT), Parakeet TDT 0.6B v2 (CC-BY-4.0), wav2vec2-lv-60-espeak-cv-ft (Apache-2.0), speechocean762 (CC-BY-4.0, calibration only).
+Distributed under the MIT License. See [LICENSE](./LICENSE) for details. The AI models keep their own licenses: Silero VAD (MIT), Parakeet TDT 0.6B v2 (CC-BY-4.0), wav2vec2-lv-60-espeak-cv-ft (Apache-2.0), speechocean762 (CC-BY-4.0, calibration only).
 
 ## Credits
 
