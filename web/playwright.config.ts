@@ -13,6 +13,9 @@ export default defineConfig({
   // The e2e server is `next dev`: first visits compile routes, so allow for cold starts.
   expect: { timeout: 15_000 },
   fullyParallel: false,
+  // One worker: specs share one `next dev` server and one database; parallel workers make
+  // cold route compiles race user clicks (before hydration) and cross-spec data collide.
+  workers: 1,
   forbidOnly: !!process.env.CI,
   retries: process.env.CI ? 1 : 0,
   reporter: process.env.CI ? "github" : "list",
