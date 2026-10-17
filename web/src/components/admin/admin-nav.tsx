@@ -10,6 +10,7 @@ const ITEMS = [
   { href: "/admin/chunks", label: "Chunks" },
   { href: "/admin/submissions", label: "Submissions" },
   { href: "/admin/waitlist", label: "Waitlist" },
+  { href: "/admin/settings", label: "Settings" },
   { href: "/today", label: "Back to app" },
 ];
 

@@ -206,6 +206,11 @@ export function ProfileView({
                 Change <ChevronRight aria-hidden className="inline size-4" />
               </Link>
             </Row>
+            <Row label="Plan" value="Plan & billing">
+              <Link href="/billing" className="text-sm font-bold">
+                View <ChevronRight aria-hidden className="inline size-4" />
+              </Link>
+            </Row>
             <Row label="Mother tongue">
               <select
                 aria-label="Mother tongue"

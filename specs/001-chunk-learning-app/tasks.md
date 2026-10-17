@@ -323,21 +323,21 @@ trial for later sign-ups; Stripe hosted Checkout/Portal; verified idempotent web
 
 ### Tests for User Story 8 ⚠️
 
-- [ ] T134 [P] [US8] Integration test: billing inactive → no Stripe calls, checkout returns `billing_inactive`, limit 1 in `web/tests/integration/billing-inactive.test.ts`
-- [ ] T135 [P] [US8] Integration test: `adminSetBilling(active)` marks all existing users `early_tester` + `free_basic`; post-activation sign-up starts app-managed `trialing` (Basic limit, `trial_ends_at` = sign-up + 7 days); daily cron expires trial → limit 0 in `web/tests/integration/billing-activation.test.ts`
-- [ ] T136 [P] [US8] Integration test: webhook signature verification, idempotency via `stripe_event`, transitions active/past_due (keeps tier limit during Stripe retries)/canceled (early tester → free_basic, others → expired), payment-method summary stored as display fields only in `web/tests/integration/stripe-webhooks.test.ts`
+- [X] T134 [P] [US8] Integration test: billing inactive → no Stripe calls, checkout returns `billing_inactive`, limit 1 in `web/tests/integration/billing-inactive.test.ts`
+- [X] T135 [P] [US8] Integration test: `adminSetBilling(active)` marks all existing users `early_tester` + `free_basic`; post-activation sign-up starts app-managed `trialing` (Basic limit, `trial_ends_at` = sign-up + 7 days); daily cron expires trial → limit 0 in `web/tests/integration/billing-activation.test.ts`
+- [X] T136 [P] [US8] Integration test: webhook signature verification, idempotency via `stripe_event`, transitions active/past_due (keeps tier limit during Stripe retries)/canceled (early tester → free_basic, others → expired), payment-method summary stored as display fields only in `web/tests/integration/stripe-webhooks.test.ts`
 
 ### Implementation for User Story 8
 
-- [ ] T137 [P] [US8] Define `stripe_event` (PK = Stripe event id, `type`, `processed_at`) in `web/src/db/schema/billing.ts` + migration
-- [ ] T138 [US8] Billing provider (Stripe client; Checkout in subscription mode **without** `trial_period_days`; Customer Portal; price ids from env) in `web/src/lib/providers/billing.ts`
-- [ ] T139 [US8] Subscription state machine per data-model.md transitions in `web/src/lib/domain/subscription.ts`
-- [ ] T140 [US8] `adminSetBilling` (confirm "ACTIVATE"/"DEACTIVATE", audit-logged, marks early testers) in `web/src/server/actions/admin-settings.ts`; post-activation sign-up hook creating app-managed trial in `web/src/lib/auth-hooks.ts`
-- [ ] T141 [US8] Routes `POST /api/billing/checkout` and `POST /api/billing/portal` (409 `billing_inactive` when off) in `web/src/app/api/billing/checkout/route.ts` and `web/src/app/api/billing/portal/route.ts`
-- [ ] T142 [US8] Webhook route (raw body, `Stripe-Signature`, idempotent processing of `checkout.session.completed`, `customer.subscription.created|updated|deleted`, `invoice.payment_failed`) in `web/src/app/api/webhooks/stripe/route.ts`
-- [ ] T143 [US8] Daily cron `POST /api/cron/daily` (expire app-managed trials, abandon stale sessions, usage rollup) in `web/src/app/api/cron/daily/route.ts` and `web/vercel.json` cron entry
-- [ ] T144 [P] [US8] Billing page (plan status, trial countdown, subscribe/manage buttons only when active; Premium conversation "coming soon") in `web/src/app/(learner)/billing/page.tsx`; admin settings page (billing switch, account cap) in `web/src/app/admin/settings/page.tsx`
-- [ ] T145 [P] [US8] Billing notice email templates (trial ending, payment failed) in `web/src/emails/billing-notice.tsx`
+- [X] T137 [P] [US8] Define `stripe_event` (PK = Stripe event id, `type`, `processed_at`) in `web/src/db/schema/billing.ts` + migration
+- [X] T138 [US8] Billing provider (Stripe client; Checkout in subscription mode **without** `trial_period_days`; Customer Portal; price ids from env) in `web/src/lib/providers/billing.ts`
+- [X] T139 [US8] Subscription state machine per data-model.md transitions in `web/src/lib/domain/subscription.ts`
+- [X] T140 [US8] `adminSetBilling` (confirm "ACTIVATE"/"DEACTIVATE", audit-logged, marks early testers) in `web/src/server/actions/admin-settings.ts`; post-activation sign-up hook creating app-managed trial in `web/src/lib/auth-hooks.ts`
+- [X] T141 [US8] Routes `POST /api/billing/checkout` and `POST /api/billing/portal` (409 `billing_inactive` when off) in `web/src/app/api/billing/checkout/route.ts` and `web/src/app/api/billing/portal/route.ts`
+- [X] T142 [US8] Webhook route (raw body, `Stripe-Signature`, idempotent processing of `checkout.session.completed`, `customer.subscription.created|updated|deleted`, `invoice.payment_failed`) in `web/src/app/api/webhooks/stripe/route.ts`
+- [X] T143 [US8] Daily cron `POST /api/cron/daily` (expire app-managed trials, abandon stale sessions, usage rollup) in `web/src/app/api/cron/daily/route.ts` and `web/vercel.json` cron entry
+- [X] T144 [P] [US8] Billing page (plan status, trial countdown, subscribe/manage buttons only when active; Premium conversation "coming soon") in `web/src/app/(learner)/billing/page.tsx`; admin settings page (billing switch, account cap) in `web/src/app/admin/settings/page.tsx`
+- [X] T145 [P] [US8] Billing notice email templates (trial ending, payment failed) in `web/src/emails/billing-notice.tsx`
 
 **Checkpoint**: Billing can be activated safely after the go-live checklist.
 

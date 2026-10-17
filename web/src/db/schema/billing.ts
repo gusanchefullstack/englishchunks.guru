@@ -21,3 +21,10 @@ export const subscription = pgTable("subscription", {
   pmExpYear: smallint(),
   ...timestamps,
 });
+
+/** Processed Stripe webhook events (idempotency, FR-062). */
+export const stripeEvent = pgTable("stripe_event", {
+  id: text().primaryKey(),
+  type: text().notNull(),
+  processedAt: timestamp({ withTimezone: true }).notNull().defaultNow(),
+});

@@ -47,9 +47,7 @@ test("at the account cap: waitlist, admin invite, invited visitor registers (US7
   request,
   browser,
 }) => {
-  const [row] = await sql<{ n: string }>(
-    `select count(*) as n from "user" where role <> 'admin'`,
-  );
+  const [row] = await sql<{ n: string }>(`select count(*) as n from "user" where role <> 'admin'`);
   await sql(`update app_setting set account_cap = $1`, [Number(row!.n)]);
 
   await page.goto("/sign-up");

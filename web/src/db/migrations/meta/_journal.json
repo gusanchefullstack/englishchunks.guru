@@ -43,6 +43,13 @@
       "when": 1792198323607,
       "tag": "0005_waitlist",
       "breakpoints": true
+    },
+    {
+      "idx": 6,
+      "version": "7",
+      "when": 1792199136979,
+      "tag": "0006_stripe_event",
+      "breakpoints": true
     }
   ]
 }
