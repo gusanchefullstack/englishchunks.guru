@@ -9,6 +9,7 @@ const ITEMS = [
   { href: "/admin/users", label: "Users" },
   { href: "/admin/chunks", label: "Chunks" },
   { href: "/admin/submissions", label: "Submissions" },
+  { href: "/admin/waitlist", label: "Waitlist" },
   { href: "/today", label: "Back to app" },
 ];
 

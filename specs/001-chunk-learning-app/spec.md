@@ -390,7 +390,8 @@ limit becomes three.
   submissions.
 - **FR-054**: Admins MUST be able to switch paid billing between inactive and active; the switch
   and its author MUST be recorded.
-- **FR-055**: While billing is inactive, System MUST cap total learner accounts at an
+- **FR-055**: While billing is inactive, System MUST cap total learner accounts (every non-admin
+  account, verified or not; admins excluded) at an
   admin-adjustable limit (default 200). When the cap is reached, sign-up MUST be replaced by a
   waitlist (email only); admins MUST be able to view the waitlist and admit people, who then
   receive an email invitation valid for 7 days that bypasses the cap. Deleted accounts free a

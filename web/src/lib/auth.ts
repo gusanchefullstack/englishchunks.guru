@@ -9,7 +9,12 @@ import { env } from "@/lib/env";
 import { ResetPassword } from "@/emails/reset-password";
 import { renderEmail } from "@/emails/render";
 import { VerifyEmail } from "@/emails/verify-email";
-import { beforeAuth, stampAgeConfirmation } from "@/lib/auth-hooks";
+import {
+  afterAccountCreated,
+  beforeAuth,
+  gateAccountCreation,
+  stampAgeConfirmation,
+} from "@/lib/auth-hooks";
 import { e2eMode } from "@/lib/e2e";
 import { emailProvider } from "@/lib/providers/email";
 
@@ -80,7 +85,11 @@ function createAuth() {
     databaseHooks: {
       user: {
         create: {
-          before: async (u, ctx) => ({ data: stampAgeConfirmation(u, ctx?.path) }),
+          before: async (u, ctx) => {
+            await gateAccountCreation(u, ctx);
+            return { data: stampAgeConfirmation(u, ctx?.path) };
+          },
+          after: async (u, ctx) => afterAccountCreated(u, ctx),
         },
       },
     },

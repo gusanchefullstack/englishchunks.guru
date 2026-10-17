@@ -8,7 +8,7 @@ import { Checkbox } from "@/components/ui/checkbox";
 import { authClient, browserTimeZone } from "@/lib/auth-client";
 import { Divider, Field, GoogleMark, outlineBtn, submitBtn } from "./fields";
 
-export function SignUpForm() {
+export function SignUpForm({ invite, invitedEmail }: { invite?: string; invitedEmail?: string }) {
   const router = useRouter();
   const [ageConfirmed, setAge] = useState(false);
   const [pending, setPending] = useState(false);
@@ -28,9 +28,14 @@ export function SignUpForm() {
       callbackURL: "/onboarding/level",
       ageConfirmed,
       timeZone: browserTimeZone(),
+      ...(invite ? { inviteToken: invite } : {}),
     } as Parameters<typeof authClient.signUp.email>[0]);
     setPending(false);
-    if (err) return setError(err.message ?? "We couldn't create your account. Please try again.");
+    if (err) {
+      if (err.code === "SIGNUP_CLOSED")
+        return router.push(`/waitlist?email=${encodeURIComponent(email)}`);
+      return setError(err.message ?? "We couldn't create your account. Please try again.");
+    }
     router.push(`/verify-email?email=${encodeURIComponent(email)}`);
   }
 
@@ -97,6 +102,8 @@ export function SignUpForm() {
             placeholder="you@example.com"
             required
             autoComplete="email"
+            defaultValue={invitedEmail}
+            readOnly={Boolean(invite && invitedEmail)}
           />
           <Field
             label="Password"

@@ -8,3 +8,4 @@ export * from "./audio";
 export * from "./counters";
 export * from "./engagement";
 export * from "./submissions";
+export * from "./waitlist";
