@@ -353,7 +353,7 @@ trial for later sign-ups; Stripe hosted Checkout/Portal; verified idempotent web
 - [X] T149 [P] Latency check script against staging measuring p95 TTS first play (≤ 2 s) and cached replay (≤ 0.5 s) (SC-004), and writing-feedback response (≤ 6 s), in `web/scripts/latency-check.ts`; results recorded in `web/docs/latency.md`
 - [X] T150 [P] Security hardening: CSP and security headers in `web/next.config.ts`, rate limits on attempts/writing/submission actions in `web/src/lib/rate-limit.ts`
 - [X] T151 [P] Root `README.md` (setup, env vars, architecture, open-source rationale) — use the create-readme conventions
-- [ ] T152 Deploy: Vercel project (Hobby) for `web/`, Droplet provisioning runbook `scoring/deploy/RUNBOOK.md`, Neon production branch; run quickstart V1–V17 against staging — runbook written; scoring Droplet live at scoring.englishchunks.guru (2026-10-17); Vercel + Neon production + V1–V17 pending
+- [ ] T152 Deploy: Vercel project (Hobby) for `web/`, Droplet provisioning runbook `scoring/deploy/RUNBOOK.md`, Neon production branch; run quickstart V1–V17 against staging — live 2026-10-17: englishchunks.guru (Vercel cle1, Neon production branch, 158 practicable chunks) + scoring.englishchunks.guru; V1–V17 on staging pending
 - [ ] T153 Go-live checklist execution (Stripe test-mode demo account subscribe/renew/cancel, Vercel Pro upgrade, live keys in env only) documented in `specs/001-chunk-learning-app/quickstart.md`
 
 ---
