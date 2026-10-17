@@ -1,0 +1,10 @@
+[Unit]
+Description=EnglishChunks hourly web cron (reminders, invite expiry)
+After=network-online.target
+
+[Service]
+Type=oneshot
+EnvironmentFile=/etc/ec-cron.env
+# /etc/ec-cron.env: APP_URL=https://englishchunks.guru and CRON_SECRET=... (root-only, 0600)
+ExecStart=/usr/bin/curl --fail --silent --show-error --max-time 120 \
+  -X POST -H "Authorization: Bearer ${CRON_SECRET}" "${APP_URL}/api/cron/hourly"

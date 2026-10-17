@@ -217,3 +217,42 @@ describe("session engine (US1)", () => {
     expect(setting!.billingActive).toBe(false);
   });
 });
+
+describe("points on completion (FR-031)", () => {
+  it("awards session points and a 3-day milestone exactly once", async () => {
+    const { pointsLedger } = await import("@/db/schema");
+    const u = await createLearner(db, {
+      currentStreak: 2,
+      longestStreak: 2,
+      lastPracticeDate: "2026-10-15",
+    });
+    const ctx = ctxFor(u, at("2026-10-16T10:00:00Z"));
+    const s = await startDailySession(ctx);
+    await advanceStep(ctx, s.id, "learn");
+    expect((await skipSpeaking(ctx, s.id)).step).toBe("write");
+    await db
+      .insert(writingResult)
+      .values(
+        [1, 2, 3].map((position) => ({
+          sessionId: s.id,
+          position,
+          original: "o",
+          corrected: "c",
+          usageGrade: 90,
+          grammarGrade: 90,
+          usesChunk: true,
+          explanation: "Good.",
+        })),
+      );
+    await advanceStep(ctx, s.id, "write");
+    await skipSpeaking(ctx, s.id);
+    await completeSession(ctx, s.id);
+    const rows = await db.select().from(pointsLedger).where(eq(pointsLedger.userId, u.id));
+    expect(rows.map((r) => [r.reason, r.amount]).sort()).toEqual([
+      ["session", 9],
+      ["streak_milestone", 5],
+    ]);
+    const [after] = await db.select().from(user).where(eq(user.id, u.id));
+    expect(after!.totalPoints).toBe(14);
+  });
+});

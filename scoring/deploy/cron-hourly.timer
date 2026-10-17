@@ -1,0 +1,10 @@
+[Unit]
+Description=Run the EnglishChunks web cron hourly (research R14: Vercel Hobby cron is daily only)
+
+[Timer]
+OnCalendar=*-*-* *:00:30
+RandomizedDelaySec=20
+Persistent=true
+
+[Install]
+WantedBy=timers.target

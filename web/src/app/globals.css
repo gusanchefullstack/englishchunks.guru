@@ -25,6 +25,7 @@
   --color-streak-foreground: var(--streak-foreground);
   --color-surface-subtle: var(--surface-subtle);
   --color-ipa: var(--ipa);
+  --color-chart-bar: var(--chart-bar);
   --color-background: var(--background);
   --color-foreground: var(--foreground);
   --font-sans: var(--font-nunito), ui-sans-serif, system-ui, sans-serif;
@@ -117,6 +118,7 @@
   --streak-foreground: #126f58;
   --surface-subtle: #f3f9fc;
   --ipa: #5f6a70;
+  --chart-bar: #0f8f6a; /* validated: L band + ≥3:1 on light surfaces */
   --sidebar: #ffffff;
   --sidebar-foreground: var(--ink);
   --sidebar-primary: var(--mint);
@@ -156,6 +158,7 @@
   --streak-foreground: #8ff5d4;
   --surface-subtle: #1a1f26;
   --ipa: #b4bcc6;
+  --chart-bar: #16a87e; /* validated against #14171c */
   --accent: var(--sky);
   --accent-foreground: var(--ink);
   --destructive: #ff8a80;
