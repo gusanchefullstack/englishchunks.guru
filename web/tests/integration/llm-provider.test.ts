@@ -41,6 +41,15 @@ describe("LlmProvider", () => {
     expect((err as AppError).code).toBe("unavailable");
   });
 
+  it("states the JSON schema in the prompt (gateway providers without structured outputs drop it)", async () => {
+    const m = mockLlm([{ message: "Nice." }]);
+    restore = m.restore;
+    await llm.generate(req);
+    // Gemma via the AI Gateway ignored responseFormat and invented its own keys ("tip").
+    expect(m.prompts[0]).toContain("JSON Schema");
+    expect(m.prompts[0]).toContain('\\"message\\"');
+  });
+
   it("applies the semantic check and retries", async () => {
     const m = mockLlm([{ message: "Score 55 is fine" }, { message: "Nice work!" }]);
     restore = m.restore;

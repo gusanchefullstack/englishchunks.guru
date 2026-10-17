@@ -6,7 +6,7 @@ import {
   Output,
   type LanguageModel,
 } from "ai";
-import type { z } from "zod";
+import { z } from "zod";
 import { env } from "@/lib/env";
 import { AppError } from "@/lib/errors";
 import { logger } from "@/lib/logger";
@@ -82,6 +82,15 @@ export function setLlmModelFactory(next: ModelFactory | undefined) {
 
 const MAX_ATTEMPTS = 2; // one retry on invalid output (contracts/llm-outputs.md)
 
+/**
+ * Some gateway providers (e.g. Gemma's) don't support JSON-schema response formats and drop the
+ * schema silently, so the model invents its own keys. Stating the schema in the system prompt
+ * works for every model; Output.object still parses and validates the reply.
+ */
+function withSchema(system: string, schema: z.ZodType) {
+  return `${system}\n\nRespond with only a JSON object (no code fences, no other text) matching this JSON Schema:\n${JSON.stringify(z.toJSONSchema(schema))}`;
+}
+
 export const llm: LlmProvider = {
   async generate({ role, schema, system, prompt, check }) {
     if (e2eMode() && modelFactory === gatewayModels) {
@@ -93,7 +102,7 @@ export const llm: LlmProvider = {
       try {
         const result = await generateText({
           model: modelFactory(role),
-          system,
+          system: withSchema(system, schema),
           prompt:
             attempt === 1
               ? prompt
