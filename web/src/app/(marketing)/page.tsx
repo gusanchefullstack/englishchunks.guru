@@ -4,6 +4,7 @@ import { connection } from "next/server";
 import { Suspense } from "react";
 import { Logo } from "@/components/app-shell/logo";
 import { IntroVideo } from "@/components/marketing/intro-video";
+import { LegalFooter } from "@/components/marketing/legal-page";
 import { Plans } from "@/components/marketing/plans";
 import { isBillingActive } from "@/lib/domain/billing-state";
 
@@ -121,9 +122,7 @@ export default function Landing() {
           </div>
         </section>
       </main>
-      <footer className="text-muted-foreground mx-auto max-w-6xl px-5 py-8 text-sm">
-        © EnglishChunks.guru · For learners aged 16 and over · Built with open-source AI
-      </footer>
+      <LegalFooter />
     </div>
   );
 }
