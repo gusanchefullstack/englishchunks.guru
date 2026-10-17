@@ -263,3 +263,104 @@ as a result,B1,discourse_marker,academic
 in addition,B1,discourse_marker,academic
 on the contrary,B2,discourse_marker,academic
 having said that,B2,discourse_marker,professional
+# --- 2026-10-17: C1/C2 and academic coverage (T154) ---
+in the wake of,C2,discourse_marker,academic
+a moot point,C2,idiom,academic
+by no stretch of the imagination,C2,idiom,casual
+far be it from me to,C2,sentence_frame,professional
+to all intents and purposes,C2,discourse_marker,academic
+bring to bear,C2,verb_pattern,academic
+a far cry from,C2,idiom,casual
+in no uncertain terms,C2,polyword,professional
+on the face of it,C2,discourse_marker,academic
+hard and fast rules,C2,collocation,professional
+a vested interest,C2,collocation,professional
+fall foul of,C2,verb_pattern,professional
+be at pains to,C2,verb_pattern,academic
+the jury is still out,C2,idiom,academic
+have an axe to grind,C2,idiom,casual
+it stands to reason that,C2,sentence_frame,academic
+a case in point,C2,polyword,academic
+in the grand scheme of things,C2,discourse_marker,casual
+lend credence to,C2,collocation,academic
+by the same token,C2,discourse_marker,academic
+a foregone conclusion,C2,collocation,academic
+run the gamut of,C2,verb_pattern,academic
+take something at face value,C2,idiom,professional
+paper over the cracks,C2,idiom,professional
+have no truck with,C2,verb_pattern,casual
+to say the least,C2,discourse_marker,casual
+or thereabouts,C2,vague_language,casual
+the long and the short of it,C2,idiom,casual
+when push comes to shove,C2,idiom,casual
+it remains to be seen whether,C2,sentence_frame,academic
+there is a case to be made for,C2,sentence_frame,academic
+go to great lengths,C2,verb_pattern,professional
+in all likelihood,C2,discourse_marker,academic
+of the order of,C2,vague_language,academic
+a double-edged sword,C2,idiom,professional
+come to a head,C2,verb_pattern,professional
+for want of a better word,C2,vague_language,casual
+without a shadow of a doubt,C2,polyword,casual
+come to terms with,C1,verb_pattern,casual
+on the grounds that,C1,sentence_frame,academic
+with regard to,C1,discourse_marker,professional
+as a rule of thumb,C1,idiom,professional
+by virtue of,C1,discourse_marker,academic
+keep tabs on,C1,idiom,professional
+weigh up the pros and cons,C1,verb_pattern,professional
+a steep learning curve,C1,collocation,professional
+to a large extent,C1,discourse_marker,academic
+it is worth noting that,C1,sentence_frame,academic
+there's no denying that,C1,sentence_frame,casual
+I'd be inclined to,C1,sentence_frame,professional
+sort of thing,C1,vague_language,casual
+or something to that effect,C1,vague_language,professional
+the bottom line is,C1,sentence_frame,professional
+touch base,C1,verb_pattern,professional
+get to grips with,C1,verb_pattern,casual
+a recipe for disaster,C1,idiom,casual
+on the verge of,C1,polyword,casual
+come up against,C1,verb_pattern,professional
+fall short of,C1,verb_pattern,professional
+heavily reliant on,C1,collocation,academic
+strongly advise against,C1,collocation,professional
+call into question,C1,verb_pattern,academic
+shed light on,C1,collocation,academic
+play a pivotal role in,C1,collocation,academic
+all things considered,C1,discourse_marker,casual
+in hindsight,C1,discourse_marker,casual
+on balance,C1,discourse_marker,academic
+it can be argued that,C1,sentence_frame,academic
+a growing body of evidence,C1,collocation,academic
+there is little evidence that,C1,sentence_frame,academic
+with respect to,C1,discourse_marker,academic
+the extent to which,C1,sentence_frame,academic
+give rise to,C1,verb_pattern,academic
+be attributed to,C1,verb_pattern,academic
+put forward a theory,C1,collocation,academic
+reach a consensus,C1,collocation,academic
+the findings indicate that,C1,sentence_frame,academic
+a direct consequence of,C1,collocation,academic
+in conjunction with,C1,polyword,academic
+this suggests that,B2,sentence_frame,academic
+carry out a study,B2,collocation,academic
+a key factor in,B2,collocation,academic
+in terms of,B2,discourse_marker,academic
+as opposed to,B2,discourse_marker,academic
+in contrast to,B2,discourse_marker,academic
+to a certain degree,B2,discourse_marker,academic
+a significant increase in,B2,collocation,academic
+it is widely believed that,B2,sentence_frame,academic
+consist of,B2,verb_pattern,academic
+take into consideration,B2,verb_pattern,academic
+a wide range of,B2,polyword,academic
+the vast majority of,B2,polyword,academic
+in the case of,B2,discourse_marker,academic
+for the most part,B2,discourse_marker,academic
+in summary,B2,discourse_marker,academic
+to sum up,B2,discourse_marker,academic
+it is clear that,B2,sentence_frame,academic
+closely linked to,B2,collocation,academic
+approximately half,B2,vague_language,academic
+a handful of,B2,vague_language,academic
