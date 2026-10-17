@@ -7,6 +7,7 @@ authors = [
     { name = "Gustavo Sanchez Galarza", email = "gustavosanchezgalarza@gmail.com" }
 ]
 requires-python = ">=3.12"
+license = "MIT"
 dependencies = [
     "av>=19.0.1",
     "fastapi>=0.143.3",
