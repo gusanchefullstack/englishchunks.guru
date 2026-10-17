@@ -6,10 +6,14 @@ import { nextDayStart } from "./time";
 
 export const TIER_LIMITS: Record<PlanTier, number> = { basic: 1, standard: 3, premium: 5 };
 
+/** Admins test the app all day; finite so "N practices left" stays a plain number. */
+export const ADMIN_DAILY_LIMIT = 99;
+
 export type LimitInput = {
   billingActive: boolean;
   subscription: { tier: PlanTier; status: SubscriptionStatus } | null;
   earlyTester: boolean;
+  isAdmin?: boolean;
 };
 
 /**
@@ -20,7 +24,13 @@ export type LimitInput = {
  * - past_due keeps the paid tier while Stripe retries (spec edge case, analysis U1).
  * - expired / none after activation → 0 (must subscribe).
  */
-export function getDailyLimit({ billingActive, subscription, earlyTester }: LimitInput): number {
+export function getDailyLimit({
+  billingActive,
+  subscription,
+  earlyTester,
+  isAdmin = false,
+}: LimitInput): number {
+  if (isAdmin) return ADMIN_DAILY_LIMIT;
   if (!billingActive) return TIER_LIMITS.basic;
   const status = subscription?.status ?? "none";
   const tier = subscription?.tier ?? "basic";

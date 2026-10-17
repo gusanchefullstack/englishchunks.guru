@@ -32,13 +32,14 @@ async function limitFor(tx: Tx, userId: string) {
   const [setting] = await tx.select().from(appSetting).limit(1);
   const [sub] = await tx.select().from(subscription).where(eq(subscription.userId, userId));
   const [u] = await tx
-    .select({ earlyTester: user.earlyTester })
+    .select({ earlyTester: user.earlyTester, role: user.role })
     .from(user)
     .where(eq(user.id, userId));
   return getDailyLimit({
     billingActive: setting?.billingActive ?? false,
     subscription: sub ? { tier: sub.tier, status: sub.status } : null,
     earlyTester: u?.earlyTester ?? false,
+    isAdmin: u?.role === "admin",
   });
 }
 
