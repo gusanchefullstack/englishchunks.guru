@@ -58,14 +58,12 @@ describe("admin user management (FR-051)", () => {
   it("lists with filters by plan, status and level", async () => {
     const a = await createLearner(db, { level: "C1", name: "Cara Filter" });
     const b = await createLearner(db, { level: "C1", name: "Dan Filter", emailVerified: false });
-    await db
-      .insert(subscription)
-      .values({
-        userId: a.id,
-        tier: "standard",
-        status: "active",
-        currentPeriodEnd: new Date("2026-11-16T00:00:00Z"),
-      });
+    await db.insert(subscription).values({
+      userId: a.id,
+      tier: "standard",
+      status: "active",
+      currentPeriodEnd: new Date("2026-11-16T00:00:00Z"),
+    });
     const standard = await listUsers({ plan: "standard" });
     expect(standard.rows.map((r) => r.id)).toEqual([a.id]);
     expect(standard.rows[0]).toMatchObject({ tier: "standard", subStatus: "active" });

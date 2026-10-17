@@ -299,16 +299,16 @@ and daily reminder emails.
 
 ### Tests for User Story 7 ⚠️
 
-- [ ] T127 [P] [US7] Integration test: sign-up gate allows iff billing active OR active users < `account_cap` OR valid unexpired invite; otherwise waitlist; invite tokens single-use, expire after 7 days; deleting an account frees a place in `web/tests/integration/signup-gate.test.ts`
-- [ ] T128 [P] [US7] E2E test: landing renders explainer, video, plans ("coming soon" for Standard/Premium while billing inactive), CTA → sign-up; at cap shows waitlist; axe scans at 375/768/1280 widths in `web/tests/e2e/landing.spec.ts`
+- [X] T127 [P] [US7] Integration test: sign-up gate allows iff billing active OR active users < `account_cap` OR valid unexpired invite; otherwise waitlist; invite tokens single-use, expire after 7 days; deleting an account frees a place in `web/tests/integration/signup-gate.test.ts`
+- [X] T128 [P] [US7] E2E test: landing renders explainer, video, plans ("coming soon" for Standard/Premium while billing inactive), CTA → sign-up; at cap shows waitlist; axe scans at 375/768/1280 widths in `web/tests/e2e/landing.spec.ts`
 
 ### Implementation for User Story 7
 
-- [ ] T129 [P] [US7] Define `waitlist_entry` (`email` unique lowercased, `status` waiting|invited|registered|expired, `invite_token_hash`, `invited_by`, `invited_at`, `invite_expires_at`) in `web/src/db/schema/waitlist.ts` + migration
-- [ ] T130 [US7] Sign-up gate domain + Better Auth before-hook enforcement in `web/src/lib/domain/signup-gate.ts` and `web/src/lib/auth-hooks.ts`
-- [ ] T131 [US7] Waitlist page (email only) and join action in `web/src/app/(auth)/waitlist/page.tsx` and `web/src/server/actions/waitlist.ts`
-- [ ] T132 [US7] Admin waitlist page + `adminInviteFromWaitlist` and `adminSetAccountCap` actions + invite email template in `web/src/app/admin/waitlist/page.tsx`, `web/src/server/actions/admin-settings.ts`, `web/src/emails/waitlist-invite.tsx`; extend hourly cron to expire invites in `web/src/app/api/cron/hourly/route.ts`
-- [ ] T133 [P] [US7] Landing page sections (hero, what are chunks with examples per type, accessible video with captions, plan comparison, CTA reflecting billing state) per Figma in `web/src/app/(marketing)/page.tsx` and `web/src/components/marketing/`
+- [X] T129 [P] [US7] Define `waitlist_entry` (`email` unique lowercased, `status` waiting|invited|registered|expired, `invite_token_hash`, `invited_by`, `invited_at`, `invite_expires_at`) in `web/src/db/schema/waitlist.ts` + migration
+- [X] T130 [US7] Sign-up gate domain + Better Auth before-hook enforcement in `web/src/lib/domain/signup-gate.ts` and `web/src/lib/auth-hooks.ts`
+- [X] T131 [US7] Waitlist page (email only) and join action in `web/src/app/(auth)/waitlist/page.tsx` and `web/src/server/actions/waitlist.ts`
+- [X] T132 [US7] Admin waitlist page + `adminInviteFromWaitlist` and `adminSetAccountCap` actions + invite email template in `web/src/app/admin/waitlist/page.tsx`, `web/src/server/actions/admin-settings.ts`, `web/src/emails/waitlist-invite.tsx`; extend hourly cron to expire invites in `web/src/app/api/cron/hourly/route.ts`
+- [X] T133 [P] [US7] Landing page sections (hero, what are chunks with examples per type, accessible video with captions, plan comparison, CTA reflecting billing state) per Figma in `web/src/app/(marketing)/page.tsx` and `web/src/components/marketing/`
 
 **Checkpoint**: Public visitors can discover and join, with cost-bounded sign-ups.
 
