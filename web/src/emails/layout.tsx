@@ -26,7 +26,7 @@ export function EmailLayout({ preview, children }: { preview: string; children: 
         }}
       >
         <Container style={{ maxWidth: 560, margin: "0 auto", padding: "32px 24px" }}>
-          <Img src={`${base}/logo-mark.svg`} width="40" height="40" alt="EnglishChunks.guru" />
+          <Img src={`${base}/logo-mark-email.png`} width="40" height="40" alt="EnglishChunks.guru" />
           <Section
             style={{
               backgroundColor: "#ffffff",
