@@ -248,19 +248,19 @@ and daily reminder emails.
 
 ### Tests for User Story 5 ⚠️
 
-- [ ] T108 [P] [US5] Unit tests for normalization (case, punctuation, contractions, slot markers, simple verb lemmas) and similarity threshold 0.6 on a near-duplicate fixture set (≥90% suggested, SC-010) in `web/tests/unit/dedupe.test.ts`
-- [ ] T109 [P] [US5] Integration test: exact match suggests existing; novel → pending; duplicate pending merged (first submitter credited); accept publishes chunk (IPA via phonemize mock), notifies in-app + email, +20 points; reject notifies with reason in `web/tests/integration/submissions.test.ts`
-- [ ] T110 [P] [US5] E2E test: submit existing and novel chunks, admin approves, learner sees notification; axe scan in `web/tests/e2e/submissions.spec.ts`
+- [X] T108 [P] [US5] Unit tests for normalization (case, punctuation, contractions, slot markers, simple verb lemmas) and similarity threshold 0.6 on a near-duplicate fixture set (≥90% suggested, SC-010) in `web/tests/unit/dedupe.test.ts`
+- [X] T109 [P] [US5] Integration test: exact match suggests existing; novel → pending; duplicate pending merged (first submitter credited); accept publishes chunk (IPA via phonemize mock), notifies in-app + email, +20 points; reject notifies with reason in `web/tests/integration/submissions.test.ts`
+- [X] T110 [P] [US5] E2E test: submit existing and novel chunks, admin approves, learner sees notification; axe scan in `web/tests/e2e/submissions.spec.ts`
 
 ### Implementation for User Story 5
 
-- [ ] T111 [P] [US5] Define `chunk_submission` (`matched_chunk_ids` uuid[], `status` pending|accepted|rejected|merged, `reviewer_id`, `decision_reason`, `decided_at`, `resulting_chunk_id`, `submitted_by` ON DELETE SET NULL) in `web/src/db/schema/submissions.ts` + migration
-- [ ] T112 [US5] Normalization + duplicate detection (exact on normalized, pg_trgm ≥ 0.6, top 3) in `web/src/lib/domain/dedupe.ts`
-- [ ] T113 [US5] Actions `checkChunkDuplicate`, `submitChunk` in `web/src/server/actions/submissions.ts`
-- [ ] T114 [US5] `adminDecideSubmission` (accept with edits → create chunk + examples, phonemize via `ScoringClient`, notify, award points; reject with optional reason) in `web/src/lib/domain/submission-review.ts` and `web/src/server/actions/admin-submissions.ts`
-- [ ] T115 [P] [US5] Decision email templates in `web/src/emails/submission-accepted.tsx` and `web/src/emails/submission-rejected.tsx`; in-app notification bell in `web/src/components/notifications-bell.tsx`
-- [ ] T116 [P] [US5] Pages: submit form with live duplicate suggestions in `web/src/app/(learner)/submit-chunk/page.tsx`; "My submissions" in `web/src/app/(learner)/my-submissions/page.tsx`
-- [ ] T117 [US5] Admin submissions queue page in `web/src/app/admin/submissions/page.tsx` using `requireAdmin()` directly (does not depend on the US6 admin layout)
+- [X] T111 [P] [US5] Define `chunk_submission` (`matched_chunk_ids` uuid[], `status` pending|accepted|rejected|merged, `reviewer_id`, `decision_reason`, `decided_at`, `resulting_chunk_id`, `submitted_by` ON DELETE SET NULL) in `web/src/db/schema/submissions.ts` + migration
+- [X] T112 [US5] Normalization + duplicate detection (exact on normalized, pg_trgm ≥ 0.6, top 3) in `web/src/lib/domain/dedupe.ts`
+- [X] T113 [US5] Actions `checkChunkDuplicate`, `submitChunk` in `web/src/server/actions/submissions.ts`
+- [X] T114 [US5] `adminDecideSubmission` (accept with edits → create chunk + examples, phonemize via `ScoringClient`, notify, award points; reject with optional reason) in `web/src/lib/domain/submission-review.ts` and `web/src/server/actions/admin-submissions.ts`
+- [X] T115 [P] [US5] Decision email templates in `web/src/emails/submission-accepted.tsx` and `web/src/emails/submission-rejected.tsx`; in-app notification bell in `web/src/components/notifications-bell.tsx`
+- [X] T116 [P] [US5] Pages: submit form with live duplicate suggestions in `web/src/app/(learner)/submit-chunk/page.tsx`; "My submissions" in `web/src/app/(learner)/my-submissions/page.tsx`
+- [X] T117 [US5] Admin submissions queue page in `web/src/app/admin/submissions/page.tsx` using `requireAdmin()` directly (does not depend on the US6 admin layout)
 
 **Checkpoint**: The library grows through moderated learner submissions.
 

@@ -1,5 +1,6 @@
 import { Suspense, type ReactNode } from "react";
 import { Logo } from "./logo";
+import { NotificationsBell } from "./notifications";
 import { MobileTabBar, MobileTabLinks, SidebarLinks, SidebarNav } from "./sidebar-nav";
 import { ThemeSwitch } from "./theme-switch";
 import { UserSummary, UserSummarySkeleton } from "./user-summary";
@@ -18,8 +19,11 @@ export function AppShell({ children }: { children: ReactNode }) {
       </a>
 
       <aside className="bg-sidebar sticky top-0 hidden h-dvh flex-col border-r px-5 pt-7 pb-5 lg:flex">
-        <div className="px-2 pb-8">
+        <div className="flex items-center justify-between pb-8 pl-2">
           <Logo />
+          <Suspense fallback={<span className="size-10" />}>
+            <NotificationsBell />
+          </Suspense>
         </div>
         <Suspense fallback={<SidebarLinks pathname={null} />}>
           <SidebarNav />
@@ -36,8 +40,13 @@ export function AppShell({ children }: { children: ReactNode }) {
 
       <header className="bg-sidebar sticky top-0 z-30 flex h-14 items-center justify-between border-b px-4 lg:hidden">
         <Logo />
-        <div className="w-40">
-          <ThemeSwitch />
+        <div className="flex items-center gap-2">
+          <Suspense fallback={<span className="size-10" />}>
+            <NotificationsBell />
+          </Suspense>
+          <div className="w-40">
+            <ThemeSwitch />
+          </div>
         </div>
       </header>
 
