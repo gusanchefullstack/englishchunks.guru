@@ -162,6 +162,7 @@ sides use the same symbols.
 | Second deployable in Python (`scoring/`) | Speech models (ONNX/sherpa-onnx, espeak-ng, ffmpeg) need a long-running CPU host and Python tooling; permitted by Principle VII | Running models in Vercel Functions exceeds size/memory limits; hosted speech APIs violate Principles I and IV |
 | Droplet systemd timer triggers web cron hourly | Reminders at each learner's local hour need hourly scheduling (FR-033) | Vercel Hobby cron is daily only; Vercel Pro adds $20/month during free testing (Principle V); a new cron vendor adds a dependency |
 | Separate auditor model (`gpt-oss-20b`) | Constitution II requires independent audit of preloaded chunks | Self-audit by Gemma shares the same blind spots |
+| gpt-oss-20b as feedback fallback (not for drafts) | Gemma providers' 30+ s tail broke interactive feedback (research R1) | Waiting on Gemma (minutes); paid faster hosting (cost rule) |
 
 ## Post-Design Notes
 

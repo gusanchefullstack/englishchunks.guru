@@ -29,7 +29,8 @@ const DRAFT_SYSTEM = [
   "You write entries for an English-learning chunk library for ESOL learners (CEFR A1–C2).",
   "Return a complete, accurate record: the chunk's type, CEFR level, registers, a plain meaning (≤ 300 chars),",
   "guidance on when to use it (≤ 400 chars), and exactly three natural American-English examples that each",
-  "contain the chunk (inflections allowed): two casual and one professional where possible. Use simple language",
+  "contain the chunk (inflections allowed): two casual and one professional where possible; label each example",
+  "'casual' or 'professional' only (formal or academic examples are 'professional'). Use simple language",
   "that a learner at the chunk's level can understand. Do not include IPA.",
 ].join(" ");
 
