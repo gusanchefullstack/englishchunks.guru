@@ -30,7 +30,7 @@ const creds = {
 
 describe("Better Auth on the Drizzle schema", () => {
   it("signs up a learner, stores defaults, and sends a verification email", async () => {
-    await auth().api.signUpEmail({ body: creds });
+    await auth().api.signUpEmail({ body: { ...creds, ageConfirmed: true } as never });
     const [row] = await db.select().from(user).where(eq(user.email, creds.email));
     expect(row).toMatchObject({
       emailVerified: false,
@@ -50,7 +50,14 @@ describe("Better Auth on the Drizzle schema", () => {
 
   it("rejects usernames outside [a-z0-9_]{3,24}", async () => {
     await expect(
-      auth().api.signUpEmail({ body: { ...creds, email: "x@example.com", username: "No Spaces" } }),
-    ).rejects.toThrow();
+      auth().api.signUpEmail({
+        body: {
+          ...creds,
+          ageConfirmed: true,
+          email: "x@example.com",
+          username: "No Spaces",
+        } as never,
+      }),
+    ).rejects.toThrow(/username/i);
   });
 });
