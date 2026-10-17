@@ -162,7 +162,7 @@ Headers: `X-Timestamp`, `X-Request-Id`, `X-Signature: sha256=HMAC(secret, "<ts>.
   "transcript": "That makes sense.", "model_versions": { "asr": "parakeet-tdt-0.6b-v2-int8" } }
 ```
 
-Other routes: `GET /api/tts?ref=chunk:<id>|example:<id>|sentence:<id>` (302 to audio), `POST /api/billing/checkout`, `POST /api/billing/portal`, `POST /api/webhooks/stripe`, `POST /api/cron/hourly`, `GET|POST /api/cron/daily`, `POST /api/unsubscribe` (RFC 8058).
+Other routes: `GET /api/tts?ref=chunk:<id>|example:<id>|sentence:<id>` (302 to audio), `POST /api/profile/avatar`, `POST /api/billing/checkout`, `POST /api/billing/portal`, `POST /api/webhooks/stripe`, `POST /api/cron/hourly`, `GET|POST /api/cron/daily`, `POST /api/unsubscribe` (RFC 8058).
 
 ## Project Structure
 

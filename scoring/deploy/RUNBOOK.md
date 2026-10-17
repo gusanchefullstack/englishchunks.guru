@@ -25,7 +25,6 @@ Production layout: **web** on Vercel, **database** on Neon, **scoring** on one D
 
 ```bash
 ssh root@<ip>
-adduser --disabled-password --gecos "" deploy && usermod -aG sudo,docker deploy   # after Docker install below
 ufw allow OpenSSH && ufw allow 80,443/tcp && ufw enable    # 8001 stays bound to 127.0.0.1
 apt-get update && apt-get -y upgrade && apt-get -y install unattended-upgrades
 ```
@@ -45,6 +44,7 @@ apt-get update && apt-get install -y caddy
 The wav2vec2 export needs PyTorch, so do it locally and copy the result:
 
 ```bash
+ssh root@<ip> mkdir -p /opt/ec-scoring/models
 # on your machine
 cd scoring
 uv run python -m scoring.models.download
@@ -111,7 +111,7 @@ Rotate `SCORING_SHARED_SECRET`: write the new value to `/etc/ec-scoring.env` and
 2. Add every variable from the README's Configuration table for **Production** and **Preview** (Preview → Neon `staging` branch). The `SPACES_*` values must exist at **build** time (CSP).
 3. `BETTER_AUTH_URL` = the production URL; add the same origin to the Google OAuth client's authorized redirect URIs (`/api/auth/callback/google`).
 4. Resend: verify the sending domain (SPF, DKIM, DMARC) before setting `EMAIL_FROM`.
-5. DigitalOcean Spaces: bucket private except the `tts/` and `avatars/` prefixes served via the CDN; CORS not needed (audio and images load by URL).
+5. DigitalOcean Spaces: create the bucket with file listing **restricted** and enable its CDN. The app sets the ACL per object on upload (`public-read` for shared TTS audio and avatars, `private` otherwise), so no bucket-wide public policy is needed; CORS isn't either (audio and images load by URL).
 6. Deploy; `vercel.json` registers the daily cron (`/api/cron/daily`). The hourly cron comes from the Droplet timer.
 7. Create the first admin: sign up normally, then in Neon SQL: `update "user" set role = 'admin' where email = '<you>';`
 
