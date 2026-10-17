@@ -20,13 +20,16 @@ Production layout: **web** on Vercel, **database** on Neon, **scoring** on one D
 
 ### 2.1 Create it
 
-- Ubuntu 24.04 LTS, **Basic 4 GB / 2 vCPU** (≈ $24/mo). Same region as Neon/Vercel if possible. Add your SSH key; disable password login.
+- Ubuntu 24.04 LTS, **Basic 4 GB / 2 vCPU**. Regular `s-2vcpu-4gb` ($24/mo) is not offered in every region (not in SFO3); there use `s-2vcpu-4gb-amd` ($28/mo). Add your SSH key. Production: `ec-scoring`, SFO3, AMD.
 - DNS: `A scoring.englishchunks.guru → <droplet IP>`.
 
 ```bash
 ssh root@<ip>
-ufw allow OpenSSH && ufw allow 80,443/tcp && ufw enable    # 8001 stays bound to 127.0.0.1
-apt-get update && apt-get -y upgrade && apt-get -y install unattended-upgrades
+apt-get update && apt-get -y upgrade && apt-get -y install unattended-upgrades ufw
+ufw default deny incoming && ufw allow OpenSSH && ufw allow 80/tcp && ufw allow 443/tcp && ufw --force enable
+# 8001 is published on 127.0.0.1 only (Docker bypasses ufw for published ports, so never publish it on 0.0.0.0)
+printf 'PasswordAuthentication no\nKbdInteractiveAuthentication no\nPermitRootLogin prohibit-password\n' > /etc/ssh/sshd_config.d/10-hardening.conf
+sshd -t && systemctl reload ssh
 ```
 
 ### 2.2 Install Docker and Caddy
@@ -49,50 +52,72 @@ ssh root@<ip> mkdir -p /opt/ec-scoring/models
 cd scoring
 uv run python -m scoring.models.download
 uv run --extra export python -m scoring.models.download --wav2vec2
-rsync -avz --progress models/ root@<ip>:/opt/ec-scoring/models/
+rsync -az models/ root@<ip>:/opt/ec-scoring/models/   # macOS openrsync: no --info/--progress2
+# verify: compare `shasum -a 256` locally with `sha256sum` on the droplet
 # on the droplet
 chown -R 10001:10001 /opt/ec-scoring/models && chmod -R a-w /opt/ec-scoring/models
 ```
 
 ### 2.4 Image
 
+Ship only committed files (never `.env`, never models):
+
 ```bash
-git clone https://github.com/gusanchefullstack/englishchunks.guru.git /opt/ec-scoring/src
-cd /opt/ec-scoring/src && docker build -f scoring/deploy/Dockerfile -t ec-scoring:latest .
+# on your machine
+git archive --format=tar HEAD scoring web/src/content/sound-hints.json | gzip > /tmp/ec-src.tgz
+scp /tmp/ec-src.tgz root@<ip>:/tmp/
+# on the droplet
+rm -rf /opt/ec-scoring/src && mkdir -p /opt/ec-scoring/src && tar -xzf /tmp/ec-src.tgz -C /opt/ec-scoring/src
+cd /opt/ec-scoring/src && docker build -f scoring/deploy/Dockerfile -t ec-scoring:<sha> -t ec-scoring:latest .
 ```
+
+(Once the repo is on GitHub, `git clone` works too.)
 
 ### 2.5 Secrets
 
+Generate them **on the droplet** so they never pass through a terminal or chat:
+
 ```bash
-install -m 600 /dev/null /etc/ec-scoring.env
-# Contents (same secret as Vercel's SCORING_SHARED_SECRET, ≥ 32 chars; generate with: openssl rand -hex 32)
-#   SCORING_SHARED_SECRET=...
-install -m 600 /dev/null /etc/ec-cron.env
-#   APP_URL=https://englishchunks.guru
-#   CRON_SECRET=...            (same as Vercel's CRON_SECRET)
+umask 077
+printf 'SCORING_SHARED_SECRET=%s\n' "$(openssl rand -hex 32)" > /etc/ec-scoring.env
+printf 'APP_URL=https://englishchunks.guru\nCRON_SECRET=%s\n' "$(openssl rand -hex 32)" > /etc/ec-cron.env
+```
+
+Copy them to Vercel by piping, never by pasting (from your machine, in `web/`):
+
+```bash
+ssh root@<ip> "sed -n 's/^SCORING_SHARED_SECRET=//p' /etc/ec-scoring.env" | tr -d '\n' | vercel env add SCORING_SHARED_SECRET production
+ssh root@<ip> "sed -n 's/^CRON_SECRET=//p' /etc/ec-cron.env" | tr -d '\n' | vercel env add CRON_SECRET production
 ```
 
 ### 2.6 Services
 
 ```bash
 cp scoring/deploy/scoring.service scoring/deploy/cron-hourly.service scoring/deploy/cron-hourly.timer /etc/systemd/system/
-cp scoring/deploy/Caddyfile /etc/caddy/Caddyfile && mkdir -p /var/log/caddy
+cp scoring/deploy/Caddyfile /etc/caddy/Caddyfile
+mkdir -p /var/log/caddy && chown caddy:caddy /var/log/caddy
+# don't run `caddy validate` as root here: it creates scoring.log owned by root and the reload then fails
 systemctl daemon-reload
-systemctl enable --now scoring.service cron-hourly.timer
+systemctl enable --now scoring.service
 systemctl reload caddy
+# only after the web app is deployed (otherwise it fails hourly):
+systemctl enable --now cron-hourly.timer
 ```
 
 ### 2.7 Verify
 
 ```bash
-curl -s localhost:8001/healthz                     # models true once preloaded (~20 s)
+curl -s localhost:8001/healthz                     # models true once preloaded (~7 s on SFO3 AMD)
 curl -s https://scoring.englishchunks.guru/healthz # valid TLS
 curl -s -o /dev/null -w '%{http_code}\n' -X POST https://scoring.englishchunks.guru/v1/score   # 401 (unsigned)
 systemctl list-timers cron-hourly.timer
 journalctl -u scoring -n 50 --no-pager            # no audio, no transcripts in logs
+docker exec ec-scoring find /tmp -type f           # only phonemizer's libespeak-ng copies, never audio
+# signed end-to-end test inside the container (secret stays on the host):
+docker exec -i ec-scoring /app/.venv/bin/python - < /opt/ec-scoring/src/scoring/deploy/smoke_test.py
 ```
 
-From your machine, with the web `.env.local` pointed at the Droplet: `pnpm --filter web latency:check` (SC-003 target p95 ≤ 5 s; record results in `web/docs/latency.md`).
+First production run (2026-10-17, SFO3 AMD, 20 synthetic clips): p50 1.43 s, p95 1.84 s, container memory 1.4 GB. The real-device check (`pnpm --filter web latency:check`) runs after the web deploy and is recorded in `web/docs/latency.md`.
 
 ### 2.8 Update / roll back
 
