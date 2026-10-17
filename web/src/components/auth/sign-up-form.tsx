@@ -122,6 +122,10 @@ export function SignUpForm({ invite, invitedEmail }: { invite?: string; invitedE
             Create my free account <ArrowRight aria-hidden className="size-4" />
           </button>
         </form>
+        <p className="text-muted-foreground text-center text-xs">
+          By creating an account you agree to our <Link href="/terms">Terms</Link> and{" "}
+          <Link href="/privacy">Privacy policy</Link>.
+        </p>
         <p className="text-muted-foreground text-center text-sm">
           Already have an account? <Link href="/sign-in">Log in</Link>
         </p>

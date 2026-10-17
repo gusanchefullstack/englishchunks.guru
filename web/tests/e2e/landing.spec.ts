@@ -42,6 +42,29 @@ for (const width of [375, 768, 1280]) {
   });
 }
 
+test("privacy policy and terms are public, linked and accessible", async ({ page }) => {
+  for (const [name, heading] of [
+    ["Privacy", "Privacy policy"],
+    ["Terms", "Terms of use"],
+  ] as const) {
+    await page.goto("/");
+    await page.getByRole("contentinfo").getByRole("link", { name, exact: true }).click();
+    await expect(page.getByRole("heading", { level: 1, name: heading })).toBeVisible();
+    await expectNoA11yViolations(page);
+  }
+  await expect(page.getByText(/deleted as soon as it is scored/i)).toHaveCount(0); // on /terms now
+  await page.goto("/privacy");
+  await expect(page.getByText(/deleted as soon as it is scored/i)).toBeVisible();
+
+  await page.goto("/sign-up");
+  const main = page.getByRole("main");
+  await expect(main.getByRole("link", { name: "Terms" })).toHaveAttribute("href", "/terms");
+  await expect(main.getByRole("link", { name: "Privacy policy" })).toHaveAttribute(
+    "href",
+    "/privacy",
+  );
+});
+
 test("at the account cap: waitlist, admin invite, invited visitor registers (US7, V12)", async ({
   page,
   request,
