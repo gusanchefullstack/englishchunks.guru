@@ -131,7 +131,7 @@ Open http://localhost:3001, create an account (confirm you're 16+), click the li
 | `STRIPE_SECRET_KEY` | Stripe **restricted** key (`rk_…`) | When billing is on | — |
 | `STRIPE_WEBHOOK_SECRET` | Webhook signing secret | When billing is on | — |
 | `STRIPE_PRICE_BASIC` / `_STANDARD` / `_PREMIUM` | One Price per plan Product | When billing is on | — |
-| `NEXT_PUBLIC_LANDING_VIDEO_URL` / `_CAPTIONS` | Landing video + WebVTT captions | No | walkthrough fallback |
+| `NEXT_PUBLIC_LANDING_VIDEO_URL` / `_CAPTIONS` / `_POSTER` | Landing video (Spaces CDN) + WebVTT captions and poster (served from `web/public/video`) | No | walkthrough fallback |
 
 `scoring/.env`: `SCORING_SHARED_SECRET` (same as the web app), `MODELS_DIR` (default `./models`), `MAX_AUDIO_SECONDS` (15), `MAX_AUDIO_BYTES` (1 MiB), `SOUND_HINTS_PATH` (set in Docker).
 

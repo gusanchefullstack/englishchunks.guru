@@ -1,18 +1,22 @@
 import { Headphones, Mic, PenLine, Volume2 } from "lucide-react";
 
 /**
- * Landing video (FR-070). The product owner supplies the file: set NEXT_PUBLIC_LANDING_VIDEO_URL
- * (and NEXT_PUBLIC_LANDING_VIDEO_CAPTIONS for a WebVTT captions track — required for WCAG).
- * Until then a static walkthrough of the session is shown.
+ * Landing video (FR-070). NEXT_PUBLIC_LANDING_VIDEO_URL points at the MP4 on the Spaces CDN;
+ * NEXT_PUBLIC_LANDING_VIDEO_CAPTIONS (WebVTT, required for WCAG) and _POSTER are served from
+ * /public on our own origin — a cross-origin <track> would need CORS. Without a URL, a static
+ * walkthrough of the session is shown.
  */
 export function IntroVideo() {
   const src = process.env.NEXT_PUBLIC_LANDING_VIDEO_URL;
   const captions = process.env.NEXT_PUBLIC_LANDING_VIDEO_CAPTIONS;
+  const poster = process.env.NEXT_PUBLIC_LANDING_VIDEO_POSTER;
   if (src) {
     return (
       <video
         controls
+        playsInline
         preload="metadata"
+        poster={poster}
         className="aspect-video w-full rounded-[20px] border bg-black"
         aria-label="How EnglishChunks.guru works"
       >
