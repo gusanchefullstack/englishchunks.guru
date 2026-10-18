@@ -200,7 +200,7 @@ englishchunks.guru/
 | Scoring latency (SC-003, p95 ≤ 5 s) | — | `uv run python -m scoring.bench` |
 | Lint · types · secrets | ESLint · tsc · ruff · mypy · gitleaks | `pnpm lint && pnpm typecheck && pnpm secret-scan` |
 
-Current results: 197 web tests, 18 e2e tests, 30 scoring tests; calibration 89.1 % over 66,189 pairs; scoring server p95 1.68 s on the production Droplet (see [`scoring/BENCHMARKS.md`](./scoring/BENCHMARKS.md)).
+Current results: 197 web tests, 21 e2e tests, 30 scoring tests; calibration 89.1 % over 66,189 pairs; scoring server p95 1.68 s on the production Droplet (see [`scoring/BENCHMARKS.md`](./scoring/BENCHMARKS.md)).
 
 ## Deployment
 

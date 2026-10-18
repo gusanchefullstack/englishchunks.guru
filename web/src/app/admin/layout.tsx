@@ -1,6 +1,7 @@
 import { Suspense } from "react";
 import { AdminNav } from "@/components/admin/admin-nav";
 import { Logo } from "@/components/app-shell/logo";
+import { HeaderAccount } from "@/components/app-shell/user-summary";
 import { adminOrNotFound } from "@/lib/admin-guard";
 import { pendingModerationCount } from "@/lib/domain/admin-chunks";
 
@@ -17,6 +18,11 @@ export default function AdminLayout({ children }: LayoutProps<"/admin">) {
           <Suspense fallback={null}>
             <NavWithCounts />
           </Suspense>
+          <div className="ml-auto">
+            <Suspense fallback={<span className="block size-10" />}>
+              <HeaderAccount area="admin" />
+            </Suspense>
+          </div>
         </div>
       </header>
       <main id="main" className="mx-auto max-w-6xl px-5 py-8">
