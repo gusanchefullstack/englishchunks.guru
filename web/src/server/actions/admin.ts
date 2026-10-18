@@ -2,7 +2,7 @@
 
 import { z } from "zod";
 import { requireAdmin } from "@/lib/authz";
-import { setChunkStatus, upsertChunk } from "@/lib/domain/admin-chunks";
+import { approveChunk, setChunkStatus, upsertChunk } from "@/lib/domain/admin-chunks";
 import { createUser, removeUser, setSuspended, updateUser } from "@/lib/domain/admin-users";
 import { AppError, toResult } from "@/lib/errors";
 
@@ -40,6 +40,9 @@ export async function adminDeleteUser(id: string, confirm: string) {
 }
 export async function adminUpsertChunk(id: string | null, input: unknown) {
   return adminAction((a) => upsertChunk(a, id ? z.uuid().parse(id) : null, input));
+}
+export async function adminApproveChunk(id: string) {
+  return adminAction((a) => approveChunk(a, z.uuid().parse(id)));
 }
 export async function adminRetireChunk(id: string, retire: boolean) {
   return adminAction((a) => setChunkStatus(a, z.uuid().parse(id), retire ? "retired" : "active"));

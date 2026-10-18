@@ -1,6 +1,8 @@
 import { Suspense } from "react";
 import { AdminNav } from "@/components/admin/admin-nav";
 import { Logo } from "@/components/app-shell/logo";
+import { adminOrNotFound } from "@/lib/admin-guard";
+import { pendingModerationCount } from "@/lib/domain/admin-chunks";
 
 /** Admin area. proxy.ts returns 404 to non-admins; each page/action still calls authorizeAdmin(). */
 export default function AdminLayout({ children }: LayoutProps<"/admin">) {
@@ -13,7 +15,7 @@ export default function AdminLayout({ children }: LayoutProps<"/admin">) {
             Admin
           </span>
           <Suspense fallback={null}>
-            <AdminNav />
+            <NavWithCounts />
           </Suspense>
         </div>
       </header>
@@ -22,4 +24,9 @@ export default function AdminLayout({ children }: LayoutProps<"/admin">) {
       </main>
     </div>
   );
+}
+
+async function NavWithCounts() {
+  await adminOrNotFound();
+  return <AdminNav pending={await pendingModerationCount()} />;
 }

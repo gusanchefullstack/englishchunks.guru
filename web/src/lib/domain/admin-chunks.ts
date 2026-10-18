@@ -1,9 +1,9 @@
 import "server-only";
-import { and, asc, desc, eq, ilike, or, type SQL } from "drizzle-orm";
+import { and, asc, count, desc, eq, gte, ilike, inArray, ne, or, type SQL } from "drizzle-orm";
 import { z } from "zod";
 import { db } from "@/db/client";
 import type { chunkStatus } from "@/db/schema";
-import { chunk, chunkExample } from "@/db/schema";
+import { adminAuditLog, chunk, chunkExample } from "@/db/schema";
 import { AppError } from "@/lib/errors";
 import { scoringClient } from "@/lib/providers/scoring-client";
 import { logAdmin } from "./audit";
@@ -41,6 +41,102 @@ export async function listAdminChunks(raw: unknown) {
     .orderBy(desc(chunk.updatedAt))
     .limit(100);
   return { filter: f, rows };
+}
+
+export const ModerationFilter = z.object({
+  tab: z.enum(["pending", "accepted", "rejected"]).catch("pending").default("pending"),
+  q: z.string().trim().max(80).optional().catch(undefined),
+});
+export type ModerationTab = z.infer<typeof ModerationFilter>["tab"];
+
+const TAB_WHERE: Record<ModerationTab, SQL | undefined> = {
+  // The auditor flagged it and nobody has decided yet.
+  pending: and(eq(chunk.auditStatus, "failed"), eq(chunk.status, "active")),
+  accepted: eq(chunk.auditStatus, "admin_approved"),
+  rejected: and(eq(chunk.auditStatus, "failed"), eq(chunk.status, "retired")),
+};
+
+/** Chunk moderation queue: flagged chunks with their examples and the auditor's notes. */
+export async function listModeration(raw: unknown) {
+  const f = ModerationFilter.parse(raw ?? {});
+  const where = and(
+    TAB_WHERE[f.tab],
+    f.q ? or(ilike(chunk.text, `%${f.q}%`), ilike(chunk.meaning, `%${f.q}%`)) : undefined,
+  );
+  const rows = await db()
+    .select()
+    .from(chunk)
+    .where(where)
+    .orderBy(
+      ...(f.tab === "pending" ? [asc(chunk.level), asc(chunk.createdAt)] : [desc(chunk.updatedAt)]),
+    )
+    .limit(50);
+  const examples = rows.length
+    ? await db()
+        .select()
+        .from(chunkExample)
+        .where(
+          inArray(
+            chunkExample.chunkId,
+            rows.map((r) => r.id),
+          ),
+        )
+        .orderBy(asc(chunkExample.position))
+    : [];
+  return {
+    tab: f.tab,
+    q: f.q,
+    rows: rows.map((r) => ({ ...r, examples: examples.filter((e) => e.chunkId === r.id) })),
+  };
+}
+
+export async function pendingModerationCount() {
+  const [r] = await db().select({ n: count() }).from(chunk).where(TAB_WHERE.pending);
+  return r?.n ?? 0;
+}
+
+/** Accept a flagged chunk as it is (the curated record and the auditor's notes are kept). */
+export async function approveChunk(adminId: string, id: string) {
+  const [row] = await db()
+    .update(chunk)
+    .set({ auditStatus: "admin_approved" })
+    .where(and(eq(chunk.id, id), TAB_WHERE.pending))
+    .returning({ id: chunk.id });
+  if (!row) throw new AppError("conflict", "This chunk isn't waiting for review anymore.");
+  await logAdmin(adminId, "chunk.approve", id);
+}
+
+const DECISIONS = ["chunk.approve", "chunk.deny"];
+
+export async function moderationStats(now = new Date()) {
+  const weekAgo = new Date(now.getTime() - 7 * 86_400_000);
+  const d = db();
+  const [library] = await d
+    .select({ n: count() })
+    .from(chunk)
+    .where(
+      and(
+        eq(chunk.status, "active"),
+        ne(chunk.auditStatus, "failed"),
+        ne(chunk.auditStatus, "pending"),
+      ),
+    );
+  const decisions = await d
+    .select({ action: adminAuditLog.action, n: count() })
+    .from(adminAuditLog)
+    .where(inArray(adminAuditLog.action, DECISIONS))
+    .groupBy(adminAuditLog.action);
+  const [week] = await d
+    .select({ n: count() })
+    .from(adminAuditLog)
+    .where(and(inArray(adminAuditLog.action, DECISIONS), gte(adminAuditLog.createdAt, weekAgo)));
+  const approved = decisions.find((x) => x.action === "chunk.approve")?.n ?? 0;
+  const denied = decisions.find((x) => x.action === "chunk.deny")?.n ?? 0;
+  return {
+    librarySize: library?.n ?? 0,
+    reviewedThisWeek: week?.n ?? 0,
+    acceptanceRate: approved + denied ? Math.round((approved / (approved + denied)) * 100) : null,
+  };
 }
 
 export async function getAdminChunk(id: string) {
@@ -116,7 +212,14 @@ export async function setChunkStatus(
     .update(chunk)
     .set({ status })
     .where(eq(chunk.id, id))
-    .returning({ id: chunk.id });
+    .returning({ id: chunk.id, auditStatus: chunk.auditStatus });
   if (!row) throw new AppError("not_found", "Chunk not found.");
-  await logAdmin(adminId, status === "retired" ? "chunk.retire" : "chunk.restore", id);
+  // Retiring a flagged chunk is a moderation decision ("deny"); it feeds the acceptance rate.
+  const action =
+    status === "retired"
+      ? row.auditStatus === "failed"
+        ? "chunk.deny"
+        : "chunk.retire"
+      : "chunk.restore";
+  await logAdmin(adminId, action, id);
 }
