@@ -3,7 +3,7 @@ import { Logo } from "./logo";
 import { NotificationsBell } from "./notifications";
 import { MobileTabBar, MobileTabLinks, SidebarLinks, SidebarNav } from "./sidebar-nav";
 import { ThemeSwitch } from "./theme-switch";
-import { UserSummary, UserSummarySkeleton } from "./user-summary";
+import { HeaderAccount, UserSummary, UserSummarySkeleton } from "./user-summary";
 
 /**
  * Learner app shell (Figma 2:380): 242px sidebar on desktop; top bar + bottom tabs below 1024px.
@@ -46,9 +46,9 @@ export function AppShell({ children }: { children: ReactNode }) {
           <Suspense fallback={<span className="size-10" />}>
             <NotificationsBell />
           </Suspense>
-          <div className="w-40">
-            <ThemeSwitch />
-          </div>
+          <Suspense fallback={<span className="size-10" />}>
+            <HeaderAccount />
+          </Suspense>
         </div>
       </header>
 
