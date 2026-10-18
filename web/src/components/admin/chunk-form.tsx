@@ -20,7 +20,7 @@ type Initial = {
 };
 const field = "bg-card h-10 w-full rounded-lg border px-3 text-sm";
 
-export function ChunkForm({ initial }: { initial: Initial }) {
+export function ChunkForm({ initial, returnTo }: { initial: Initial; returnTo?: string }) {
   const router = useRouter();
   const [busy, setBusy] = useState(false);
   async function onSubmit(e: React.FormEvent<HTMLFormElement>) {
@@ -39,7 +39,7 @@ export function ChunkForm({ initial }: { initial: Initial }) {
     setBusy(false);
     if (!r.ok) return toast.error(r.error.message);
     toast.success("Saved — IPA recomputed");
-    router.push(`/admin/chunks/${r.data.id}`);
+    router.push(returnTo ?? `/admin/chunks/${r.data.id}`);
     router.refresh();
   }
   return (

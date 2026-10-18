@@ -16,6 +16,9 @@
   --color-nav-active-foreground: var(--nav-active-foreground);
   --color-tag-type: var(--tag-type);
   --color-tag-type-foreground: var(--tag-type-foreground);
+  --color-danger-soft: var(--danger-soft);
+  --color-danger-soft-border: var(--danger-soft-border);
+  --color-danger-soft-foreground: var(--danger-soft-foreground);
   --color-tag-level: var(--tag-level);
   --color-tag-level-foreground: var(--tag-level-foreground);
   --color-coach: var(--coach);
@@ -110,6 +113,9 @@
   --nav-active-foreground: #0b765a;
   --tag-type: #efeffa;
   --tag-type-foreground: #5c619b;
+  --danger-soft: #fff8f8;
+  --danger-soft-border: #e4caca;
+  --danger-soft-foreground: #a14d4d;
   --tag-level: #e9f8f3;
   --tag-level-foreground: #547269;
   --coach: #171d1f;
@@ -151,6 +157,9 @@
   --nav-active-foreground: #8ff5d4;
   --tag-type: #262845;
   --tag-type-foreground: #c4c6f0;
+  --danger-soft: #2a1718;
+  --danger-soft-border: #5c2e30;
+  --danger-soft-foreground: #f4b4b4;
   --tag-level: #15332b;
   --tag-level-foreground: #a6e6d2;
   --coach: #1e262a;

@@ -9,18 +9,26 @@ import { AppError } from "@/lib/errors";
 
 export const metadata: Metadata = { title: "Edit chunk · Admin" };
 
-export default function ChunkEditPage({ params }: PageProps<"/admin/chunks/[id]">) {
+export default function ChunkEditPage({ params, searchParams }: PageProps<"/admin/chunks/[id]">) {
   return (
     <Suspense
       fallback={<div aria-busy="true" className="bg-muted h-96 animate-pulse rounded-2xl" />}
     >
-      <Edit params={params} />
+      <Edit params={params} searchParams={searchParams} />
     </Suspense>
   );
 }
 
-async function Edit({ params }: { params: PageProps<"/admin/chunks/[id]">["params"] }) {
+async function Edit({
+  params,
+  searchParams,
+}: {
+  params: PageProps<"/admin/chunks/[id]">["params"];
+  searchParams: PageProps<"/admin/chunks/[id]">["searchParams"];
+}) {
   const { id } = await params;
+  // Opened from the moderation queue: go back there after saving (FR-053).
+  const fromQueue = (await searchParams).from === "review";
   await adminOrNotFound();
   const empty = {
     id: null,
@@ -57,13 +65,13 @@ async function Edit({ params }: { params: PageProps<"/admin/chunks/[id]">["param
   return (
     <div>
       <Link href="/admin/chunks" className="text-sm font-bold">
-        ← Chunks
+        ← {fromQueue ? "Back to the review queue" : "Chunks"}
       </Link>
       <h1 className="mt-2 mb-6 text-[34px] leading-tight tracking-[-1px]">
         {initial.id ? `Edit “${initial.text}”` : "New chunk"}
       </h1>
       <div className="bg-card rounded-2xl border p-5">
-        <ChunkForm initial={initial} />
+        <ChunkForm initial={initial} returnTo={fromQueue ? "/admin/chunks" : undefined} />
       </div>
     </div>
   );
