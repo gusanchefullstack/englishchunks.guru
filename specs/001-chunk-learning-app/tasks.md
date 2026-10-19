@@ -467,3 +467,4 @@ Task: "Play button in web/src/components/session/play-button.tsx"
 - [X] T168 Add `web/src/app/error.tsx` and `global-error.tsx` (friendly retry + `page_error` report with the error digest) per FR-074 / FR-071
 - [X] T169 Make unusable-recording messages encouraging and actionable (`wrong_content`, `too_short`, `too_noisy`) in `web/src/components/session/record-panel.tsx` per Constitution VI (friendly, encouraging copy)
 - [X] T170 Describe practice diagnostics and their 30-day retention on `/privacy` per FR-073
+- [X] T171 Stop sign-in lookups failing with a WebSocket `ErrorEvent` on reused Vercel functions: `attachDatabasePool` + 5 s idle timeout, pool `error` listener, and read-only retry in `web/src/db/connect.ts` / `web/src/db/retry.ts` (`tests/unit/db-retry.test.ts`) per research R21 / Constitution V

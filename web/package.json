@@ -24,6 +24,7 @@
     "@neondatabase/serverless": "^1.2.0",
     "@react-email/components": "^1.0.12",
     "@react-email/render": "^2.1.1",
+    "@vercel/functions": "^3.9.9",
     "ai": "^7.0.142",
     "better-auth": "^1.7.10",
     "class-variance-authority": "^0.7.1",

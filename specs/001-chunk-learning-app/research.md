@@ -265,6 +265,22 @@ Each entry records the decision, why it was chosen, and what else was considered
   per day is recorded in a `usage_counters` table and shown on the admin dashboard.
 - **Rationale**: Covers the clarify-session deferrals with minimal cost.
 
+## R21. Database connections on reused, frozen functions
+
+- **Decision**: Keep one Neon WebSocket pool per function instance, but
+  `attachDatabasePool(pool)` (`@vercel/functions`) with `idleTimeoutMillis: 5000` so idle
+  sockets close before Vercel freezes the instance. Add a `pool.on("error")` listener, and
+  retry only plain `select` statements (300 ms, then 1 s) on connection-level failures
+  (`ErrorEvent`, `57P0x`, `08xxx`, terminated sockets). Writes and transactions are never retried.
+- **Rationale**: Production logged 16 sign-in lookups failing with a bare WebSocket
+  `ErrorEvent` in 2 days. The Neon driver documents that WebSockets don't survive between
+  serverless requests. On staging, suspending the compute made the pool emit an `error` event,
+  which has no listener and would crash the process. A failed write may already have committed,
+  so repeating it could apply it twice. No cost: free plan, no always-on compute.
+- **Alternatives considered**: disabling Neon auto-suspend (costs money, rejected); a new pool
+  per request (more connection setup on every request); Neon's HTTP driver (no interactive
+  transactions, which the app's row locks need).
+
 ---
 
 ## Community Wisdom (DEV)
