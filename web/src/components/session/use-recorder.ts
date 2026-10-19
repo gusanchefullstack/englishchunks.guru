@@ -7,6 +7,13 @@ const PREFERRED = ["audio/webm;codecs=opus", "audio/webm", "audio/mp4", "audio/o
 
 export type RecorderState = "idle" | "requesting" | "recording" | "denied" | "unsupported";
 
+/** Why no clip came back. `error` is the DOMException name (e.g. NotAllowedError). */
+export type RecordOutcome =
+  | { kind: "clip"; blob: Blob; mimeType: string }
+  | { kind: "denied"; error: string }
+  | { kind: "unsupported" }
+  | { kind: "empty" };
+
 function pickMimeType(): string | undefined {
   if (typeof MediaRecorder === "undefined") return undefined;
   return PREFERRED.find((t) => MediaRecorder.isTypeSupported(t));
@@ -26,7 +33,7 @@ export function useRecorder() {
   const [state, setState] = useState<RecorderState>("idle");
   const [elapsed, setElapsed] = useState(0);
   const recorderRef = useRef<MediaRecorder | null>(null);
-  const resolveRef = useRef<((r: { blob: Blob; mimeType: string } | null) => void) | null>(null);
+  const resolveRef = useRef<((r: RecordOutcome) => void) | null>(null);
   const timers = useRef<number[]>([]);
 
   const clear = () => {
@@ -47,14 +54,15 @@ export function useRecorder() {
     if (r && r.state === "recording") r.stop();
   }, []);
 
-  const start = useCallback(async (): Promise<{ blob: Blob; mimeType: string } | null> => {
+  /** Resolves when recording stops. The outcome says why, since `state` is stale in callers. */
+  const start = useCallback(async (): Promise<RecordOutcome> => {
     if (
       typeof window === "undefined" ||
       !navigator.mediaDevices?.getUserMedia ||
       typeof MediaRecorder === "undefined"
     ) {
       setState("unsupported");
-      return null;
+      return { kind: "unsupported" };
     }
     setState("requesting");
     let stream: MediaStream;
@@ -62,18 +70,16 @@ export function useRecorder() {
       stream = await navigator.mediaDevices.getUserMedia({
         audio: { echoCancellation: true, noiseSuppression: true },
       });
-    } catch {
+    } catch (err) {
       setState("denied");
-      return null;
+      return { kind: "denied", error: err instanceof Error ? err.name : "unknown" };
     }
     const mimeType = pickMimeType();
     const recorder = new MediaRecorder(stream, mimeType ? { mimeType } : undefined);
     recorderRef.current = recorder;
     const chunks: Blob[] = [];
     recorder.ondataavailable = (e) => e.data.size && chunks.push(e.data);
-    const done = new Promise<{ blob: Blob; mimeType: string } | null>(
-      (resolve) => (resolveRef.current = resolve),
-    );
+    const done = new Promise<RecordOutcome>((resolve) => (resolveRef.current = resolve));
     recorder.onstop = () => {
       clear();
       stream.getTracks().forEach((t) => t.stop());
@@ -81,7 +87,9 @@ export function useRecorder() {
       setElapsed(0);
       const type = recorder.mimeType || mimeType || "audio/webm";
       resolveRef.current?.(
-        chunks.length ? { blob: new Blob(chunks, { type }), mimeType: baseMime(type) } : null,
+        chunks.length
+          ? { kind: "clip", blob: new Blob(chunks, { type }), mimeType: baseMime(type) }
+          : { kind: "empty" },
       );
     };
     recorder.start();

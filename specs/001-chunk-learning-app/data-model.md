@@ -320,6 +320,23 @@ invite token is presented.
 | target_id | text | |
 | details | jsonb | no personal content |
 
+## practice_event
+
+Why a practice stalled (FR-074). Pruned after 30 days by the hourly cron.
+
+| Field | Type | Rules |
+|-------|------|-------|
+| id | uuid | PK (v7) |
+| user_id | text | FK → user `ON DELETE CASCADE` |
+| session_id | uuid | FK → practice_session `ON DELETE CASCADE`, nullable (page errors outside practice) |
+| kind | enum | `mic_denied`, `mic_unsupported`, `recording_unusable`, `upload_failed`, `scoring_unavailable`, `page_error` |
+| step | session_step | nullable |
+| reason | text | ≤ 40 chars, allow-listed: DOMException name, unusable reason, `offline`/`http_5xx`, or Next.js error digest |
+| created_at | timestamptz | indexed |
+
+`recording_unusable` and `scoring_unavailable` are written by the server; the other kinds come
+from the browser via `POST /api/events`, capped at 30 per learner per day.
+
 ---
 
 ## Relationships (summary)

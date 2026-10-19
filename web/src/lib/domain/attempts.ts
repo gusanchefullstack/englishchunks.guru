@@ -15,6 +15,7 @@ import { AppError } from "@/lib/errors";
 import { scoringClient } from "@/lib/providers/scoring-client";
 import { CAPS, consume } from "./caps";
 import { fallbackTip, lookupHints, writeTip } from "./feedback";
+import { logPracticeEvent } from "./practice-events";
 import type { HintInput } from "./prompts";
 import { setCountsTowardLimit, type SessionCtx } from "./session-engine";
 import { recordUsage } from "./usage";
@@ -101,6 +102,7 @@ export async function recordAttempt(
     "You've reached today's recording limit for this practice. Continue to the next step.",
   );
 
+  const where = { userId: ctx.userId, sessionId: s.id, step: input.step };
   let outcome;
   try {
     outcome = await scoringClient.score({
@@ -111,12 +113,17 @@ export async function recordAttempt(
     });
   } catch (err) {
     // Keep the session; if the learner gives up now, this practice won't use today's limit.
-    if (err instanceof AppError && err.code === "unavailable")
+    if (err instanceof AppError && err.code === "unavailable") {
       await setCountsTowardLimit(s.id, false);
+      await logPracticeEvent({ ...where, kind: "scoring_unavailable" });
+    }
     throw err;
   }
   await recordUsage("scoring_requests", 1).catch(() => undefined);
-  if (outcome.kind === "unusable") return { kind: "unusable", reason: outcome.reason };
+  if (outcome.kind === "unusable") {
+    await logPracticeEvent({ ...where, kind: "recording_unusable", reason: outcome.reason });
+    return { kind: "unusable", reason: outcome.reason };
+  }
   if (!s.countsTowardLimit) await setCountsTowardLimit(s.id, true);
 
   const r: ScoreResult = outcome.result;

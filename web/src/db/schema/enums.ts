@@ -61,6 +61,18 @@ export const attemptItems = [
 ] as const;
 export const attemptItem = pgEnum("attempt_item", attemptItems);
 
+/** Why a practice stalled (FR-074). Server kinds are written by the app; the rest by the browser. */
+export const practiceEventKinds = [
+  "mic_denied",
+  "mic_unsupported",
+  "recording_unusable",
+  "upload_failed",
+  "scoring_unavailable",
+  "page_error",
+] as const;
+export type PracticeEventKind = (typeof practiceEventKinds)[number];
+export const practiceEventKind = pgEnum("practice_event_kind", practiceEventKinds);
+
 export const chunkSource = pgEnum("chunk_source", ["curated", "submitted"]);
 export const auditStatus = pgEnum("audit_status", [
   "pending",
