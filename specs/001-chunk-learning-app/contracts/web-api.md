@@ -85,7 +85,8 @@ Common rules:
 | `POST /api/billing/checkout` | learner | `{ tier }` | `{ url }` Stripe Checkout; `409 billing_inactive` if off |
 | `POST /api/billing/portal` | learner with customer | — | `{ url }` Stripe Customer Portal |
 | `POST /api/webhooks/stripe` | Stripe | raw body + `Stripe-Signature` | `200` after idempotent processing; `400` on bad signature |
-| `POST /api/cron/hourly` | Droplet timer | `Authorization: Bearer CRON_SECRET` | sends due reminders (≤1/user/day), expires invites |
+| `POST /api/events` | verified user | JSON `{ kind: "mic_denied" \| "mic_unsupported" \| "upload_failed" \| "page_error", sessionId?, step?, reason }`; `reason` is an allow-listed code (FR-074) | `204` · `404` if `sessionId` isn't the caller's · `422` invalid · `429 limit_reached` after 30/day |
+| `POST /api/cron/hourly` | Droplet timer | `Authorization: Bearer CRON_SECRET` | sends due reminders (≤1/user/day), expires invites, prunes practice events older than 30 days |
 | `GET` or `POST /api/cron/daily` | Vercel Cron | `Authorization: Bearer CRON_SECRET` | housekeeping (abandon stale sessions, usage rollup) |
 | `GET /api/unsubscribe?token=…` and `POST` (RFC 8058 one-click) | public | signed token | turns reminders off without sign-in |
 

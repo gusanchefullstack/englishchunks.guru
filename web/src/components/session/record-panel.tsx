@@ -2,6 +2,7 @@
 
 import { Loader2, Mic, MicOff, Square } from "lucide-react";
 import { useState } from "react";
+import { micErrorCode, reportPracticeEvent } from "@/lib/report-event";
 import { cn } from "@/lib/utils";
 import type { AttemptResult } from "./types";
 import { MAX_RECORDING_MS, useRecorder } from "./use-recorder";
@@ -32,10 +33,16 @@ export function RecordPanel({
     if (rec.state === "recording") return rec.stop();
     setMessage("");
     const clip = await rec.start();
-    if (!clip) {
-      if (rec.state === "denied" || rec.state === "unsupported") onMicUnavailable();
+    if (clip.kind === "denied" || clip.kind === "unsupported") {
+      onMicUnavailable();
+      reportPracticeEvent(
+        clip.kind === "denied"
+          ? { kind: "mic_denied", sessionId, step, reason: micErrorCode(clip.error) }
+          : { kind: "mic_unsupported", sessionId, step },
+      );
       return;
     }
+    if (clip.kind === "empty") return;
     setUploading(true);
     try {
       const form = new FormData();
@@ -61,9 +68,17 @@ export function RecordPanel({
         onResult(body as AttemptResult);
       } else {
         setMessage(body?.error?.message ?? "Something went wrong. Please try again.");
+        if (res.status >= 500)
+          reportPracticeEvent({
+            kind: "upload_failed",
+            sessionId,
+            step,
+            reason: `http_${res.status}`,
+          });
       }
     } catch {
       setMessage("You seem to be offline. Please try again.");
+      reportPracticeEvent({ kind: "upload_failed", sessionId, step, reason: "offline" });
     } finally {
       setUploading(false);
     }
@@ -134,13 +149,13 @@ function unusableMessage(reason: string) {
   switch (reason) {
     case "no_speech":
     case "too_short":
-      return "We couldn't hear you. Please try again a little closer to the microphone.";
+      return "I couldn't quite hear you. Hold the phone a little closer and say the whole phrase.";
     case "too_noisy":
-      return "It's a bit noisy. Try again somewhere quieter.";
+      return "It's a bit noisy there. Try again somewhere quieter. You're doing fine!";
     case "wrong_content":
-      return "That didn't sound like the sentence. Listen once more and try again.";
+      return "Almost! I couldn't match that to the words yet. Listen once more, then say the words shown above.";
     default:
-      return "We couldn't read that recording. Please try again.";
+      return "That recording didn't come through. Please try once more.";
   }
 }
 
@@ -163,8 +178,7 @@ async function readStreamedResult(
       let nl;
       while ((nl = buffer.indexOf("\n")) >= 0) {
         const line = JSON.parse(buffer.slice(0, nl)) as
-          | Extract<AttemptResult, { kind: "scored" }>
-          | { kind: "tip"; tip: string };
+          Extract<AttemptResult, { kind: "scored" }> | { kind: "tip"; tip: string };
         buffer = buffer.slice(nl + 1);
         if (line.kind === "scored") {
           scored = line;

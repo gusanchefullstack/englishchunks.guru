@@ -459,3 +459,11 @@ Task: "Play button in web/src/components/session/play-button.tsx"
 - [X] T163 Record the LLM reliability decision in `specs/001-chunk-learning-app/research.md` (R1/R2) and `plan.md`: per-attempt timeouts (feedback 5 s then 12 s, audit 45 s), SDK retries off, feedback falling back to `openai/gpt-oss-20b`, library drafts never falling back (auditor independence) — implemented in `web/src/lib/providers/llm.ts` and `web/src/lib/domain/library-seeding.ts` per plan: R1 decision / Constitution II (partial)
 - [X] T164 Diagnose why the seed "lend credence to" fails every pipeline run ("Feedback is taking a break") although a direct Gemma draft is valid — trace the audit/import step in `web/src/lib/domain/library-seeding.ts`, fix the cause, and import it per FR-040 (partial)
 - [X] T165 Update the README "Current results" test counts (now 186 web tests) per T162 (partial)
+
+## Phase 14: Practice diagnostics
+
+- [X] T166 Add `practice_event` (enum `practice_event_kind`, migration `0007_practice_events.sql`) in `web/src/db/schema/events.ts`; log `recording_unusable` and `scoring_unavailable` from `web/src/lib/domain/attempts.ts`; accept allow-listed browser reports at `POST /api/events` (`web/src/lib/domain/practice-events.ts`, 30/learner/day); prune after 30 days in the hourly cron per FR-074
+- [X] T167 Fix the stale recorder state in `web/src/components/session/record-panel.tsx`: `useRecorder().start()` now returns why no clip came back, so a blocked microphone offers "Skip speaking today" on the first tap and is reported (`tests/e2e/mic-blocked.spec.ts`) per FR-074 / US1
+- [X] T168 Add `web/src/app/error.tsx` and `global-error.tsx` (friendly retry + `page_error` report with the error digest) per FR-074 / FR-071
+- [X] T169 Make unusable-recording messages encouraging and actionable (`wrong_content`, `too_short`, `too_noisy`) in `web/src/components/session/record-panel.tsx` per Constitution VI (friendly, encouraging copy)
+- [X] T170 Describe practice diagnostics and their 30-day retention on `/privacy` per FR-073

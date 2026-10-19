@@ -9,7 +9,7 @@ export const metadata: Metadata = {
 
 export default function PrivacyPage() {
   return (
-    <LegalPage title="Privacy policy" updated="October 17, 2026">
+    <LegalPage title="Privacy policy" updated="October 18, 2026">
       <p>
         EnglishChunks.guru helps you learn English chunks by listening, speaking and writing. This
         page explains what we collect, why, who helps us process it, and the choices you have. If
@@ -52,6 +52,12 @@ export default function PrivacyPage() {
         <li>
           <strong>Technical logs:</strong> short-lived server logs with request IDs and timings.
           They don&apos;t contain your recordings, sentences or what you said.
+        </li>
+        <li>
+          <strong>Practice problems:</strong> when something stops a practice (the microphone is
+          blocked, a recording can&apos;t be understood, an upload or page fails), we note what
+          happened, at which step and when, so we can fix it. Only a short code is kept, never your
+          audio or anything you said or wrote.
         </li>
       </ul>
 
@@ -102,6 +108,7 @@ export default function PrivacyPage() {
         <li>Recordings: not kept at all (deleted right after scoring).</li>
         <li>Your account and learning history: until you delete your account.</li>
         <li>Technical logs: a short time, then they are rotated out.</li>
+        <li>Practice problems: 30 days, then they are deleted automatically.</li>
       </ul>
 
       <h2>Your choices and rights</h2>

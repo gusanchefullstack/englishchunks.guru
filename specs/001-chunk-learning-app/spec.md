@@ -433,6 +433,11 @@ limit becomes three.
 - **FR-073**: The site MUST publish a privacy policy and terms of use as public pages, linked
   from the landing footer and the sign-up form, that accurately describe what data is
   collected, which processors receive it, retention, and how to delete an account.
+- **FR-074**: The system MUST record why a practice stalls — microphone blocked or unsupported,
+  unusable recording (with its reason), failed upload, scoring outage, or a page that failed to
+  load — as allow-listed codes with the learner, session, step and time, never audio or free
+  text, and delete these records after 30 days. A page that fails to load MUST show a friendly
+  retry instead of the framework's default error.
 
 ### Key Entities
 
