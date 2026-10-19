@@ -14,6 +14,14 @@ describe("dedupe key", () => {
     expect(lemma("stopped")).toBe("stop");
   });
 
+  it("maps short irregular past forms (got, ran) to their base verb", () => {
+    expect(lemma("got")).toBe("get");
+    expect(lemma("ran")).toBe("run");
+    expect(lemma("did")).toBe("do");
+    expect(lemma("thought")).toBe("think");
+    expect(lemma("bit")).toBe("bit"); // "a bit" — ambiguous forms stay as-is
+  });
+
   it("matches pg_trgm similarity semantics", () => {
     expect(similarity("word", "word")).toBe(1);
     expect(similarity("abc", "xyz")).toBe(0);

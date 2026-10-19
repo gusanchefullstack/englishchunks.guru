@@ -2,8 +2,49 @@ import { normalizeChunkText } from "./normalize";
 
 /** Light, rule-based lemma for duplicate comparison ("spilled" → "spill", "decisions" → "decision"). */
 export function lemma(word: string): string {
-  if (word.length <= 3 || word === "_slot_") return word;
+  // Irregular forms come first: short ones ("got", "ran", "met") must not hit the length guard.
   const irregular: Record<string, string> = {
+    ran: "run",
+    met: "meet",
+    led: "lead",
+    fed: "feed",
+    won: "win",
+    lost: "lose",
+    told: "tell",
+    sold: "sell",
+    brought: "bring",
+    bought: "buy",
+    thought: "think",
+    caught: "catch",
+    taught: "teach",
+    found: "find",
+    felt: "feel",
+    held: "hold",
+    stood: "stand",
+    sent: "send",
+    spent: "spend",
+    built: "build",
+    paid: "pay",
+    meant: "mean",
+    broke: "break",
+    broken: "break",
+    spoke: "speak",
+    spoken: "speak",
+    wrote: "write",
+    written: "write",
+    chose: "choose",
+    chosen: "choose",
+    knew: "know",
+    known: "know",
+    threw: "throw",
+    thrown: "throw",
+    began: "begin",
+    begun: "begin",
+    fell: "fall",
+    fallen: "fall",
+    ate: "eat",
+    eaten: "eat",
+    bitten: "bite",
     made: "make",
     took: "take",
     taken: "take",
@@ -33,6 +74,7 @@ export function lemma(word: string): string {
     being: "be",
   };
   if (irregular[word]) return irregular[word];
+  if (word.length <= 3 || word === "_slot_") return word;
   if (word.endsWith("ies") && word.length > 4) return `${word.slice(0, -3)}y`;
   // stop→stopped, get→getting double the final consonant; spill/miss/stuff already end doubled.
   const undouble = (w: string) => w.replace(/([bdgmnprt])\1$/, "$1");

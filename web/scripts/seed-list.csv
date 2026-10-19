@@ -364,3 +364,21 @@ it is clear that,B2,sentence_frame,academic
 closely linked to,B2,collocation,academic
 approximately half,B2,vague_language,academic
 a handful of,B2,vague_language,academic
+# --- 2026-10-18: from the Notion "English Chunks Tracker" (not yet in the library) ---
+wrap up,B1,verb_pattern,professional
+run into,B1,verb_pattern,casual
+pull the plug,B2,idiom,professional
+drop the ball,B2,idiom,professional
+run out of steam,B2,idiom,casual
+take it with a grain of salt,B2,idiom,casual
+play it by ear,B2,idiom,casual
+get the green light,B2,idiom,professional
+on the back burner,B2,idiom,professional
+ballpark figure,B2,collocation,professional
+in the pipeline,B2,idiom,professional
+low-hanging fruit,B2,idiom,professional
+move the needle,C1,idiom,professional
+get the ball rolling,B2,idiom,professional
+keep someone in the loop,B2,idiom,professional
+circle back,B2,verb_pattern,professional
+bite the bullet,B2,idiom,casual

@@ -169,6 +169,14 @@ describe("admin chunk editing (T123)", () => {
     expect(exampleContainsChunk("make a decision", "She took a break.")).toBe(false);
   });
 
+  it("accepts irregular past forms (library seeding false positives, 2026-10-18)", () => {
+    expect(exampleContainsChunk("run into", "I ran into my old teacher yesterday.")).toBe(true);
+    expect(exampleContainsChunk("run out of steam", "I ran out of steam after an hour.")).toBe(true);
+    expect(
+      exampleContainsChunk("get the green light", "I finally got the green light from my boss."),
+    ).toBe(true);
+  });
+
   it("refuses to save a chunk whose example doesn't contain it", async () => {
     const admin = await createLearner(db, { role: "admin" });
     await expect(
