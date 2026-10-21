@@ -43,6 +43,7 @@ export function SpeakStep({
     ),
   );
   const [micMissing, setMicMissing] = useState(false);
+  const [limitReached, setLimitReached] = useState(false);
   const current = items[index]!;
   const doneCount = items.filter((it) => results[it.key] || stored(it.key)).length;
   const result = results[current.key];
@@ -113,6 +114,7 @@ export function SpeakStep({
             item={current.key}
             onResult={onResult}
             onMicUnavailable={() => setMicMissing(true)}
+            onLimitReached={() => setLimitReached(true)}
           />
         </div>
         <p className="text-muted-foreground mt-2 text-xs">
@@ -125,9 +127,9 @@ export function SpeakStep({
           {doneCount}/{items.length} recorded
         </p>
         <div className="flex flex-wrap gap-3">
-          {micMissing ? (
+          {micMissing || limitReached ? (
             <button type="button" className={ghostBtn} onClick={onSkip} disabled={busy}>
-              Skip speaking today
+              {limitReached ? "Continue without recording" : "Skip speaking today"}
             </button>
           ) : null}
           {result && index < items.length - 1 ? (
