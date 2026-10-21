@@ -14,6 +14,7 @@ export function RecordPanel({
   item,
   onResult,
   onMicUnavailable,
+  onLimitReached,
   compact = false,
 }: {
   sessionId: string;
@@ -21,6 +22,8 @@ export function RecordPanel({
   item: string;
   onResult: (r: AttemptResult) => void;
   onMicUnavailable: () => void;
+  /** The practice's recording cap is used up; the parent must offer a way to move on. */
+  onLimitReached?: () => void;
   compact?: boolean;
 }) {
   const rec = useRecorder();
@@ -68,6 +71,7 @@ export function RecordPanel({
         onResult(body as AttemptResult);
       } else {
         setMessage(body?.error?.message ?? "Something went wrong. Please try again.");
+        if (body?.error?.code === "limit_reached") onLimitReached?.();
         if (res.status >= 500)
           reportPracticeEvent({
             kind: "upload_failed",

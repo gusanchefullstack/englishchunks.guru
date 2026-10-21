@@ -66,6 +66,7 @@ export function ReadAloudStep({
                       item={key}
                       compact
                       onMicUnavailable={() => setMicMissing(true)}
+                      onLimitReached={() => setMicMissing(true)}
                       onResult={(r) =>
                         r.kind === "scored" && setScores((s) => ({ ...s, [key]: r.score }))
                       }
