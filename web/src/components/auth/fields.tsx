@@ -1,13 +1,49 @@
-import type { ComponentProps } from "react";
+import { Check, Circle } from "lucide-react";
+import type { ComponentProps, ReactNode } from "react";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { PASSWORD_MAX, PASSWORD_MIN } from "@/lib/account-rules";
+
+function Rule({ met, children }: { met: boolean; children: ReactNode }) {
+  const Icon = met ? Check : Circle;
+  return (
+    <li className={`flex items-center gap-1.5 ${met ? "text-foreground font-medium" : ""}`}>
+      <Icon aria-hidden className="size-3 shrink-0" />
+      <span>
+        {children}
+        <span className="sr-only">{met ? " (done)" : " (not yet)"}</span>
+      </span>
+    </li>
+  );
+}
+
+/** Live hint for a new-password field: the length rule (with a count) and what characters are allowed. */
+export function PasswordHint({ length }: { length: number }) {
+  return (
+    <ul className="grid gap-1">
+      <Rule met={length >= PASSWORD_MIN}>
+        At least {PASSWORD_MIN} characters
+        {length > 0 && length < PASSWORD_MIN ? ` (${length}/${PASSWORD_MIN})` : ""}
+      </Rule>
+      <li className="pl-[18px]">
+        Any letters, numbers, spaces or symbols. No special characters required — a short phrase
+        works well.
+      </li>
+    </ul>
+  );
+}
+
+export const PASSWORD_ERRORS: Record<string, string> = {
+  PASSWORD_TOO_SHORT: `Your password needs at least ${PASSWORD_MIN} characters.`,
+  PASSWORD_TOO_LONG: `Your password can have at most ${PASSWORD_MAX} characters.`,
+};
 
 export function Field({
   label,
   id,
   hint,
   ...props
-}: { label: string; id: string; hint?: string } & ComponentProps<"input">) {
+}: { label: string; id: string; hint?: ReactNode } & ComponentProps<"input">) {
   return (
     <div className="grid gap-1.5">
       <Label htmlFor={id} className="text-xs font-bold">
@@ -21,9 +57,9 @@ export function Field({
         {...props}
       />
       {hint ? (
-        <p id={`${id}-hint`} className="text-muted-foreground text-xs">
+        <div id={`${id}-hint`} className="text-muted-foreground text-xs">
           {hint}
-        </p>
+        </div>
       ) : null}
     </div>
   );

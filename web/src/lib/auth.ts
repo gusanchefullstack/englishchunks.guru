@@ -17,8 +17,13 @@ import {
 } from "@/lib/auth-hooks";
 import { e2eMode } from "@/lib/e2e";
 import { emailProvider } from "@/lib/providers/email";
-
-const USERNAME_RE = /^[a-z0-9_]{3,24}$/;
+import {
+  PASSWORD_MAX,
+  PASSWORD_MIN,
+  USERNAME_MAX,
+  USERNAME_MIN,
+  USERNAME_RE,
+} from "@/lib/account-rules";
 
 function createAuth() {
   const e = env();
@@ -31,7 +36,8 @@ function createAuth() {
     }),
     emailAndPassword: {
       enabled: true,
-      minPasswordLength: 8,
+      minPasswordLength: PASSWORD_MIN,
+      maxPasswordLength: PASSWORD_MAX,
       // FR-002: password accounts cannot sign in (or practice) until the email is verified.
       requireEmailVerification: true,
       resetPasswordTokenExpiresIn: 60 * 60,
@@ -97,8 +103,8 @@ function createAuth() {
     rateLimit: { enabled: !e2eMode(), window: 60, max: 30, storage: "database" },
     plugins: [
       username({
-        minUsernameLength: 3,
-        maxUsernameLength: 24,
+        minUsernameLength: USERNAME_MIN,
+        maxUsernameLength: USERNAME_MAX,
         usernameValidator: (name) => USERNAME_RE.test(name),
       }),
       admin({ defaultRole: "learner", adminRoles: ["admin"] }),
