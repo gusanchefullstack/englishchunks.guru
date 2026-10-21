@@ -6,7 +6,8 @@ import { useRouter, useSearchParams } from "next/navigation";
 import { useActionState, useState } from "react";
 import { authClient } from "@/lib/auth-client";
 import { requestPasswordReset } from "@/server/actions/auth";
-import { Field, submitBtn } from "./fields";
+import { PASSWORD_MAX, PASSWORD_MIN } from "@/lib/account-rules";
+import { Field, PASSWORD_ERRORS, PasswordHint, submitBtn } from "./fields";
 
 export function ForgotPasswordForm() {
   const [state, action, pending] = useActionState(requestPasswordReset, null);
@@ -43,6 +44,7 @@ export function ResetPasswordForm() {
   const invalid = params.get("error") === "INVALID_TOKEN" || !token;
   const [error, setError] = useState("");
   const [pending, setPending] = useState(false);
+  const [passwordLength, setPasswordLength] = useState(0);
   async function onSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
     const f = new FormData(e.currentTarget);
@@ -52,7 +54,10 @@ export function ResetPasswordForm() {
     const { error: err } = await authClient.resetPassword({ newPassword, token });
     setPending(false);
     if (err)
-      return setError("This link has expired or was already used. Please request a new one.");
+      return setError(
+        (err.code && PASSWORD_ERRORS[err.code]) ??
+          "This link has expired or was already used. Please request a new one.",
+      );
     router.push("/sign-in?reset=1");
   }
   if (invalid) {
@@ -75,7 +80,10 @@ export function ResetPasswordForm() {
           id="password"
           type="password"
           required
-          minLength={8}
+          minLength={PASSWORD_MIN}
+          maxLength={PASSWORD_MAX}
+          onChange={(e) => setPasswordLength(e.currentTarget.value.length)}
+          hint={<PasswordHint length={passwordLength} />}
           autoComplete="new-password"
         />
         <Field
@@ -83,7 +91,8 @@ export function ResetPasswordForm() {
           id="confirm"
           type="password"
           required
-          minLength={8}
+          minLength={PASSWORD_MIN}
+          maxLength={PASSWORD_MAX}
           autoComplete="new-password"
         />
         <p role="alert" aria-live="assertive" className="text-destructive text-sm">

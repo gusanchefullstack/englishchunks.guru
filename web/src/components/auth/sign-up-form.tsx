@@ -5,14 +5,40 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { Checkbox } from "@/components/ui/checkbox";
+import {
+  PASSWORD_MAX,
+  PASSWORD_MIN,
+  USERNAME_MAX,
+  USERNAME_MIN,
+  usernameProblem,
+} from "@/lib/account-rules";
 import { authClient, browserTimeZone } from "@/lib/auth-client";
-import { Divider, Field, GoogleMark, outlineBtn, submitBtn } from "./fields";
+import {
+  Divider,
+  Field,
+  GoogleMark,
+  outlineBtn,
+  PASSWORD_ERRORS,
+  PasswordHint,
+  submitBtn,
+} from "./fields";
+
+const SIGN_UP_ERRORS: Record<string, string> = {
+  ...PASSWORD_ERRORS,
+  INVALID_USERNAME: "Usernames can only use lowercase letters (a–z), numbers (0–9) and _.",
+  USERNAME_TOO_SHORT: `Your username needs at least ${USERNAME_MIN} characters.`,
+  USERNAME_TOO_LONG: `Your username can have at most ${USERNAME_MAX} characters.`,
+  USERNAME_IS_ALREADY_TAKEN: "That username is taken. Please try another one.",
+};
 
 export function SignUpForm({ invite, invitedEmail }: { invite?: string; invitedEmail?: string }) {
   const router = useRouter();
   const [ageConfirmed, setAge] = useState(false);
   const [pending, setPending] = useState(false);
   const [error, setError] = useState("");
+  const [username, setUsername] = useState("");
+  const [passwordLength, setPasswordLength] = useState(0);
+  const usernameIssue = usernameProblem(username);
 
   async function onSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
@@ -34,7 +60,11 @@ export function SignUpForm({ invite, invitedEmail }: { invite?: string; invitedE
     if (err) {
       if (err.code === "SIGNUP_CLOSED")
         return router.push(`/waitlist?email=${encodeURIComponent(email)}`);
-      return setError(err.message ?? "We couldn't create your account. Please try again.");
+      return setError(
+        (err.code && SIGN_UP_ERRORS[err.code]) ??
+          err.message ??
+          "We couldn't create your account. Please try again.",
+      );
     }
     router.push(`/verify-email?email=${encodeURIComponent(email)}`);
   }
@@ -89,11 +119,31 @@ export function SignUpForm({ invite, invitedEmail }: { invite?: string; invitedE
             id="username"
             placeholder="e.g. amira_m"
             required
-            minLength={3}
-            maxLength={24}
+            minLength={USERNAME_MIN}
+            maxLength={USERNAME_MAX}
             pattern="[a-z0-9_]{3,24}"
-            hint="3–24 lowercase letters, numbers or _"
+            value={username}
+            // Capitals are lowercased as you type, so they never count as a mistake.
+            onChange={(e) => {
+              const v = e.currentTarget.value.toLowerCase();
+              setUsername(v);
+              e.currentTarget.setCustomValidity(usernameProblem(v));
+            }}
+            aria-invalid={usernameIssue ? true : undefined}
+            hint={
+              <>
+                <p>
+                  {USERNAME_MIN}–{USERNAME_MAX} characters: lowercase letters (a–z), numbers (0–9)
+                  or underscore (_).
+                </p>
+                <p aria-live="polite" className="text-destructive">
+                  {usernameIssue}
+                </p>
+              </>
+            }
             autoComplete="username"
+            autoCapitalize="none"
+            spellCheck={false}
           />
           <Field
             label="Email address"
@@ -109,9 +159,12 @@ export function SignUpForm({ invite, invitedEmail }: { invite?: string; invitedE
             label="Password"
             id="password"
             type="password"
-            placeholder="At least 8 characters"
+            placeholder={`At least ${PASSWORD_MIN} characters`}
             required
-            minLength={8}
+            minLength={PASSWORD_MIN}
+            maxLength={PASSWORD_MAX}
+            onChange={(e) => setPasswordLength(e.currentTarget.value.length)}
+            hint={<PasswordHint length={passwordLength} />}
             autoComplete="new-password"
           />
           <p role="alert" aria-live="assertive" className="text-destructive text-sm">
