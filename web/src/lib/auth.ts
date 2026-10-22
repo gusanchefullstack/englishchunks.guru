@@ -85,6 +85,7 @@ function createAuth() {
         level: { type: "string", required: false, input: false },
         ageConfirmedAt: { type: "date", required: false, input: false },
         earlyTester: { type: "boolean", required: false, input: false },
+        lastActiveAt: { type: "date", required: false, input: false },
       },
     },
     hooks: { before: beforeAuth },
