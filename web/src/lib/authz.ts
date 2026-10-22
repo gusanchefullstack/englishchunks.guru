@@ -1,8 +1,11 @@
 import "server-only";
 import { headers } from "next/headers";
+import { after } from "next/server";
 import type { CefrLevel } from "@/db/schema";
 import { auth } from "@/lib/auth";
+import { isActivityStale, touchLastActive } from "@/lib/domain/activity";
 import { AppError } from "@/lib/errors";
+import { logger } from "@/lib/logger";
 
 /** The subset of the session user that authorization decisions depend on. */
 export type SessionUser = {
@@ -15,6 +18,7 @@ export type SessionUser = {
   level?: string | null;
   timeZone?: string | null;
   ageConfirmedAt?: Date | string | null;
+  lastActiveAt?: Date | string | null;
 };
 
 export type Learner = SessionUser & { level: CefrLevel; timeZone: string };
@@ -49,7 +53,14 @@ export async function getSessionUser(): Promise<SessionUser | null> {
   // auth client (and its env) is only touched at request time.
   const requestHeaders = await headers();
   const s = await auth().api.getSession({ headers: requestHeaders });
-  return (s?.user as SessionUser | undefined) ?? null;
+  const u = (s?.user as SessionUser | undefined) ?? null;
+  // Admin "Last active": refreshed at most every 15 min, after the response is sent.
+  if (u && !s?.session.impersonatedBy && isActivityStale(u.lastActiveAt)) {
+    after(() =>
+      touchLastActive(u.id).catch((err) => logger.warn({ err }, "last-active update failed")),
+    );
+  }
+  return u;
 }
 
 export async function requireLearner(): Promise<Learner> {
