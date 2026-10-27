@@ -54,6 +54,17 @@ export function SpeakStep({
   }
 
   const isTry2 = step === "speak_2";
+  const recordPanel = (
+    <RecordPanel
+      key={`${step}-${current.key}`}
+      sessionId={view.session.id}
+      step={step}
+      item={current.key}
+      onResult={onResult}
+      onMicUnavailable={() => setMicMissing(true)}
+      onLimitReached={() => setLimitReached(true)}
+    />
+  );
   return (
     <div>
       <div className="text-center">
@@ -99,24 +110,19 @@ export function SpeakStep({
         </p>
 
         {result ? (
-          <ScoreResult result={result} />
-        ) : storedScore !== undefined ? (
-          <p className="mt-6 border-t pt-6">
-            Your score: <span className="font-bold">{storedScore}%</span>
-          </p>
-        ) : null}
-
-        <div className="mt-6">
-          <RecordPanel
-            key={`${step}-${current.key}`}
-            sessionId={view.session.id}
-            step={step}
-            item={current.key}
-            onResult={onResult}
-            onMicUnavailable={() => setMicMissing(true)}
-            onLimitReached={() => setLimitReached(true)}
-          />
-        </div>
+          <ScoreResult result={result}>
+            <div className="mt-6">{recordPanel}</div>
+          </ScoreResult>
+        ) : (
+          <>
+            {storedScore !== undefined ? (
+              <p className="mt-6 border-t pt-6">
+                Your score: <span className="font-bold">{storedScore}%</span>
+              </p>
+            ) : null}
+            <div className="mt-6">{recordPanel}</div>
+          </>
+        )}
         <p className="text-muted-foreground mt-2 text-xs">
           Your recording is private and deleted as soon as it&apos;s scored.
         </p>
