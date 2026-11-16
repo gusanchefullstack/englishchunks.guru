@@ -1,6 +1,6 @@
 # Deployment runbook
 
-Production layout: **web** on Vercel, **database** on Neon, **scoring** on one DigitalOcean Droplet behind Caddy. No secret ever goes into the repo. Every value below lives only in the Vercel project env, `/etc/ec-scoring.env` or `/etc/ec-cron.env` on the Droplet, or your password manager.
+Production layout: **web** on Vercel, **database** on Neon, **scoring** on Google Cloud Run (§2C, scale-to-zero, free tier), hourly cron from GitHub Actions. The DigitalOcean Droplet setup (§2) is kept as the fallback host. No secret ever goes into the repo. Every value below lives only in the Vercel project env, Google Secret Manager, GitHub Actions secrets, `/etc/ec-*.env` on a Droplet, or your password manager.
 
 ## 1. Neon (database)
 
@@ -16,7 +16,7 @@ Production layout: **web** on Vercel, **database** on Neon, **scoring** on one D
 
 4. Optional: grow the library (needs `AI_GATEWAY_API_KEY`, ~$1–3 of LLM calls): `DATABASE_URL=… pnpm seed:library`.
 
-## 2. Scoring Droplet
+## 2. Scoring Droplet (fallback host)
 
 ### 2.1 Create it
 
@@ -130,6 +130,54 @@ systemctl restart scoring
 
 Rotate `SCORING_SHARED_SECRET`: write the new value to `/etc/ec-scoring.env` and `systemctl restart scoring`, then immediately update it in Vercel and redeploy. Attempts in between fail signature checks and show learners the "try again" message; no data is lost.
 
+## 2C. Scoring on Google Cloud Run (production since 2026-11)
+
+Same image contents and models as §2, but the int8 models are baked in (`scoring/deploy/Dockerfile.cloudrun`) and the service scales to zero. Free-tier sized: one score ≈ 3 vCPU-s; the monthly free grant is 180,000 vCPU-s / 360,000 GiB-s / 2 M requests. Artifact Registry keeps the 2 newest images (~$0.15/mo above its 0.5 GB free tier).
+
+One-time setup (project `englishchunks-scoring`, billing linked, $1 budget alert):
+
+```bash
+gcloud services enable run.googleapis.com artifactregistry.googleapis.com cloudbuild.googleapis.com secretmanager.googleapis.com
+gcloud artifacts repositories create scoring --repository-format=docker --location=us-central1
+gcloud artifacts repositories set-cleanup-policies scoring --location=us-central1 --policy=<keep 2 newest>.json --no-dry-run
+gcloud iam service-accounts create ec-scoring-run
+# Secret generated straight into Secret Manager, never printed:
+openssl rand -hex 32 | tr -d '\n' | gcloud secrets create scoring-shared-secret --data-file=-
+gcloud secrets add-iam-policy-binding scoring-shared-secret \
+  --member=serviceAccount:ec-scoring-run@englishchunks-scoring.iam.gserviceaccount.com --role=roles/secretmanager.secretAccessor
+# Build uploads are copies of the models: auto-delete after a day.
+gcloud storage buckets update gs://englishchunks-scoring_cloudbuild --lifecycle-file=<delete age 1>.json
+```
+
+Build and deploy (from a clean context: committed files + the verified models, never `.env`):
+
+```bash
+SHA=$(git rev-parse --short HEAD); CTX=$(mktemp -d)
+git archive HEAD scoring web/src/content/sound-hints.json | tar -x -C "$CTX"
+rm -rf "$CTX/scoring/tests" && cp -R scoring/models "$CTX/scoring/models"   # compare sha256 with the reference first
+cp "$CTX/scoring/deploy/Dockerfile.cloudrun" "$CTX/Dockerfile" && : > "$CTX/.gcloudignore"
+gcloud builds submit "$CTX" --region=us-central1 --tag=us-central1-docker.pkg.dev/englishchunks-scoring/scoring/ec-scoring:$SHA
+gcloud run deploy ec-scoring --region=us-central1 \
+  --image=us-central1-docker.pkg.dev/englishchunks-scoring/scoring/ec-scoring:$SHA \
+  --service-account=ec-scoring-run@englishchunks-scoring.iam.gserviceaccount.com \
+  --execution-environment=gen2 --cpu=2 --memory=4Gi --cpu-boost \
+  --concurrency=4 --min-instances=0 --max-instances=1 --timeout=60 \
+  --set-secrets=SCORING_SHARED_SECRET=scoring-shared-secret:latest \
+  --startup-probe=httpGet.path=/healthz,periodSeconds=2,timeoutSeconds=1,failureThreshold=90 \
+  --allow-unauthenticated   # every route except /healthz requires the HMAC signature
+```
+
+- **gen2** loads the models in ~10 s (gen1: ~31 s). The startup probe waits on `/healthz` (503 until loaded), so requests queue instead of failing while an instance starts.
+- **Concurrency 4 / max 1** mirrors the Droplet: one instance, requests processed one at a time in-process, the rest wait. `max-instances` is the spend cap (budgets only alert).
+- **Cold start**: the first request after ~15 min idle takes ~18 s. The web app sends a signed `GET /v1/warm` when a learner opens a practice session, and its scoring timeout is 30 s.
+- Cloud Run reserves paths ending in `z`: `/healthz` answers the probe internally but returns Google's 404 from outside. Use `/v1/warm` (signed) to check from outside.
+- Verify after each deploy (from `scoring/`, secret piped from Secret Manager, never printed):
+  `SCORING_SHARED_SECRET="$(gcloud secrets versions access latest --secret=scoring-shared-secret)" SCORING_URL=<service url> uv run python deploy/smoke_test.py`
+- Roll back: `gcloud run services update-traffic ec-scoring --region=us-central1 --to-revisions=<previous>=100`.
+- Rotate the secret: add a new version in Secret Manager, redeploy (picks up `latest`), update `SCORING_SHARED_SECRET` in Vercel and redeploy the web app.
+
+Point the web app at it: Vercel production `SCORING_URL=<service url>` and `SCORING_SHARED_SECRET` (piped from Secret Manager into `vercel env add … --sensitive`).
+
 ## 3. Vercel (web)
 
 1. Import the GitHub repo, **Root Directory `web`**, framework Next.js, plan **Hobby** while testing (Pro before charging money: Hobby is non-commercial).
@@ -137,7 +185,7 @@ Rotate `SCORING_SHARED_SECRET`: write the new value to `/etc/ec-scoring.env` and
 3. `BETTER_AUTH_URL` = the production URL; add the same origin to the Google OAuth client's authorized redirect URIs (`/api/auth/callback/google`).
 4. Resend: verify the sending domain (SPF, DKIM, DMARC) before setting `EMAIL_FROM`.
 5. DigitalOcean Spaces: create the bucket with file listing **restricted** and enable its CDN. The app sets the ACL per object on upload (`public-read` for shared TTS audio and avatars, `private` otherwise), so no bucket-wide public policy is needed; CORS isn't either (audio and images load by URL).
-6. Deploy; `vercel.json` registers the daily cron (`/api/cron/daily`). The hourly cron comes from the Droplet timer.
+6. Deploy; `vercel.json` registers the daily cron (`/api/cron/daily`). The hourly cron comes from GitHub Actions (`.github/workflows/cron-hourly.yml`, repo secret `CRON_SECRET` = the Vercel value); the Droplet timer in §2.6 is the fallback.
 7. Create the first admin: sign up normally, then in Neon SQL: `update "user" set role = 'admin' where email = '<you>';`
 
 ## 4. Staging validation

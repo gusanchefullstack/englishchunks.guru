@@ -62,6 +62,17 @@ Each entry records the decision, why it was chosen, and what else was considered
   `PARALLEL_MODELS`, `ASR_THREADS=1`, `PHONEME_THREADS=2`), −10% server time; no 8 GB resize
   needed (scoring/BENCHMARKS.md).
 
+- **Production note (2026-11-15) — moved to Google Cloud Run**: to keep the app free for everyone
+  (constitution v1.2.0, Principle V), scoring moved from the $28/mo Droplet to Cloud Run
+  (us-central1, gen2, 2 vCPU / 4 GiB, scale-to-zero, max 1 instance) within the free tier. Same
+  image contents, same int8 models (sha256-verified), same x86 CPU family. Measured on the test
+  service: SC-005 calibration 88.8% over 66,189 pairs (baseline 89.1%); warm server time
+  0.75–1.6 s; first request after scale-to-zero 17.8 s, hidden by a signed `/v1/warm` call when a
+  learner opens practice. Rejected: Oracle Always Free ARM (A1 allowance halved to 2 OCPU / 12 GB,
+  idle reclamation, ARM numerics change), Vercel Hobby functions (4 CPU-h/month shared with the
+  site; overage pauses the whole site), Render free (0.1 CPU / 512 MB), Hugging Face Spaces (free
+  CPU/Docker availability unclear, demo platform), Modal (relies on promotional credits).
+
 ## R4. Voice activity detection
 
 - **Decision**: Silero VAD (ONNX) trims leading/trailing silence and rejects recordings with
@@ -197,6 +208,10 @@ Each entry records the decision, why it was chosen, and what else was considered
 - **Alternatives**: Vercel Pro cron (costs $20/month during free testing — rejected per
   Principle V; switch when billing goes live and the plan is upgraded anyway); external cron
   SaaS (extra vendor).
+- **Update (2026-11-15)**: with scoring on Cloud Run there is no always-on server, so the hourly
+  call moved to a GitHub Actions schedule (`.github/workflows/cron-hourly.yml`, free minutes).
+  The route stays idempotent (reminders claimed once per learner per day), so GitHub's
+  occasionally late runs or an overlap with the old Droplet timer are harmless.
 
 ## R15. Email
 
