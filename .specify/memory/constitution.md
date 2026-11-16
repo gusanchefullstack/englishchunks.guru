@@ -10,7 +10,10 @@ tooling. Specifically:
 - Daily chunk selection, example generation, writing grades, and learner tips MUST run on an
   open-weight LLM (Gemma family, currently Gemma 4 26B A4B via Vercel AI Gateway).
 - Speech scoring MUST run on self-hosted open models (Silero VAD, Parakeet ASR, wav2vec2
-  phoneme recognition) on infrastructure the project controls.
+  phoneme recognition) on infrastructure the project controls. A container service the project
+  deploys and configures itself (its image, models, secrets, scaling and logging) counts as
+  infrastructure the project controls — today a Google Cloud Run service or a DigitalOcean
+  Droplet; a hosted third-party scoring API does not.
 - Closed/proprietary services (ElevenLabs TTS, Resend email, Stripe billing) are permitted only
   for peripheral concerns and MUST NOT be required for the core "learn → speak → write → score"
   loop to produce a result.
@@ -73,9 +76,10 @@ verification keeps changes safe.
   flow MUST be validated in test mode before go-live.
 - Admin routes and APIs MUST enforce role-based authorization server-side.
 - Learner voice recordings MUST be used only for scoring and MUST NOT be sent to third-party
-  services. Hosting infrastructure the project operates (its Vercel Functions and DigitalOcean
-  Droplet) is not a third-party service, provided audio only transits it in memory and is never
-  stored or logged there. Raw audio MUST be deleted (from memory, temp files, and any storage) as soon as its
+  services. Hosting infrastructure the project operates (its Vercel Functions, its DigitalOcean
+  Droplet, and its Google Cloud Run service) is not a third-party service, provided audio only
+  transits it in memory and is never stored or logged there — including platform request logs,
+  which MUST NOT capture request bodies. Raw audio MUST be deleted (from memory, temp files, and any storage) as soon as its
   score is computed, including when scoring fails; only derived results (scores, transcripts
   of words, per-sound results) may be persisted.
 - Uploaded profile pictures MUST be validated (type, size), normalized, and stored in object
@@ -89,13 +93,17 @@ Rationale: the app handles personal data, voice biometrics-adjacent audio, and p
   sentence and voice in object storage (DigitalOcean Spaces); cached audio MUST be reused.
 - The cheapest adequate model tier MUST be the default (e.g., ElevenLabs Flash, the lowest-cost
   Gemma variant); a more expensive tier requires a documented justification in the plan.
-- Speech models SHOULD be quantized (ONNX int8) to fit the smallest viable Droplet.
+- Speech models SHOULD be quantized (ONNX int8) to fit the smallest viable instance.
+- Infrastructure MUST prefer free tiers and scale-to-zero services over fixed monthly servers;
+  a paid fixed server requires a documented justification in the plan. Latency MUST be met with
+  code and configuration (parallelism, streaming, warm-up calls) before paid capacity.
 - Free/hobby tiers (Vercel Hobby, Neon free) MUST be used while the app is in friends-and-family
   testing with no payments.
 - Per-plan daily practice limits (Basic 1, Standard 3, Premium 5 + 1 conversation) MUST be
   enforced server-side to bound per-user AI spend.
 
-Rationale: the service is free during testing; runaway inference or TTS spend would end it.
+Rationale: the goal is to keep EnglishChunks.guru free for everyone, funded personally; fixed
+infrastructure bills and runaway inference or TTS spend would end it.
 
 ### VI. Learner-First, Inclusive Design
 
@@ -126,8 +134,11 @@ Rationale: a small team and a hackathon timeline reward predictable, typed, mini
 
 - **Web app**: Next.js (App Router) + TypeScript, deployed on Vercel.
 - **LLM**: Gemma 4 26B A4B via Vercel AI Gateway; a separate low-cost model for chunk auditing.
-- **Speech scoring**: FastAPI service on a DigitalOcean CPU Droplet running Silero VAD,
-  Parakeet, and wav2vec2 (quantized ONNX where possible).
+- **Speech scoring**: FastAPI service running Silero VAD, Parakeet, and wav2vec2 (quantized
+  ONNX where possible) on Google Cloud Run (scale-to-zero, request-based billing within the free
+  tier, warmed by a signed call when a learner opens practice) or on a DigitalOcean CPU Droplet.
+  Moving between hosts MUST re-run the calibration suite and the latency smoke test (Principle
+  III) before learner traffic is switched.
 - **TTS**: ElevenLabs (Flash model, American voices, user-selectable voice).
 - **Database**: PostgreSQL on Neon (users, profiles, chunks, attempts, scores, streaks,
   subscriptions).
@@ -162,4 +173,4 @@ Rationale: a small team and a hackathon timeline reward predictable, typed, mini
 - Compliance is reviewed at every plan's Constitution Check, at `/speckit-analyze`, and during
   code review; unjustified violations block merge.
 
-**Version**: 1.1.1 | **Ratified**: 2026-10-16 | **Last Amended**: 2026-10-16
+**Version**: 1.2.0 | **Ratified**: 2026-10-16 | **Last Amended**: 2026-11-15
