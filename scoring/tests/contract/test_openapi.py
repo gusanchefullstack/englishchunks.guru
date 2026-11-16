@@ -1,13 +1,16 @@
 """Responses must match specs/001-chunk-learning-app/contracts/scoring-service.openapi.yaml."""
 
+import threading
 from pathlib import Path
 from typing import Any
 
 import jsonschema
+import pytest
 import structlog.testing
 import yaml
 from fastapi.testclient import TestClient
 
+import scoring.app as app_module
 from tests.conftest import FakeAsr, FakeVad, score_form, signed_headers
 
 SPEC_PATH = (
@@ -26,10 +29,46 @@ def response_schema(path: str, method: str, status: str) -> dict[str, Any]:
     return SPEC["paths"][path][method]["responses"][status]["content"]["application/json"]["schema"]  # type: ignore[no-any-return]
 
 
-def test_healthz_matches_contract(client: TestClient) -> None:
+def test_healthz_loading_is_503(client: TestClient, monkeypatch: pytest.MonkeyPatch) -> None:
+    # Startup probes must not route traffic until the models are in memory.
+    monkeypatch.setattr(app_module, "_ready", threading.Event())
+    res = client.get("/healthz")
+    assert res.status_code == 503
+    assert res.json()["status"] == "loading"
+    validate(res.json(), "#/components/schemas/Health")
+    assert "503" in SPEC["paths"]["/healthz"]["get"]["responses"]
+
+
+def test_healthz_ready_is_200(client: TestClient, monkeypatch: pytest.MonkeyPatch) -> None:
+    ready = threading.Event()
+    ready.set()
+    monkeypatch.setattr(app_module, "_ready", ready)
     res = client.get("/healthz")
     assert res.status_code == 200
-    jsonschema.validate(res.json(), response_schema("/healthz", "get", "200"))
+    assert res.json() == {"status": "ok", "models": {"vad": True, "asr": True, "phonemes": True}}
+    validate(res.json(), "#/components/schemas/Health")
+
+
+def test_warm_requires_signature(client: TestClient) -> None:
+    # Unsigned callers can't wake (and bill) a scaled-to-zero instance.
+    assert client.get("/v1/warm").status_code == 401
+
+
+def test_warm_signed_ready_is_200(client: TestClient, monkeypatch: pytest.MonkeyPatch) -> None:
+    ready = threading.Event()
+    ready.set()
+    monkeypatch.setattr(app_module, "_ready", ready)
+    res = client.get("/v1/warm", headers=signed_headers())
+    assert res.status_code == 200
+    validate(res.json(), "#/components/schemas/Health")
+
+
+def test_warm_signed_loading_is_503(client: TestClient, monkeypatch: pytest.MonkeyPatch) -> None:
+    monkeypatch.setattr(app_module, "_ready", threading.Event())
+    res = client.get("/v1/warm", headers=signed_headers())
+    assert res.status_code == 503
+    assert res.json()["status"] == "loading"
+    assert {"200", "401", "503"} <= set(SPEC["paths"]["/v1/warm"]["get"]["responses"])
 
 
 def test_score_200_matches_score_result(client: TestClient) -> None:

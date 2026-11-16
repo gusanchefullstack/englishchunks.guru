@@ -23,17 +23,31 @@ paths:
       security: []
       responses:
         "200":
-          description: Ready
+          description: Ready (all models loaded)
           content:
             application/json:
-              schema:
-                type: object
-                required: [status, models]
-                properties:
-                  status: { type: string, enum: [ok, loading] }
-                  models:
-                    type: object
-                    additionalProperties: { type: boolean }
+              schema: { $ref: "#/components/schemas/Health" }
+        "503":
+          description: Models still loading (startup probes keep traffic away until 200)
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/Health" }
+  /v1/warm:
+    get:
+      summary: Signed wake-up call before a learner records (loads models on a cold instance)
+      security: [{ hmac: [] }]
+      responses:
+        "200":
+          description: Ready (all models loaded)
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/Health" }
+        "401": { description: Missing, stale or invalid signature }
+        "503":
+          description: Models still loading
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/Health" }
   /v1/score:
     post:
       summary: Score one recording against an expected text
@@ -107,6 +121,14 @@ components:
       in: header
       name: X-Signature
   schemas:
+    Health:
+      type: object
+      required: [status, models]
+      properties:
+        status: { type: string, enum: [ok, loading] }
+        models:
+          type: object
+          additionalProperties: { type: boolean }
     ScoreResult:
       type: object
       required: [score, components, sounds, weakest_sounds, transcript, model_versions]
