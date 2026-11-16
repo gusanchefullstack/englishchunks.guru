@@ -31,6 +31,11 @@ export function displayStreak(
   return daysBetween(lastPracticeDate, practiceDateFor(timeZone, now)) <= 1 ? current : 0;
 }
 
+/** Public ranking label: first name only, so full names never leave the server. */
+export function firstName(name: string) {
+  return name.trim().split(/\s+/)[0] || "Learner";
+}
+
 export type RankEntry = {
   userId: string;
   name: string;
@@ -43,7 +48,7 @@ export type RankEntry = {
 
 /**
  * FR-032: ranking by points (this ISO week, or all time) within the learner's level band
- * by default, or across everyone. Only display name + picture are exposed; opted-out and
+ * by default, or across everyone. Only first name + picture are exposed; opted-out and
  * suspended learners are not listed, but an opted-out learner still sees their own position.
  */
 export async function getRanking(args: {
@@ -91,7 +96,7 @@ export async function getRanking(args: {
     .sort((a, b) => b.points - a.points || a.name.localeCompare(b.name));
   const entries: RankEntry[] = visible.map((r, i) => ({
     userId: r.userId,
-    name: r.name,
+    name: firstName(r.name),
     image: r.image,
     points: r.points,
     position: i + 1,

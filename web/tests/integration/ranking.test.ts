@@ -42,7 +42,7 @@ describe("ranking (FR-032)", () => {
       period: "week",
       now,
     });
-    expect(weekBand.top.map((e) => e.name)).toEqual(["Ana B1", "Ben B2"]);
+    expect(weekBand.top.map((e) => e.name)).toEqual(["Ana", "Ben"]);
     expect(weekBand.me).toMatchObject({ position: 1, points: 30 });
 
     const allBand = await getRanking({
@@ -52,7 +52,7 @@ describe("ranking (FR-032)", () => {
       period: "all",
       now,
     });
-    expect(allBand.top.map((e) => e.name)).toEqual(["Ben B2", "Ana B1"]);
+    expect(allBand.top.map((e) => e.name)).toEqual(["Ben", "Ana"]);
 
     const overall = await getRanking({
       userId: a.id,
@@ -61,7 +61,7 @@ describe("ranking (FR-032)", () => {
       period: "week",
       now,
     });
-    expect(overall.top.map((e) => e.name)).toEqual(["Cy A2", "Ana B1", "Ben B2"]);
+    expect(overall.top.map((e) => e.name)).toEqual(["Cy", "Ana", "Ben"]);
     expect(overall.me!.position).toBe(2);
   });
 
@@ -102,5 +102,18 @@ describe("ranking (FR-032)", () => {
       now,
     });
     expect(JSON.stringify(r)).not.toMatch(/@example\.com/);
+  });
+
+  it("shows only the first name", async () => {
+    await createLearner(db, { name: "  María José Pérez ", level: "B1" });
+    const r = await getRanking({
+      userId: "nobody",
+      level: "B1",
+      scope: "band",
+      period: "all",
+      now,
+    });
+    expect(r.top.map((e) => e.name)).toContain("María");
+    expect(JSON.stringify(r)).not.toMatch(/Pérez|José/);
   });
 });
