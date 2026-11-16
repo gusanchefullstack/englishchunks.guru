@@ -50,3 +50,21 @@ signed like the web app, through the live HTTP service. Server times come from t
 - Container memory 1.4 GB of 3.8 GB; no recording is ever written (`/tmp` holds only
   phonemizer's libespeak-ng copies).
 - Cost rule: latency is improved with code (parallelism, streaming), never by upsizing.
+
+## 2026-11-15 — Google Cloud Run (us-central1, free tier)
+
+Same models (sha256 identical to the Droplet's), baked into `scoring/deploy/Dockerfile.cloudrun`.
+2 vCPU / 4 GiB, scale-to-zero, max 1 instance. Server times from `score.ok` log fields.
+
+| Check | gen1 | **gen2 (chosen)** | Droplet (reference) |
+|-------|-----:|------------------:|--------------------:|
+| Model load at instance start | ~31 s | **~10.5 s** | ~7 s |
+| Warm server time, synthetic clips | p50 1651 ms · p95 2118 ms (n=18) | **747–1617 ms** (n=6) | p50 1333 ms · p95 1680 ms |
+| First request after ~20 min idle (round trip from a laptop) | — | **17.8 s**, then 1.9 s | n/a (always on) |
+| SC-005 calibration (600 speechocean762 utterances over HTTP, 66,189 pairs) | — | **88.8 %** (559 scored, 41 unusable) | 89.1 % (laptop, in-process) |
+
+- The 0.3-point calibration gap is within int8 kernel differences between the ARM laptop (where
+  the baseline ran) and x86; same sample and pairs as `tests/calibration/test_pairs.py`.
+- Cold starts are hidden by a signed `GET /v1/warm` sent when a learner opens practice; the web
+  scoring timeout is 30 s as a backstop.
+- Cost rule holds: $0 compute within the free grant (≈ 3 vCPU-s per score) instead of $28/mo.

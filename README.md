@@ -181,7 +181,7 @@ englishchunks.guru/
 │   ├── src/db/                  # Drizzle schema, migrations, seeds
 │   ├── scripts/                 # library seeding pipeline, latency check
 │   └── tests/                   # unit, integration (PGlite + MSW), contract, e2e (Playwright + axe)
-├── scoring/                     # Python 3.12 FastAPI speech scoring — DigitalOcean Droplet
+├── scoring/                     # Python 3.12 FastAPI speech scoring — Google Cloud Run
 │   ├── src/scoring/             # audio decode, engines, CTC alignment/GOP, combination, app
 │   ├── tests/                   # unit, contract, no-audio-persisted, calibration (opt-in)
 │   └── deploy/                  # Dockerfile, systemd units, hourly cron timer, Caddy

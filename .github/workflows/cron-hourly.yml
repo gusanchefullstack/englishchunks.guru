@@ -1,0 +1,29 @@
+name: Hourly cron
+
+# Replaces the Droplet systemd timer (scoring/deploy/cron-hourly.*) now that scoring runs on
+# Cloud Run: reminders, invite expiry and practice-event pruning. Vercel Hobby crons are
+# daily-only, so the hourly call comes from here. The route is idempotent (reminders are claimed
+# once per learner per day), so a late or duplicate run is harmless.
+on:
+  schedule:
+    - cron: "7 * * * *" # off the top of the hour, when GitHub's scheduler is busiest
+  workflow_dispatch:
+
+permissions: {}
+
+concurrency:
+  group: cron-hourly
+  cancel-in-progress: false
+
+jobs:
+  hourly:
+    runs-on: ubuntu-latest
+    timeout-minutes: 3
+    steps:
+      - name: POST /api/cron/hourly
+        env:
+          CRON_SECRET: ${{ secrets.CRON_SECRET }}
+        run: |
+          curl --fail --silent --show-error --max-time 120 \
+            -X POST -H "Authorization: Bearer ${CRON_SECRET}" \
+            https://englishchunks.guru/api/cron/hourly
