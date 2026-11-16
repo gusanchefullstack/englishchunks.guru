@@ -67,15 +67,17 @@ test("progress shows seeded history, streak, ranking toggles and a table view (U
   await expectNoA11yViolations(page);
 
   // Band ranking (B1–B2): rival first, me second; the C2 learner isn't in my band.
-  const around = page.getByRole("list").filter({ hasText: "Rival Bee" });
+  // Only first names are shown.
+  const around = page.getByRole("list").filter({ hasText: "Rival" });
+  await expect(page.getByText("Rival Bee")).toHaveCount(0);
   await expect(around).toContainText("You");
   await expect(page.getByText("#2", { exact: true })).toBeVisible();
-  await expect(page.getByText("Other Band")).toHaveCount(0);
+  await expect(page.getByText("Other", { exact: true })).toHaveCount(0);
 
   // Overall: the C2 learner appears.
   await page.getByRole("link", { name: "Everyone" }).click();
   await expect(page).toHaveURL(/scope=overall/);
-  await expect(page.getByText("Other Band")).toBeVisible();
+  await expect(page.getByText("Other", { exact: true })).toBeVisible();
   await expect(page.getByText("#3", { exact: true })).toBeVisible();
 
   // 7-day range + table view

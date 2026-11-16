@@ -368,7 +368,7 @@ limit becomes three.
   streak milestones, and accepted chunk submissions.
 - **FR-032**: System MUST show a ranking by points over the current week and all time, within
   the learner's level band by default (Beginner A1–A2, Intermediate B1–B2, Advanced C1–C2) with a
-  toggle to the overall ranking; entries display only display name and picture; learners MAY opt
+  toggle to the overall ranking; entries display only the learner's first name and picture; learners MAY opt
   out of public listing. A learner appears in the band of their current level.
 - **FR-033**: System MUST send at most one reminder email per learner per day, at the learner's
   chosen local time (default 19:00), only if they have not completed a practice that day.
