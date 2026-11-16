@@ -7,11 +7,13 @@ export const scoringMock = {
   score: 78,
   weakest: ["ð", "s"] as string[],
   requests: [] as { headers: Headers; fields: Record<string, string>; audioBytes: number }[],
+  warmRequests: [] as Headers[],
   reset() {
     this.mode = "ok";
     this.score = 78;
     this.weakest = ["ð", "s"];
     this.requests = [];
+    this.warmRequests = [];
   },
 };
 
@@ -46,6 +48,14 @@ export const handlers: AnyHandler[] = [
     if (scoringMock.mode === "unusable")
       return HttpResponse.json({ reason: "no_speech" }, { status: 422 });
     return HttpResponse.json(fakeScore());
+  }),
+  http.get("https://scoring.test/v1/warm", ({ request }) => {
+    scoringMock.warmRequests.push(request.headers);
+    if (scoringMock.mode === "down") return new HttpResponse(null, { status: 503 });
+    return HttpResponse.json({
+      status: "ok",
+      models: { vad: true, asr: true, phonemes: true },
+    });
   }),
   http.post("https://scoring.test/v1/phonemize", async ({ request }) => {
     const { texts } = (await request.json()) as { texts: string[] };

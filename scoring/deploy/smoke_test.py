@@ -18,7 +18,10 @@ import uuid
 
 from scoring.bench import SENTENCES, synth
 
-URL = "http://127.0.0.1:8001/v1/score"
+# SCORING_URL lets the same test run against a Cloud Run test service (https only).
+URL = os.environ.get("SCORING_URL", "http://127.0.0.1:8001").rstrip("/") + "/v1/score"
+if not URL.startswith(("https://", "http://127.0.0.1")):
+    raise SystemExit("SCORING_URL must be https:// (or the local http://127.0.0.1 container)")
 SECRET = os.environ["SCORING_SHARED_SECRET"].encode()
 
 
@@ -38,7 +41,7 @@ def post(audio: bytes, text: str) -> tuple[int, object, float]:
         + b"\r\n"
     )
     body = b"".join(parts) + f"--{boundary}--\r\n".encode()
-    req = urllib.request.Request(
+    req = urllib.request.Request(  # noqa: S310 — scheme checked at import
         URL,
         data=body,
         method="POST",
@@ -51,13 +54,13 @@ def post(audio: bytes, text: str) -> tuple[int, object, float]:
     )
     t0 = time.perf_counter()
     try:
-        with urllib.request.urlopen(req, timeout=30) as r:  # noqa: S310 — fixed http://127.0.0.1 URL
+        with urllib.request.urlopen(req, timeout=30) as r:  # noqa: S310 — scheme checked at import
             return r.status, json.loads(r.read()), time.perf_counter() - t0
     except urllib.error.HTTPError as e:
         return e.code, e.read()[:200], time.perf_counter() - t0
 
 
-def main(n: int = 20) -> None:
+def main(n: int = int(os.environ.get("SMOKE_N", "20"))) -> None:
     times: list[float] = []
     failures = 0
     for i in range(n):

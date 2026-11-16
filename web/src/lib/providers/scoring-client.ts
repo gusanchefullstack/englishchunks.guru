@@ -29,7 +29,9 @@ function authHeaders(requestId: string): Record<string, string> {
   };
 }
 
-const TIMEOUT_MS = 20_000;
+// Covers a scaled-to-zero Cloud Run instance (~18 s to start and load models) in case the
+// warm-up call didn't land first; warm requests answer in ~1–2 s.
+const TIMEOUT_MS = 30_000;
 
 /**
  * Client for the self-hosted scoring service. Audio is passed through in memory only and is
@@ -71,6 +73,24 @@ export const scoringClient = {
       throw new AppError("validation", "That recording is too long. Keep it under 15 seconds.");
     logger.warn({ requestId, status: res.status }, "scoring error");
     throw new AppError("unavailable", "Scoring is busy right now. Please try again.");
+  },
+
+  /**
+   * Fire-and-forget wake-up when a learner opens a practice session, so a scaled-to-zero
+   * scoring instance loads its models while the learner reads and listens. Never throws.
+   */
+  async warm(): Promise<void> {
+    if (e2eMode()) return;
+    const requestId = randomUUID();
+    try {
+      const res = await fetch(`${env().SCORING_URL}/v1/warm`, {
+        headers: authHeaders(requestId),
+        signal: AbortSignal.timeout(TIMEOUT_MS),
+      });
+      if (!res.ok) logger.warn({ requestId, status: res.status }, "scoring warm-up not ready");
+    } catch (err) {
+      logger.warn({ requestId, err: (err as Error).name }, "scoring warm-up failed");
+    }
   },
 
   /** Deterministic American-English IPA via espeak-ng (never an LLM — Principle II). */

@@ -43,6 +43,7 @@ def _load(settings: Settings) -> Engines:
 
 
 _ready = threading.Event()
+_MODELS = ("vad", "asr", "phonemes")
 
 
 def _preload() -> None:
@@ -90,12 +91,26 @@ def _error(status: int, message: str) -> JSONResponse:
 
 
 @app.get("/healthz")
-def healthz() -> dict[str, object]:
+def healthz() -> JSONResponse:
+    # 503 while loading so platform startup/readiness probes (Cloud Run) hold traffic until the
+    # models are in memory; the body still reports progress for humans and the Droplet runbook.
     ready = _ready.is_set()
-    return {
-        "status": "ok" if ready else "loading",
-        "models": dict.fromkeys(("vad", "asr", "phonemes"), ready),
-    }
+    body = {"status": "ok" if ready else "loading", "models": dict.fromkeys(_MODELS, ready)}
+    return JSONResponse(body, status_code=200 if ready else 503)
+
+
+@app.get("/v1/warm", response_model=None)
+def warm(request: Request, settings: Annotated[Settings, Depends(get_settings)]) -> JSONResponse:
+    """Signed wake-up call: the web app sends it when a learner opens a practice session, so a
+    scaled-to-zero Cloud Run instance loads its models before the first recording arrives.
+    (Cloud Run reserves paths ending in "z", so the public /healthz can't serve this role.)"""
+    if verify_signature(request, settings) is None:
+        return _error(401, "invalid signature")
+    ready = _ready.is_set()
+    return JSONResponse(
+        {"status": "ok" if ready else "loading", "models": dict.fromkeys(_MODELS, ready)},
+        status_code=200 if ready else 503,
+    )
 
 
 @app.post("/v1/score", response_model=None)

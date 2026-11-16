@@ -53,6 +53,21 @@ describe("scoringClient", () => {
     expect((err as AppError).code).toBe("unavailable");
   });
 
+  it("sends a signed warm-up call", async () => {
+    await scoringClient.warm();
+    expect(scoringMock.warmRequests).toHaveLength(1);
+    const h = scoringMock.warmRequests[0]!;
+    const ts = h.get("x-timestamp")!;
+    const rid = h.get("x-request-id")!;
+    const expected = createHmac("sha256", "x".repeat(32)).update(`${ts}.${rid}`).digest("hex");
+    expect(h.get("x-signature")).toBe(`sha256=${expected}`);
+  });
+
+  it("never throws when the warm-up fails", async () => {
+    scoringMock.mode = "down";
+    await expect(scoringClient.warm()).resolves.toBeUndefined();
+  });
+
   it("phonemizes texts in order", async () => {
     await expect(scoringClient.phonemize(["A", "B"])).resolves.toEqual(["/a/", "/b/"]);
   });

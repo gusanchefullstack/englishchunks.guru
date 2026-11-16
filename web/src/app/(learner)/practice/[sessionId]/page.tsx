@@ -1,6 +1,7 @@
 import { eq } from "drizzle-orm";
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
+import { after } from "next/server";
 import { Suspense } from "react";
 import { db } from "@/db/client";
 import { user } from "@/db/schema";
@@ -10,6 +11,7 @@ import { SummaryStep } from "@/components/session/summary-step";
 import { getSession } from "@/lib/domain/session-engine";
 import { AppError } from "@/lib/errors";
 import { learnerOrRedirect } from "@/lib/page-guards";
+import { scoringClient } from "@/lib/providers/scoring-client";
 
 export const metadata: Metadata = { title: "Practice" };
 
@@ -50,6 +52,9 @@ async function PracticeContent({
       </>
     );
   }
+  // Wake the scoring service (scale-to-zero on Cloud Run) while the learner reads and listens,
+  // so the first recording isn't held up by model loading. Runs after the response is sent.
+  after(() => scoringClient.warm());
   return (
     <>
       <SessionHeader step={view.session.step} date={view.session.practiceDate} title={title} />
