@@ -6,6 +6,6 @@ async function run(request: Request) {
   return Response.json(await runDailyBilling());
 }
 
-/** Vercel Cron calls GET with `Authorization: Bearer $CRON_SECRET`; POST for manual/Droplet runs. */
+/** Vercel Cron calls GET with `Authorization: Bearer $CRON_SECRET`; POST for manual runs. */
 export const GET = run;
 export const POST = run;

@@ -8,7 +8,7 @@ Three views of EnglishChunks.guru, read from the code: where it runs, how the co
 
 ## 1. Physical architecture
 
-Production hosts, managed services and the network calls between them. The web app is serverless on Vercel; speech scoring runs on one self-managed Droplet so recordings never reach a third party.
+Production hosts, managed services and the network calls between them. The web app is serverless on Vercel; speech scoring runs as the project's own scale-to-zero container on Google Cloud Run, so recordings never reach a third-party API.
 
 ```mermaid
 flowchart LR
@@ -17,7 +17,7 @@ flowchart LR
   end
 
   subgraph Vercel["Vercel · project englishchunks-guru"]
-    DNS["Vercel DNS<br/>englishchunks.guru<br/>scoring.englishchunks.guru → 137.184.8.93"]
+    DNS["Vercel DNS<br/>englishchunks.guru"]
     FN["Next.js 16 functions · region cle1<br/>Server Components · Server Actions<br/>Route Handlers · proxy.ts"]
     VC["Vercel Cron<br/>daily 04:15 UTC"]
     GW["Vercel AI Gateway"]
@@ -27,13 +27,12 @@ flowchart LR
     PG[("Postgres<br/>branch: production<br/>branch: staging")]
   end
 
+  subgraph GCP["Google Cloud · project englishchunks-scoring · us-central1"]
+    SC["Cloud Run service ec-scoring<br/>gen2 · 2 vCPU / 4 GiB · min 0 / max 1<br/>FastAPI / uvicorn"]
+    MOD[("ONNX int8 models, ~950 MB<br/>baked into the image")]
+  end
+
   subgraph DOC["DigitalOcean"]
-    subgraph Droplet["Droplet ec-scoring · SFO3 · 2 vCPU / 4 GB AMD · Ubuntu 24.04"]
-      CADDY["Caddy :443<br/>Let's Encrypt TLS<br/>1.1 MB body cap"]
-      SC["Docker ec-scoring<br/>FastAPI / uvicorn 127.0.0.1:8001<br/>read-only FS, tmpfs /tmp"]
-      MOD[("/opt/ec-scoring/models<br/>ONNX int8, ~950 MB, read-only")]
-      TMR["systemd timer<br/>hourly at :00:30"]
-    end
     SP[("Spaces sfo3 + CDN<br/>TTS audio cache<br/>avatars")]
   end
 
@@ -48,6 +47,7 @@ flowchart LR
   subgraph GH["GitHub"]
     REPO["Repository<br/>main = production"]
     CI["Actions CI<br/>lint · typecheck · Vitest<br/>Playwright e2e · scoring pytest"]
+    TMR["Actions schedule<br/>cron-hourly.yml"]
   end
 
   B -- "HTTPS: pages, actions,<br/>audio upload (multipart)" --> FN
@@ -55,8 +55,7 @@ flowchart LR
   B -- "Checkout / Portal redirect" --> ST
   B -- "OAuth consent" --> GO
   FN -- "Drizzle over Neon<br/>WebSocket pool" --> PG
-  FN -- "HTTPS + HMAC headers<br/>audio held in memory" --> CADDY
-  CADDY --> SC
+  FN -- "HTTPS + HMAC headers<br/>GET /v1/warm on practice open<br/>POST /v1/score, audio in memory" --> SC
   SC --- MOD
   TMR -- "POST /api/cron/hourly<br/>Bearer CRON_SECRET" --> FN
   VC -- "GET /api/cron/daily" --> FN
@@ -71,8 +70,8 @@ flowchart LR
 ```
 
 - **Web tier.** One Next.js app on Vercel serves the marketing site, learner app, admin console and every API route. Functions run in `cle1`, next to the Neon database in us-east-2. Previews sit behind Vercel Authentication.
-- **Scoring tier.** The Droplet runs Caddy in front of a read-only Docker container ([`scoring/deploy`](../scoring/deploy/)). Uploads stay in memory: Caddy caps bodies at 1.1 MB, Starlette never spools to disk, and `/tmp` is a 64 MB tmpfs.
-- **Scheduled jobs.** Vercel Hobby cron only runs daily, so the daily billing sweep uses Vercel Cron ([`web/vercel.json`](../web/vercel.json)) and the hourly job (reminder emails, invite expiry) is triggered by a systemd timer on the Droplet.
+- **Scoring tier.** Cloud Run runs the container from [`scoring/deploy/Dockerfile.cloudrun`](../scoring/deploy/Dockerfile.cloudrun) and scales to zero between sessions, staying inside the free tier. Opening a practice page sends a signed `GET /v1/warm` so the ~15 s cold start finishes before the first recording. Uploads stay in memory and request logs hold only metadata. Setup: [`scoring/deploy/RUNBOOK.md`](../scoring/deploy/RUNBOOK.md) §2C.
+- **Scheduled jobs.** Vercel Hobby cron only runs daily, so the daily billing sweep uses Vercel Cron ([`web/vercel.json`](../web/vercel.json)) and the hourly job (reminder emails, invite expiry) is triggered by a GitHub Actions schedule ([`.github/workflows/cron-hourly.yml`](../.github/workflows/cron-hourly.yml)).
 - **Data stores.** Postgres holds all application state. Spaces holds generated speech and avatars, served through its CDN. Learner recordings are never stored anywhere.
 
 ## 2. Logical architecture (components)
