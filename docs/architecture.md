@@ -1,14 +1,15 @@
 # Architecture
 
-Three views of EnglishChunks.guru, read from the code: where it runs, how the code is layered, and the path a learner takes from the landing page to a daily score. GitHub renders the Mermaid diagrams below.
+Views of EnglishChunks.guru, read from the code: where it runs, how the code is layered, the path a learner takes from the landing page to a daily score, and how the hosting got to where it is. GitHub renders the Mermaid diagrams below. The reasons behind each choice are in [`rationals.md`](./rationals.md).
 
 - [1. Physical architecture](#1-physical-architecture)
 - [2. Logical architecture (components)](#2-logical-architecture-components)
 - [3. User workflow](#3-user-workflow)
+- [4. Hosting evolution](#4-hosting-evolution)
 
 ## 1. Physical architecture
 
-Production hosts, managed services and the network calls between them. The web app is serverless on Vercel; speech scoring runs as the project's own scale-to-zero container on Google Cloud Run, so recordings never reach a third-party API.
+Production hosts, managed services and the network calls between them, as of 2026-11-21. Every host runs on a free tier: the web app is serverless on Vercel, speech scoring is the project's own scale-to-zero container on Google Cloud Run (so recordings never reach a third-party API), and files live in a private Cloudflare R2 bucket. Paid usage is limited to per-call APIs (LLMs, text-to-speech, email).
 
 ```mermaid
 flowchart LR
@@ -16,24 +17,24 @@ flowchart LR
     B["Browser<br/>React 19 UI<br/>MediaRecorder: WebM/Opus or MP4/AAC"]
   end
 
-  subgraph Vercel["Vercel · project englishchunks-guru"]
+  subgraph Vercel["Vercel Hobby · project englishchunks-guru"]
     DNS["Vercel DNS<br/>englishchunks.guru"]
-    FN["Next.js 16 functions · region cle1<br/>Server Components · Server Actions<br/>Route Handlers · proxy.ts"]
+    FN["Next.js 16 functions · region cle1<br/>Server Components · Server Actions<br/>Route Handlers · proxy.ts<br/>/media/:key → signed R2 URL"]
     VC["Vercel Cron<br/>daily 04:15 UTC"]
     GW["Vercel AI Gateway"]
   end
 
-  subgraph Neon["Neon · AWS us-east-2"]
+  subgraph Neon["Neon free plan · AWS us-east-2"]
     PG[("Postgres<br/>branch: production<br/>branch: staging")]
   end
 
-  subgraph GCP["Google Cloud · project englishchunks-scoring · us-central1"]
+  subgraph GCP["Google Cloud free tier · project englishchunks-scoring · us-central1"]
     SC["Cloud Run service ec-scoring<br/>gen2 · 2 vCPU / 4 GiB · min 0 / max 1<br/>FastAPI / uvicorn"]
     MOD[("ONNX int8 models, ~950 MB<br/>baked into the image")]
     TMR["Cloud Scheduler job cron-hourly<br/>every hour at :07 UTC"]
   end
 
-  subgraph CF["Cloudflare"]
+  subgraph CF["Cloudflare R2 free tier"]
     SP[("R2 bucket englishchunks-media<br/>private, signed URLs<br/>TTS cache · avatars · landing video")]
   end
 
@@ -47,11 +48,12 @@ flowchart LR
 
   subgraph GH["GitHub"]
     REPO["Repository<br/>main = production"]
-    CI["Actions CI<br/>lint · typecheck · Vitest<br/>Playwright e2e · scoring pytest"]
+    CI["Actions CI<br/>lint · typecheck · Vitest<br/>Playwright e2e · scoring pytest · gitleaks"]
+    MAN["cron-hourly.yml<br/>manual trigger only"]
   end
 
   B -- "HTTPS: pages, actions,<br/>audio upload (multipart)" --> FN
-  B -- "302 redirect: audio, avatars" --> SP
+  B -- "302 to a signed URL:<br/>audio, avatars, landing video" --> SP
   B -- "Checkout / Portal redirect" --> ST
   B -- "OAuth consent" --> GO
   FN -- "Drizzle over Neon<br/>WebSocket pool" --> PG
@@ -61,16 +63,17 @@ flowchart LR
   VC -- "GET /api/cron/daily" --> FN
   FN --> GW --> LLM
   FN -- "synthesize on cache miss" --> EL
-  FN -- "S3 API: cache audio, avatars" --> SP
+  FN -- "S3 API: cache audio, avatars<br/>sign read URLs" --> SP
   FN -- "send email" --> RS
   FN -- "Checkout / Portal sessions" --> ST
   ST -- "POST /api/webhooks/stripe" --> FN
   REPO -- "push to main deploys" --> FN
   REPO --> CI
+  MAN -. "POST /api/cron/hourly" .-> FN
 ```
 
 - **Web tier.** One Next.js app on Vercel serves the marketing site, learner app, admin console and every API route. Functions run in `cle1`, next to the Neon database in us-east-2. Previews sit behind Vercel Authentication.
-- **Scoring tier.** Cloud Run runs the container from [`scoring/deploy/Dockerfile.cloudrun`](../scoring/deploy/Dockerfile.cloudrun) and scales to zero between sessions, staying inside the free tier. Opening a practice page sends a signed `GET /v1/warm` so the ~15 s cold start finishes before the first recording. Uploads stay in memory and request logs hold only metadata. Setup: [`scoring/deploy/RUNBOOK.md`](../scoring/deploy/RUNBOOK.md) §2C.
+- **Scoring tier.** Cloud Run runs the container from [`scoring/deploy/Dockerfile.cloudrun`](../scoring/deploy/Dockerfile.cloudrun) and scales to zero between sessions, staying inside the free tier. Opening a practice page sends a signed `GET /v1/warm` so the ~15 s cold start finishes before the first recording; the web client waits up to 30 s as a backstop. Uploads stay in memory and request logs hold only metadata. Setup: [`scoring/deploy/RUNBOOK.md`](../scoring/deploy/RUNBOOK.md) §2C.
 - **Scheduled jobs.** Vercel Hobby cron only runs daily, so the daily billing sweep uses Vercel Cron ([`web/vercel.json`](../web/vercel.json)) and the hourly job (reminder emails, invite expiry) is triggered by a Cloud Scheduler job (`cron-hourly`, free tier). GitHub's scheduled workflows ran only a few times a day, so [`.github/workflows/cron-hourly.yml`](../.github/workflows/cron-hourly.yml) is now a manual trigger.
 - **Data stores.** Postgres holds all application state. A private R2 bucket holds generated speech, avatars and the landing video; browsers get signed URLs (directly for audio, via the `/media/<key>` redirect for avatars and video). Learner recordings are never stored anywhere.
 
@@ -98,7 +101,7 @@ flowchart TB
   subgraph ENTRY["Entry points"]
     direction LR
     SA["Server Actions · server/actions<br/>session · library · profile · submissions<br/>waitlist · auth · unsubscribe<br/>admin · admin-settings"]
-    RH["Route Handlers · app/api<br/>auth/[...all] · sessions/:id/attempts (NDJSON)<br/>tts · billing/checkout · billing/portal<br/>webhooks/stripe · cron/daily · cron/hourly<br/>profile/avatar · unsubscribe"]
+    RH["Route Handlers · app/api<br/>auth/[...all] · sessions/:id/attempts (NDJSON)<br/>tts · billing/checkout · billing/portal<br/>webhooks/stripe · cron/daily · cron/hourly<br/>profile/avatar · unsubscribe · media/[...key]"]
   end
 
   subgraph DOM["Domain · web/src/lib/domain"]
@@ -114,15 +117,15 @@ flowchart TB
   subgraph PRV["Providers · lib/providers + lib/auth (swappable adapters)"]
     direction LR
     P1["auth<br/>Better Auth<br/>admin + username plugins"]
-    P2["scoring-client<br/>HMAC-signed, 20 s timeout"]
+    P2["scoring-client<br/>HMAC-signed, 30 s timeout<br/>warm() on practice open"]
     P3["llm<br/>AI SDK via gateway<br/>5 s then fallback model"]
     P4["tts<br/>ElevenLabs"]
-    P5["storage<br/>S3 API / R2"]
+    P5["storage<br/>S3 API / R2<br/>private, signed URLs"]
     P6["email<br/>Resend + React Email"]
     P7["billing<br/>Stripe"]
   end
 
-  subgraph DATA["Persistence · web/src/db (Drizzle, 7 migrations)"]
+  subgraph DATA["Persistence · web/src/db (Drizzle, 9 migrations)"]
     direction LR
     T1[("Identity<br/>user · session · account<br/>verification · rate_limit")]
     T2[("Content<br/>chunk · chunk_example<br/>sound_hint · audio_clip · voice")]
@@ -133,7 +136,7 @@ flowchart TB
 
   subgraph SCR["Scoring service · scoring/src/scoring (Python 3.12)"]
     direction LR
-    S1["app.py<br/>POST /v1/score<br/>POST /v1/phonemize<br/>GET /healthz<br/>HMAC check, size limits"] --> S2["pipeline.py<br/>orchestrates, times stages"]
+    S1["app.py<br/>POST /v1/score<br/>POST /v1/phonemize<br/>GET /v1/warm · GET /healthz<br/>HMAC check, size limits"] --> S2["pipeline.py<br/>orchestrates, times stages"]
     S2 --> S3["audio.py<br/>decode in memory<br/>to 16 kHz mono"]
     S3 --> S4["engines.py<br/>Silero VAD trim<br/>Parakeet TDT ASR<br/>wav2vec2 phoneme CTC"]
     S4 --> S5["align.py<br/>word and phoneme<br/>alignment, GOP"]
@@ -198,3 +201,45 @@ flowchart TD
 - **Resuming.** Today redirects to an unfinished daily session if one exists, so a learner never starts two daily sessions in one local day. Scoring outages don't use up the day's practice.
 - **Billing.** Once an admin activates billing, new learners get a 7-day trial on the Basic limit with no card. Stripe webhooks keep the `subscription` table in sync.
 - **Admin loop.** Admins review audit-failed and learner-suggested chunks, invite people from the waitlist, manage users, and set the account cap and billing switch.
+
+## 4. Hosting evolution
+
+The product and code stayed the same while the hosting moved, step by step, from about $33/month of fixed servers to free tiers. Each move was measured before switching and kept the old host as a fallback until production had run cleanly.
+
+```mermaid
+flowchart LR
+  subgraph A["2026-10-16 · launch · ~$33/month fixed"]
+    direction TB
+    A1["Vercel Hobby<br/>web"]
+    A2["DigitalOcean Droplet<br/>2 vCPU / 4 GB AMD · $28<br/>scoring + hourly systemd timer"]
+    A3["DigitalOcean Spaces + CDN · $5<br/>TTS cache · avatars · video"]
+    A4["Neon free<br/>Postgres"]
+  end
+
+  subgraph B["2026-11-16 · scoring on Cloud Run · Droplet idle as fallback"]
+    direction TB
+    B2["Cloud Run · scale-to-zero<br/>calibration 88.8 % vs 89.1 %"]
+    B3["GitHub Actions schedule<br/>hourly cron (proved too sparse)"]
+    B4["Droplet kept one week<br/>for rollback"]
+  end
+
+  subgraph C["2026-11-21 · all free tiers · $0 fixed"]
+    direction TB
+    C1["Droplet deleted"]
+    C2["Cloud Scheduler<br/>hourly cron on time"]
+    C3["Cloudflare R2<br/>private bucket, signed URLs"]
+  end
+
+  A --> B --> C
+```
+
+| Concern                               | Launch (2026-10-16)                    | Now (2026-11-21)                      | Monthly fixed cost |
+| ------------------------------------- | -------------------------------------- | ------------------------------------- | ------------------ |
+| Web app                               | Vercel Hobby                           | Vercel Hobby                          | $0 → $0            |
+| Database                              | Neon free                              | Neon free                             | $0 → $0            |
+| Speech scoring                        | DigitalOcean Droplet `s-2vcpu-4gb-amd` | Google Cloud Run, gen2, min 0 / max 1 | $28 → $0           |
+| Hourly job (reminders, invite expiry) | systemd timer on the Droplet           | Google Cloud Scheduler                | (in Droplet) → $0  |
+| Files (TTS cache, avatars, video)     | DigitalOcean Spaces + CDN              | Cloudflare R2, private                | $5 → $0            |
+| **Total fixed**                       |                                        |                                       | **~$33 → $0**      |
+
+Usage-based costs are unchanged: LLM calls through Vercel AI Gateway, ElevenLabs text-to-speech (generated lazily and cached), and Resend email.

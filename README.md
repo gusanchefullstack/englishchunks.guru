@@ -16,6 +16,7 @@ A web app that teaches English **chunks** — the ready-made phrases native spea
 - [Why EnglishChunks.guru?](#why-englishchunksguru)
 - [Screenshots](#screenshots)
 - [How it works](#how-it-works)
+- [Architecture](#architecture)
 - [Installation](#installation)
 - [Quick Start](#quick-start)
 - [Configuration](#configuration)
@@ -59,7 +60,56 @@ Browser (Next.js 16, React 19) ── Server Actions / Route Handlers (TypeScrip
 
 A session is **Learn → Speak (try 1, try 2) → Write → Read aloud → Daily score**, with streaks, points, a level-band ranking, a searchable chunk library, learner chunk suggestions with admin review, and an admin console.
 
-Diagrams of the physical deployment, logical components and user workflow are in [`docs/architecture.md`](./docs/architecture.md).
+## Architecture
+
+Everything runs on free tiers; the only costs are per-call APIs (LLMs, text-to-speech, email). Learner recordings go from the browser to the web app and on to the project's own scoring container, held in memory only, and are never stored.
+
+```mermaid
+flowchart TB
+  B["Browser · Next.js 16 / React 19 · MediaRecorder"]
+
+  subgraph V["Vercel Hobby"]
+    FN["Next.js app · pages, Server Actions, Route Handlers"]
+    VC["Vercel Cron · daily"]
+  end
+
+  subgraph G["Google Cloud free tier"]
+    SC["Cloud Run · ec-scoring<br/>VAD → Parakeet → wav2vec2 (ONNX int8)<br/>scale-to-zero"]
+    CS["Cloud Scheduler · hourly"]
+  end
+
+  PG[("Neon Postgres · free")]
+  R2[("Cloudflare R2 · free<br/>private: TTS cache, avatars, video")]
+
+  subgraph X["Per-call APIs"]
+    LLM["AI Gateway → Gemma 4 26B A4B<br/>(gpt-oss-20b fallback)"]
+    EL["ElevenLabs Flash"]
+    RS["Resend · Stripe (off)"]
+  end
+
+  B -- "pages, audio upload" --> FN
+  B -. "302 → signed URL" .-> R2
+  FN -- "HMAC-signed, audio in memory" --> SC
+  FN --> PG
+  FN -- "S3 API" --> R2
+  FN --> LLM
+  FN -- "on first play" --> EL
+  FN --> RS
+  CS -- "/api/cron/hourly" --> FN
+  VC -- "/api/cron/daily" --> FN
+```
+
+| Layer | Service | Plan | Fixed cost |
+|---|---|---|---|
+| Web app, API, daily cron | Vercel (Next.js 16) | Hobby | $0 |
+| Database | Neon Postgres | Free | $0 |
+| Speech scoring | Google Cloud Run (gen2, 2 vCPU / 4 GiB, min 0 / max 1) | Free tier | $0 |
+| Hourly job | Google Cloud Scheduler | Free tier (3 jobs) | $0 |
+| Files | Cloudflare R2 (private, signed URLs) | Free tier (10 GB) | $0 |
+| Feedback and audit LLMs | Gemma 4 26B A4B, gpt-oss-20b via Vercel AI Gateway | Pay per call | usage |
+| Text-to-speech | ElevenLabs Flash v2.5, generated on first play and cached | Character credits | usage |
+
+The hosting started on a $28/month DigitalOcean Droplet and $5/month Spaces and moved to free tiers in November 2026 without changing scoring quality (calibration 88.8 % vs 89.1 %). Diagrams of the physical deployment, logical components, user workflow and that move are in [`docs/architecture.md`](./docs/architecture.md); the options and decisions behind every choice are in [`docs/rationals.md`](./docs/rationals.md).
 
 ## Installation
 
