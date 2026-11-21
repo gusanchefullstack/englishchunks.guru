@@ -3,7 +3,7 @@ import { prunePracticeEvents } from "@/lib/domain/practice-events";
 import { sendDueReminders } from "@/lib/domain/reminders";
 import { expireInvites } from "@/lib/domain/signup-gate";
 
-/** Called hourly by GitHub Actions (.github/workflows/cron-hourly.yml, research R14). */
+/** Called hourly by Google Cloud Scheduler (job cron-hourly, research R14). */
 export async function POST(request: Request) {
   if (!isCronAuthorized(request)) return new Response(null, { status: 401 });
   const reminders = await sendDueReminders();

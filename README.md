@@ -207,7 +207,7 @@ Current results: 197 web tests, 21 e2e tests, 30 scoring tests; calibration 89.1
 Every change goes through a pull request to `main`; CI (lint, types, unit/integration, Playwright e2e with axe, scoring tests, secret scan) must pass, and merging deploys production automatically. The scoring service is updated separately per its runbook.
 
 - **Web** → Vercel (Hobby while testing; Pro before charging money). Set every variable above in the project, including Spaces ones (used by the CSP at build). `vercel.json` schedules the daily cron.
-- **Scoring** → Google Cloud Run (gen2, 2 vCPU / 4 GiB, scale-to-zero within the free tier), image from `scoring/deploy/Dockerfile.cloudrun` with the models baked in. The hourly cron (`/api/cron/hourly`: reminders, invite expiry) runs from GitHub Actions. See [`scoring/deploy/RUNBOOK.md`](./scoring/deploy/RUNBOOK.md) §2C.
+- **Scoring** → Google Cloud Run (gen2, 2 vCPU / 4 GiB, scale-to-zero within the free tier), image from `scoring/deploy/Dockerfile.cloudrun` with the models baked in. The hourly cron (`/api/cron/hourly`: reminders, invite expiry) runs from Google Cloud Scheduler. See [`scoring/deploy/RUNBOOK.md`](./scoring/deploy/RUNBOOK.md) §2C.
 - **Billing** stays off until an admin types `ACTIVATE` in Admin → Settings, after the go-live checklist (Stripe test-mode demo, Vercel Pro, restricted live keys, Stripe Tax decision).
 
 ## What I learned

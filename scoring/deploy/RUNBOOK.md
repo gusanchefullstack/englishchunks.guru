@@ -1,6 +1,6 @@
 # Deployment runbook
 
-Production layout: **web** on Vercel, **database** on Neon, **scoring** on Google Cloud Run (§2C, scale-to-zero, free tier), hourly cron from GitHub Actions. The production Droplet was deleted on 2026-11-21; §2 is kept as the steps to rebuild a Droplet host if Cloud Run ever stops fitting. No secret ever goes into the repo. Every value below lives only in the Vercel project env, Google Secret Manager, GitHub Actions secrets, `/etc/ec-*.env` on a Droplet, or your password manager.
+Production layout: **web** on Vercel, **database** on Neon, **scoring** on Google Cloud Run (§2C, scale-to-zero, free tier), hourly cron from Google Cloud Scheduler. The production Droplet was deleted on 2026-11-21; §2 is kept as the steps to rebuild a Droplet host if Cloud Run ever stops fitting. No secret ever goes into the repo. Every value below lives only in the Vercel project env, Google Secret Manager, GitHub Actions secrets, `/etc/ec-*.env` on a Droplet, or your password manager.
 
 ## 1. Neon (database)
 
@@ -185,7 +185,7 @@ Point the web app at it: Vercel production `SCORING_URL=<service url>` and `SCOR
 3. `BETTER_AUTH_URL` = the production URL; add the same origin to the Google OAuth client's authorized redirect URIs (`/api/auth/callback/google`).
 4. Resend: verify the sending domain (SPF, DKIM, DMARC) before setting `EMAIL_FROM`.
 5. DigitalOcean Spaces: create the bucket with file listing **restricted** and enable its CDN. The app sets the ACL per object on upload (`public-read` for shared TTS audio and avatars, `private` otherwise), so no bucket-wide public policy is needed; CORS isn't either (audio and images load by URL).
-6. Deploy; `vercel.json` registers the daily cron (`/api/cron/daily`). The hourly cron comes from GitHub Actions (`.github/workflows/cron-hourly.yml`, repo secret `CRON_SECRET` = the Vercel value); the Droplet timer in §2.6 is the fallback.
+6. Deploy; `vercel.json` registers the daily cron (`/api/cron/daily`). The hourly cron comes from Cloud Scheduler job `cron-hourly` (project `englishchunks-scoring`, us-central1, `7 * * * *` UTC, POST with `Authorization: Bearer <CRON_SECRET>`; free tier covers 3 jobs). To rotate `CRON_SECRET`, set the same new value in Vercel production, the GitHub repo secret (used by the manual `cron-hourly.yml` run) and the job (`gcloud scheduler jobs update http cron-hourly --update-headers …`), then redeploy production.
 7. Create the first admin: sign up normally, then in Neon SQL: `update "user" set role = 'admin' where email = '<you>';`
 
 ## 4. Staging validation

@@ -30,6 +30,7 @@ flowchart LR
   subgraph GCP["Google Cloud · project englishchunks-scoring · us-central1"]
     SC["Cloud Run service ec-scoring<br/>gen2 · 2 vCPU / 4 GiB · min 0 / max 1<br/>FastAPI / uvicorn"]
     MOD[("ONNX int8 models, ~950 MB<br/>baked into the image")]
+    TMR["Cloud Scheduler job cron-hourly<br/>every hour at :07 UTC"]
   end
 
   subgraph DOC["DigitalOcean"]
@@ -47,7 +48,6 @@ flowchart LR
   subgraph GH["GitHub"]
     REPO["Repository<br/>main = production"]
     CI["Actions CI<br/>lint · typecheck · Vitest<br/>Playwright e2e · scoring pytest"]
-    TMR["Actions schedule<br/>cron-hourly.yml"]
   end
 
   B -- "HTTPS: pages, actions,<br/>audio upload (multipart)" --> FN
@@ -71,7 +71,7 @@ flowchart LR
 
 - **Web tier.** One Next.js app on Vercel serves the marketing site, learner app, admin console and every API route. Functions run in `cle1`, next to the Neon database in us-east-2. Previews sit behind Vercel Authentication.
 - **Scoring tier.** Cloud Run runs the container from [`scoring/deploy/Dockerfile.cloudrun`](../scoring/deploy/Dockerfile.cloudrun) and scales to zero between sessions, staying inside the free tier. Opening a practice page sends a signed `GET /v1/warm` so the ~15 s cold start finishes before the first recording. Uploads stay in memory and request logs hold only metadata. Setup: [`scoring/deploy/RUNBOOK.md`](../scoring/deploy/RUNBOOK.md) §2C.
-- **Scheduled jobs.** Vercel Hobby cron only runs daily, so the daily billing sweep uses Vercel Cron ([`web/vercel.json`](../web/vercel.json)) and the hourly job (reminder emails, invite expiry) is triggered by a GitHub Actions schedule ([`.github/workflows/cron-hourly.yml`](../.github/workflows/cron-hourly.yml)).
+- **Scheduled jobs.** Vercel Hobby cron only runs daily, so the daily billing sweep uses Vercel Cron ([`web/vercel.json`](../web/vercel.json)) and the hourly job (reminder emails, invite expiry) is triggered by a Cloud Scheduler job (`cron-hourly`, free tier). GitHub's scheduled workflows ran only a few times a day, so [`.github/workflows/cron-hourly.yml`](../.github/workflows/cron-hourly.yml) is now a manual trigger.
 - **Data stores.** Postgres holds all application state. Spaces holds generated speech and avatars, served through its CDN. Learner recordings are never stored anywhere.
 
 ## 2. Logical architecture (components)
