@@ -1,6 +1,6 @@
 # Deployment runbook
 
-Production layout: **web** on Vercel, **database** on Neon, **scoring** on Google Cloud Run (§2C, scale-to-zero, free tier), hourly cron from GitHub Actions. The DigitalOcean Droplet setup (§2) is kept as the fallback host. No secret ever goes into the repo. Every value below lives only in the Vercel project env, Google Secret Manager, GitHub Actions secrets, `/etc/ec-*.env` on a Droplet, or your password manager.
+Production layout: **web** on Vercel, **database** on Neon, **scoring** on Google Cloud Run (§2C, scale-to-zero, free tier), hourly cron from GitHub Actions. The production Droplet was deleted on 2026-11-21; §2 is kept as the steps to rebuild a Droplet host if Cloud Run ever stops fitting. No secret ever goes into the repo. Every value below lives only in the Vercel project env, Google Secret Manager, GitHub Actions secrets, `/etc/ec-*.env` on a Droplet, or your password manager.
 
 ## 1. Neon (database)
 
@@ -16,11 +16,11 @@ Production layout: **web** on Vercel, **database** on Neon, **scoring** on Googl
 
 4. Optional: grow the library (needs `AI_GATEWAY_API_KEY`, ~$1–3 of LLM calls): `DATABASE_URL=… pnpm seed:library`.
 
-## 2. Scoring Droplet (fallback host)
+## 2. Scoring Droplet (alternative host, not running)
 
 ### 2.1 Create it
 
-- Ubuntu 24.04 LTS, **Basic 4 GB / 2 vCPU**. Regular `s-2vcpu-4gb` ($24/mo) is not offered in every region (not in SFO3); there use `s-2vcpu-4gb-amd` ($28/mo). Add your SSH key. Production: `ec-scoring`, SFO3, AMD.
+- Ubuntu 24.04 LTS, **Basic 4 GB / 2 vCPU**. Regular `s-2vcpu-4gb` ($24/mo) is not offered in every region (not in SFO3); there use `s-2vcpu-4gb-amd` ($28/mo). Add your SSH key. The former production Droplet was `ec-scoring`, SFO3, AMD (2026-10-17 → 2026-11-21).
 - DNS: `A scoring.englishchunks.guru → <droplet IP>`.
 
 ```bash

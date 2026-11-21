@@ -15,7 +15,8 @@ info:
     `X-Signature: sha256=<hex HMAC-SHA256(SCORING_SHARED_SECRET, X-Timestamp + "." + X-Request-Id)>`,
     `X-Timestamp` (unix seconds, ±60 s skew allowed) and `X-Request-Id` (UUID, propagated to logs).
 servers:
-  - url: https://scoring.englishchunks.guru
+  - url: https://ec-scoring-313237424803.us-central1.run.app
+    description: Google Cloud Run (production)
 paths:
   /healthz:
     get:
