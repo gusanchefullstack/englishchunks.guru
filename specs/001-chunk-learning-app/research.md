@@ -212,7 +212,10 @@ Each entry records the decision, why it was chosen, and what else was considered
   call moved to a GitHub Actions schedule (`.github/workflows/cron-hourly.yml`, free minutes).
   The route stays idempotent (reminders claimed once per learner per day), so GitHub's
   occasionally late runs or an overlap with the old Droplet timer are harmless.
-- **Update (2026-11-21)**: the Droplet was deleted; GitHub Actions is the only hourly trigger.
+- **Update (2026-11-21)**: the Droplet was deleted, and GitHub's schedule proved too sparse (17 runs
+  in 5 days, roughly every 6–9 hours), so reminders arrived late. The hourly call moved to Google
+  Cloud Scheduler (job `cron-hourly`, free tier: 3 jobs per billing account); the GitHub workflow
+  is kept as a manual trigger.
 
 ## R15. Email
 
