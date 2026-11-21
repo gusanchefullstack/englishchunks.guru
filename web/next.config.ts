@@ -1,26 +1,27 @@
 import type { NextConfig } from "next";
 
 const isDev = process.env.NODE_ENV !== "production";
-const cdn = process.env.SPACES_CDN_URL ? new URL(process.env.SPACES_CDN_URL).origin : "";
-const spaces = process.env.SPACES_ENDPOINT
-  ? `https://*.${new URL(process.env.SPACES_ENDPOINT).host}`
-  : "";
-if (!isDev && process.env.npm_lifecycle_event === "build" && (!cdn || !spaces)) {
+// Signed R2 URLs are virtual-hosted: https://<bucket>.<account>.r2.cloudflarestorage.com/<key>
+const r2 =
+  process.env.R2_BUCKET && process.env.R2_ACCOUNT_ID
+    ? `https://${process.env.R2_BUCKET}.${process.env.R2_ACCOUNT_ID}.r2.cloudflarestorage.com`
+    : "";
+if (!isDev && process.env.npm_lifecycle_event === "build" && !r2) {
   console.warn(
-    "⚠ SPACES_CDN_URL / SPACES_ENDPOINT not set at build time: the CSP will block TTS audio and avatars. Set them in the build environment (Vercel project env).",
+    "⚠ R2_BUCKET / R2_ACCOUNT_ID not set at build time: the CSP will block TTS audio and avatars. Set them in the build environment (Vercel project env).",
   );
 }
 
 /**
  * Static CSP (nonces would force every page dynamic and lose partial prerendering).
- * Audio/images come from our Spaces CDN; Google avatars from googleusercontent.
+ * Audio/images come from signed URLs on our R2 bucket; Google avatars from googleusercontent.
  */
 const csp = [
   "default-src 'self'",
   `script-src 'self' 'unsafe-inline'${isDev ? " 'unsafe-eval'" : ""}`,
   "style-src 'self' 'unsafe-inline'",
-  `img-src 'self' data: blob: ${cdn} ${spaces} https://lh3.googleusercontent.com`.trim(),
-  `media-src 'self' blob: ${cdn} ${spaces}`.trim(),
+  ["img-src 'self' data: blob:", r2, "https://lh3.googleusercontent.com"].filter(Boolean).join(" "),
+  ["media-src 'self' blob:", r2].filter(Boolean).join(" "),
   "font-src 'self'",
   `connect-src 'self'${isDev ? " ws:" : ""}`,
   "frame-ancestors 'none'",

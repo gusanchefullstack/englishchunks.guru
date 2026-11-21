@@ -87,7 +87,6 @@ export async function getAudioUrl(userId: string, voiceId: string, ref: TtsRef):
     await storage().put(storageKey, audio, {
       contentType,
       visibility: ownerId ? "private" : "public",
-      cacheControl: ownerId ? "private, max-age=3600" : undefined,
     });
     const [updated] = await tx
       .update(audioClip)
@@ -99,7 +98,6 @@ export async function getAudioUrl(userId: string, voiceId: string, ref: TtsRef):
   // Outside the transaction: never hold the row lock while using another connection.
   if ("generated" in ready)
     await recordUsage("tts_chars", normalize(text).length).catch(() => undefined);
-  return ready.ownerId
-    ? storage().signedGetUrl(ready.storageKey, 600)
-    : storage().publicUrl(ready.storageKey);
+  // The bucket is private: every play gets a signed URL (stable within the hour for caching).
+  return storage().signedGetUrl(ready.storageKey, ready.ownerId ? 600 : 3600);
 }

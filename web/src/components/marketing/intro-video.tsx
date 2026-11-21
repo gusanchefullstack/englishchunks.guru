@@ -1,7 +1,7 @@
 import { Headphones, Mic, PenLine, Volume2 } from "lucide-react";
 
 /**
- * Landing video (FR-070). NEXT_PUBLIC_LANDING_VIDEO_URL points at the MP4 on the Spaces CDN;
+ * Landing video (FR-070). NEXT_PUBLIC_LANDING_VIDEO_URL is the MP4's /media/<key> path (redirects to R2);
  * NEXT_PUBLIC_LANDING_VIDEO_CAPTIONS (WebVTT, required for WCAG) and _POSTER are served from
  * /public on our own origin — a cross-origin <track> would need CORS. Without a URL, a static
  * walkthrough of the session is shown.

@@ -43,7 +43,7 @@ describe("TTS by reference (FR-012, R9)", () => {
     const url1 = await getAudioUrl(u.id, DEFAULT_VOICE_ID, { kind: "chunk", id: c!.id });
     const url2 = await getAudioUrl(u.id, DEFAULT_VOICE_ID, { kind: "chunk", id: c!.id });
     expect(url1).toBe(url2);
-    expect(url1).toMatch(/^https:\/\/cdn\.test\/tts\/shared\//);
+    expect(url1).toMatch(/^https:\/\/signed\.test\/tts\/shared\//);
     expect(synthCalls - before).toBe(1);
   });
 

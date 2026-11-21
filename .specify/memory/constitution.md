@@ -90,7 +90,7 @@ Rationale: the app handles personal data, voice biometrics-adjacent audio, and p
 ### V. Cost-Conscious by Default
 
 - Text-to-speech MUST be generated lazily (only when a learner presses play) and cached per
-  sentence and voice in object storage (DigitalOcean Spaces); cached audio MUST be reused.
+  sentence and voice in object storage (Cloudflare R2); cached audio MUST be reused.
 - The cheapest adequate model tier MUST be the default (e.g., ElevenLabs Flash, the lowest-cost
   Gemma variant); a more expensive tier requires a documented justification in the plan.
 - Speech models SHOULD be quantized (ONNX int8) to fit the smallest viable instance.
@@ -142,7 +142,8 @@ Rationale: a small team and a hackathon timeline reward predictable, typed, mini
 - **TTS**: ElevenLabs (Flash model, American voices, user-selectable voice).
 - **Database**: PostgreSQL on Neon (users, profiles, chunks, attempts, scores, streaks,
   subscriptions).
-- **Object storage**: DigitalOcean Spaces for cached TTS audio and profile pictures.
+- **Object storage**: Cloudflare R2 (private bucket, signed URLs) for cached TTS audio and
+  profile pictures.
 - **Email**: Resend (verification, password reset, chunk-approval notifications).
 - **Billing**: Stripe Billing (test mode until admin activation).
 - Changes to this stack require a constitution amendment if they affect Principle I, or a
@@ -173,4 +174,4 @@ Rationale: a small team and a hackathon timeline reward predictable, typed, mini
 - Compliance is reviewed at every plan's Constitution Check, at `/speckit-analyze`, and during
   code review; unjustified violations block merge.
 
-**Version**: 1.2.0 | **Ratified**: 2026-10-16 | **Last Amended**: 2026-11-15
+**Version**: 1.2.1 | **Ratified**: 2026-10-16 | **Last Amended**: 2026-11-21

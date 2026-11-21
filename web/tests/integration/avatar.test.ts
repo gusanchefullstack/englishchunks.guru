@@ -48,7 +48,7 @@ describe("profile picture (FR-005)", () => {
     expect(meta).toMatchObject({ format: "webp", width: 512, height: 512 });
     expect(meta.exif).toBeUndefined();
     expect(stored.visibility).toBe("public");
-    expect(first.imageUrl).toBe(`https://cdn.test/${row!.imageKey}`);
+    expect(first.imageUrl).toBe(`/media/${row!.imageKey}`);
 
     await setAvatar(u.id, await jpegWithGps(600, 600));
     expect(store.objects.has(row!.imageKey!)).toBe(false); // old picture deleted

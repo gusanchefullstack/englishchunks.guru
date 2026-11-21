@@ -181,10 +181,10 @@ Point the web app at it: Vercel production `SCORING_URL=<service url>` and `SCOR
 ## 3. Vercel (web)
 
 1. Import the GitHub repo, **Root Directory `web`**, framework Next.js, plan **Hobby** while testing (Pro before charging money: Hobby is non-commercial).
-2. Add every variable from the README's Configuration table for **Production** and **Preview** (Preview → Neon `staging` branch). The `SPACES_*` values must exist at **build** time (CSP).
+2. Add every variable from the README's Configuration table for **Production** and **Preview** (Preview → Neon `staging` branch). `R2_ACCOUNT_ID` and `R2_BUCKET` must exist at **build** time (CSP).
 3. `BETTER_AUTH_URL` = the production URL; add the same origin to the Google OAuth client's authorized redirect URIs (`/api/auth/callback/google`).
 4. Resend: verify the sending domain (SPF, DKIM, DMARC) before setting `EMAIL_FROM`.
-5. DigitalOcean Spaces: create the bucket with file listing **restricted** and enable its CDN. The app sets the ACL per object on upload (`public-read` for shared TTS audio and avatars, `private` otherwise), so no bucket-wide public policy is needed; CORS isn't either (audio and images load by URL).
+5. Cloudflare R2: create a **Standard** bucket (location hint ENAM) with public access **off**, and an API token with **Object Read & Write** on that bucket only. The bucket stays private: TTS audio is handed out as signed URLs (stable within the hour so browsers cache them), and avatars / the landing video use `/media/<key>`, which redirects to a signed URL. No CORS needed (audio and images load by URL). Free tier: 10 GB, 1M writes, 10M reads per month, no egress fees.
 6. Deploy; `vercel.json` registers the daily cron (`/api/cron/daily`). The hourly cron comes from Cloud Scheduler job `cron-hourly` (project `englishchunks-scoring`, us-central1, `7 * * * *` UTC, POST with `Authorization: Bearer <CRON_SECRET>`; free tier covers 3 jobs). To rotate `CRON_SECRET`, set the same new value in Vercel production, the GitHub repo secret (used by the manual `cron-hourly.yml` run) and the job (`gcloud scheduler jobs update http cron-hourly --update-headers …`), then redeploy production.
 7. Create the first admin: sign up normally, then in Neon SQL: `update "user" set role = 'admin' where email = '<you>';`
 

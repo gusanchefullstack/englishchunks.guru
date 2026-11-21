@@ -33,8 +33,8 @@ flowchart LR
     TMR["Cloud Scheduler job cron-hourly<br/>every hour at :07 UTC"]
   end
 
-  subgraph DOC["DigitalOcean"]
-    SP[("Spaces sfo3 + CDN<br/>TTS audio cache<br/>avatars")]
+  subgraph CF["Cloudflare"]
+    SP[("R2 bucket englishchunks-media<br/>private, signed URLs<br/>TTS cache · avatars · landing video")]
   end
 
   subgraph Ext["Third-party APIs"]
@@ -72,7 +72,7 @@ flowchart LR
 - **Web tier.** One Next.js app on Vercel serves the marketing site, learner app, admin console and every API route. Functions run in `cle1`, next to the Neon database in us-east-2. Previews sit behind Vercel Authentication.
 - **Scoring tier.** Cloud Run runs the container from [`scoring/deploy/Dockerfile.cloudrun`](../scoring/deploy/Dockerfile.cloudrun) and scales to zero between sessions, staying inside the free tier. Opening a practice page sends a signed `GET /v1/warm` so the ~15 s cold start finishes before the first recording. Uploads stay in memory and request logs hold only metadata. Setup: [`scoring/deploy/RUNBOOK.md`](../scoring/deploy/RUNBOOK.md) §2C.
 - **Scheduled jobs.** Vercel Hobby cron only runs daily, so the daily billing sweep uses Vercel Cron ([`web/vercel.json`](../web/vercel.json)) and the hourly job (reminder emails, invite expiry) is triggered by a Cloud Scheduler job (`cron-hourly`, free tier). GitHub's scheduled workflows ran only a few times a day, so [`.github/workflows/cron-hourly.yml`](../.github/workflows/cron-hourly.yml) is now a manual trigger.
-- **Data stores.** Postgres holds all application state. Spaces holds generated speech and avatars, served through its CDN. Learner recordings are never stored anywhere.
+- **Data stores.** Postgres holds all application state. A private R2 bucket holds generated speech, avatars and the landing video; browsers get signed URLs (directly for audio, via the `/media/<key>` redirect for avatars and video). Learner recordings are never stored anywhere.
 
 ## 2. Logical architecture (components)
 
@@ -117,7 +117,7 @@ flowchart TB
     P2["scoring-client<br/>HMAC-signed, 20 s timeout"]
     P3["llm<br/>AI SDK via gateway<br/>5 s then fallback model"]
     P4["tts<br/>ElevenLabs"]
-    P5["storage<br/>S3 / Spaces"]
+    P5["storage<br/>S3 API / R2"]
     P6["email<br/>Resend + React Email"]
     P7["billing<br/>Stripe"]
   end
