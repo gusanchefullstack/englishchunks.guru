@@ -13,35 +13,53 @@ import { env } from "@/lib/env";
 
 export type PutOptions = {
   contentType: string;
-  /** public-read for shared TTS and avatars; private for per-learner sentence audio. */
+  /**
+   * Who may read it. The bucket itself is private either way: "public" objects (shared TTS,
+   * avatars) are readable by anyone holding a link we hand out, "private" ones (per-learner
+   * sentence audio) only by their owner. It sets the default Cache-Control.
+   */
   visibility: "public" | "private";
   cacheControl?: string;
 };
 
-/** Object storage (DigitalOcean Spaces). Never used for learner recordings (FR-019). */
+/** Key prefixes anyone may fetch through /media/<key> (stable URLs, e.g. user.image). */
+export const PUBLIC_MEDIA_PREFIXES = ["avatars/", "media/"] as const;
+
+/** Object storage (Cloudflare R2). Never used for learner recordings (FR-019). */
 export interface StorageProvider {
   put(key: string, body: Uint8Array, opts: PutOptions): Promise<void>;
   delete(key: string): Promise<void>;
   deletePrefix(prefix: string): Promise<number>;
+  /** Short-lived read URL. Stable within an hour, so browsers can reuse their cached copy. */
   signedGetUrl(key: string, expiresInSeconds?: number): Promise<string>;
+  /** Stable app URL for a PUBLIC_MEDIA_PREFIXES key; redirects to a signed URL. */
   publicUrl(key: string): string;
 }
 
-class SpacesStorage implements StorageProvider {
+const SIGNING_WINDOW_S = 3600;
+
+/** Same signed URL for every request in the current hour, still valid `expiresIn` after it ends. */
+function signingWindow(expiresInSeconds: number, now = Date.now()) {
+  const start = Math.floor(now / 1000 / SIGNING_WINDOW_S) * SIGNING_WINDOW_S;
+  return { signingDate: new Date(start * 1000), expiresIn: SIGNING_WINDOW_S + expiresInSeconds };
+}
+
+export function mediaPath(key: string) {
+  return `/media/${key}`;
+}
+
+class R2Storage implements StorageProvider {
   private s3: S3Client;
   private bucket: string;
-  private cdn: string;
 
   constructor() {
     const e = env();
     this.s3 = new S3Client({
-      endpoint: e.SPACES_ENDPOINT,
-      region: e.SPACES_REGION,
-      credentials: { accessKeyId: e.SPACES_KEY, secretAccessKey: e.SPACES_SECRET },
-      forcePathStyle: false,
+      endpoint: `https://${e.R2_ACCOUNT_ID}.r2.cloudflarestorage.com`,
+      region: "auto",
+      credentials: { accessKeyId: e.R2_ACCESS_KEY_ID, secretAccessKey: e.R2_SECRET_ACCESS_KEY },
     });
-    this.bucket = e.SPACES_BUCKET;
-    this.cdn = e.SPACES_CDN_URL.replace(/\/$/, "");
+    this.bucket = e.R2_BUCKET;
   }
 
   async put(key: string, body: Uint8Array, opts: PutOptions) {
@@ -51,8 +69,11 @@ class SpacesStorage implements StorageProvider {
         Key: key,
         Body: body,
         ContentType: opts.contentType,
-        ACL: opts.visibility === "public" ? "public-read" : "private",
-        CacheControl: opts.cacheControl ?? "public, max-age=31536000, immutable",
+        CacheControl:
+          opts.cacheControl ??
+          (opts.visibility === "public"
+            ? "public, max-age=31536000, immutable"
+            : "private, max-age=3600"),
       }),
     );
   }
@@ -82,17 +103,19 @@ class SpacesStorage implements StorageProvider {
   }
 
   async signedGetUrl(key: string, expiresInSeconds = 300) {
-    return getSignedUrl(this.s3, new GetObjectCommand({ Bucket: this.bucket, Key: key }), {
-      expiresIn: expiresInSeconds,
-    });
+    return getSignedUrl(
+      this.s3,
+      new GetObjectCommand({ Bucket: this.bucket, Key: key }),
+      signingWindow(expiresInSeconds),
+    );
   }
 
   publicUrl(key: string) {
-    return `${this.cdn}/${key}`;
+    return mediaPath(key);
   }
 }
 
-/** In-memory storage for tests and local development without Spaces. */
+/** In-memory storage for tests and local development without R2. */
 export class MemoryStorage implements StorageProvider {
   readonly objects = new Map<string, { body: Uint8Array } & PutOptions>();
   async put(key: string, body: Uint8Array, opts: PutOptions) {
@@ -111,14 +134,14 @@ export class MemoryStorage implements StorageProvider {
     return `https://signed.test/${key}?sig=test`;
   }
   publicUrl(key: string) {
-    return `https://cdn.test/${key}`;
+    return mediaPath(key);
   }
 }
 
 let provider: StorageProvider | undefined;
 
 export function storage(): StorageProvider {
-  provider ??= e2eMode() ? new MemoryStorage() : new SpacesStorage();
+  provider ??= e2eMode() ? new MemoryStorage() : new R2Storage();
   return provider;
 }
 

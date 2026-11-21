@@ -72,9 +72,15 @@ export const handlers: AnyHandler[] = [
   // Resend
   http.post("https://api.resend.com/emails", () => HttpResponse.json({ id: "email_test" })),
 
-  // Spaces (S3-compatible)
-  http.put("https://bucket.spaces.test/*", () => new HttpResponse(null, { status: 200 })),
-  http.delete("https://bucket.spaces.test/*", () => new HttpResponse(null, { status: 204 })),
+  // R2 (S3-compatible)
+  http.put(
+    "https://bucket.00000000000000000000000000000000.r2.cloudflarestorage.com/*",
+    () => new HttpResponse(null, { status: 200 }),
+  ),
+  http.delete(
+    "https://bucket.00000000000000000000000000000000.r2.cloudflarestorage.com/*",
+    () => new HttpResponse(null, { status: 204 }),
+  ),
 
   // Stripe (individual tests override with server.use)
   http.all("https://api.stripe.com/*", () =>

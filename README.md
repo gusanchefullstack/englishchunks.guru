@@ -53,7 +53,7 @@ Browser (Next.js 16, React 19) ── Server Actions / Route Handlers (TypeScrip
    │                                               │                           → 0–100 score + per-sound results
    │                                               │ ◀── weakest sounds ──── curated IPA hint table (deterministic)
    │                                               │ ── Gemma 4 26B A4B (Vercel AI Gateway) → warm tip, writing grades
-   │  ▶ play  ◀── 302 ── /api/tts?ref=… ────────── │ ── ElevenLabs Flash (lazy, cached in DigitalOcean Spaces)
+   │  ▶ play  ◀── 302 ── /api/tts?ref=… ────────── │ ── ElevenLabs Flash (lazy, cached in Cloudflare R2)
    │                                               │ ── Resend (verification, reminders) · Stripe Billing (off until admin activates)
 ```
 
@@ -123,7 +123,7 @@ Open http://localhost:3001, create an account (confirm you're 16+), click the li
 | `AI_FEEDBACK_MODEL` | Tips + writing grades | No | `google/gemma-4-26b-a4b-it` |
 | `AI_AUDIT_MODEL` | Independent chunk auditor | No | `openai/gpt-oss-20b` |
 | `ELEVENLABS_API_KEY` / `ELEVENLABS_MODEL` | Text-to-speech | Yes / No | — / `eleven_flash_v2_5` |
-| `SPACES_ENDPOINT`, `SPACES_REGION`, `SPACES_BUCKET`, `SPACES_KEY`, `SPACES_SECRET`, `SPACES_CDN_URL` | DigitalOcean Spaces (TTS cache, avatars). **Also needed at build time** for the CSP | Yes | — |
+| `R2_ACCOUNT_ID`, `R2_ACCESS_KEY_ID`, `R2_SECRET_ACCESS_KEY`, `R2_BUCKET` | Cloudflare R2, private bucket (TTS cache, avatars, landing video); reads are signed URLs. **`R2_ACCOUNT_ID` and `R2_BUCKET` are also needed at build time** for the CSP | Yes | — |
 | `RESEND_API_KEY` / `EMAIL_FROM` | Transactional email | Yes | — |
 | `SCORING_URL` / `SCORING_SHARED_SECRET` | Scoring service URL and HMAC secret (≥ 32 chars) | Yes | — |
 | `CRON_SECRET` | Bearer secret for `/api/cron/*` | Yes | — |
@@ -131,7 +131,7 @@ Open http://localhost:3001, create an account (confirm you're 16+), click the li
 | `STRIPE_SECRET_KEY` | Stripe **restricted** key (`rk_…`) | When billing is on | — |
 | `STRIPE_WEBHOOK_SECRET` | Webhook signing secret | When billing is on | — |
 | `STRIPE_PRICE_BASIC` / `_STANDARD` / `_PREMIUM` | One Price per plan Product | When billing is on | — |
-| `NEXT_PUBLIC_LANDING_VIDEO_URL` / `_CAPTIONS` / `_POSTER` | Landing video (Spaces CDN) + WebVTT captions and poster (served from `web/public/video`) | No | walkthrough fallback |
+| `NEXT_PUBLIC_LANDING_VIDEO_URL` / `_CAPTIONS` / `_POSTER` | Landing video (`/media/<key>` path of the MP4 in R2) + WebVTT captions and poster (served from `web/public/video`) | No | walkthrough fallback |
 
 `scoring/.env`: `SCORING_SHARED_SECRET` (same as the web app), `MODELS_DIR` (default `./models`), `MAX_AUDIO_SECONDS` (15), `MAX_AUDIO_BYTES` (1 MiB), `SOUND_HINTS_PATH` (set in Docker).
 
@@ -206,7 +206,7 @@ Current results: 197 web tests, 21 e2e tests, 30 scoring tests; calibration 89.1
 
 Every change goes through a pull request to `main`; CI (lint, types, unit/integration, Playwright e2e with axe, scoring tests, secret scan) must pass, and merging deploys production automatically. The scoring service is updated separately per its runbook.
 
-- **Web** → Vercel (Hobby while testing; Pro before charging money). Set every variable above in the project, including Spaces ones (used by the CSP at build). `vercel.json` schedules the daily cron.
+- **Web** → Vercel (Hobby while testing; Pro before charging money). Set every variable above in the project, including the R2 ones (used by the CSP at build). `vercel.json` schedules the daily cron.
 - **Scoring** → Google Cloud Run (gen2, 2 vCPU / 4 GiB, scale-to-zero within the free tier), image from `scoring/deploy/Dockerfile.cloudrun` with the models baked in. The hourly cron (`/api/cron/hourly`: reminders, invite expiry) runs from Google Cloud Scheduler. See [`scoring/deploy/RUNBOOK.md`](./scoring/deploy/RUNBOOK.md) §2C.
 - **Billing** stays off until an admin types `ACTIVATE` in Admin → Settings, after the go-live checklist (Stripe test-mode demo, Vercel Pro, restricted live keys, Stripe Tax decision).
 

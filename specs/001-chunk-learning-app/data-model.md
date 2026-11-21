@@ -55,7 +55,7 @@ replaced.
 | level | `cefr_level` | nullable until onboarding; required to start a session (FR-003) |
 | mother_tongue | text | ISO 639-1 code, nullable |
 | time_zone | text | IANA tz, default from browser (R18) |
-| image_key | text | Spaces key under `avatars/`, nullable |
+| image_key | text | storage (R2) key under `avatars/`, nullable |
 | voice_id | text | FK → `voice.id`, default voice |
 | theme | `theme` | default `system` |
 | ranking_visible | boolean | default true (FR-032) |
@@ -69,8 +69,8 @@ replaced.
 | last_active_at | timestamptz | admin list (FR-051) |
 
 Deletion (FR-008): hard delete cascades to sessions, attempts, writing results, ledger,
-notifications, subscription record; avatar object deleted from Spaces; Stripe subscription
-cancelled first; private TTS objects under `tts/u/<userId>/` deleted from Spaces; accepted
+notifications, subscription record; avatar object deleted from storage; Stripe subscription
+cancelled first; private TTS objects under `tts/u/<userId>/` deleted from storage; accepted
 submissions keep the chunk with `submitted_by` set to NULL.
 
 ## session / account / verification (Better Auth)

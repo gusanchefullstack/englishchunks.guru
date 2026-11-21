@@ -3,7 +3,8 @@ import path from "node:path";
 
 const fakeAudio = path.resolve(import.meta.dirname, "tests/e2e/fixtures/audio/chunk.wav");
 
-const E2E_DB = process.env.E2E_DATABASE_URL ?? "postgres://postgres:dev@localhost:54329/englishchunks";
+const E2E_DB =
+  process.env.E2E_DATABASE_URL ?? "postgres://postgres:dev@localhost:54329/englishchunks";
 const dummy = "e2e-only-not-a-secret-e2e-only-not-a-secret";
 
 export default defineConfig({
@@ -54,12 +55,10 @@ export default defineConfig({
           BETTER_AUTH_URL: "http://localhost:3100",
           AI_GATEWAY_API_KEY: "e2e",
           ELEVENLABS_API_KEY: "e2e",
-          SPACES_ENDPOINT: "https://spaces.e2e.test",
-          SPACES_REGION: "e2e",
-          SPACES_BUCKET: "e2e",
-          SPACES_KEY: "e2e",
-          SPACES_SECRET: "e2e",
-          SPACES_CDN_URL: "https://cdn.e2e.test",
+          R2_ACCOUNT_ID: "0".repeat(32),
+          R2_ACCESS_KEY_ID: "e2e",
+          R2_SECRET_ACCESS_KEY: "e2e",
+          R2_BUCKET: "e2e",
           RESEND_API_KEY: "e2e",
           EMAIL_FROM: "E2E <e2e@e2e.test>",
           SCORING_URL: "https://scoring.e2e.test",

@@ -251,6 +251,11 @@ Each entry records the decision, why it was chosen, and what else was considered
   route handler that validates MIME by magic bytes, rejects >5 MB, and uses `sharp` to
   auto-orient, strip metadata (EXIF/GPS), center-crop to 512×512, and encode WebP.
 - **Rationale**: One storage vendor; metadata stripping protects privacy.
+- **Update (2026-11-21)**: moved to Cloudflare R2 (same S3 API) to drop the $5/month Spaces
+  minimum: R2's free tier (10 GB, 1M writes, 10M reads, no egress fees) covers the ~24 MB in use.
+  R2 has no per-object ACLs, so the bucket is private: TTS gets signed URLs signed per hour
+  window (cacheable), and avatars / the landing video get stable `/media/<key>` URLs that
+  302 to a signed URL (only `avatars/` and `media/` keys; per-learner audio never).
 
 ## R18. Time zones and "practice day"
 
