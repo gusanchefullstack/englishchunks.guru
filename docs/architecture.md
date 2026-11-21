@@ -233,13 +233,13 @@ flowchart LR
   A --> B --> C
 ```
 
-| Concern | Launch (2026-10-16) | Now (2026-11-21) | Monthly fixed cost |
-|---|---|---|---|
-| Web app | Vercel Hobby | Vercel Hobby | $0 → $0 |
-| Database | Neon free | Neon free | $0 → $0 |
-| Speech scoring | DigitalOcean Droplet `s-2vcpu-4gb-amd` | Google Cloud Run, gen2, min 0 / max 1 | $28 → $0 |
-| Hourly job (reminders, invite expiry) | systemd timer on the Droplet | Google Cloud Scheduler | (in Droplet) → $0 |
-| Files (TTS cache, avatars, video) | DigitalOcean Spaces + CDN | Cloudflare R2, private | $5 → $0 |
-| **Total fixed** | | | **~$33 → $0** |
+| Concern                               | Launch (2026-10-16)                    | Now (2026-11-21)                      | Monthly fixed cost |
+| ------------------------------------- | -------------------------------------- | ------------------------------------- | ------------------ |
+| Web app                               | Vercel Hobby                           | Vercel Hobby                          | $0 → $0            |
+| Database                              | Neon free                              | Neon free                             | $0 → $0            |
+| Speech scoring                        | DigitalOcean Droplet `s-2vcpu-4gb-amd` | Google Cloud Run, gen2, min 0 / max 1 | $28 → $0           |
+| Hourly job (reminders, invite expiry) | systemd timer on the Droplet           | Google Cloud Scheduler                | (in Droplet) → $0  |
+| Files (TTS cache, avatars, video)     | DigitalOcean Spaces + CDN              | Cloudflare R2, private                | $5 → $0            |
+| **Total fixed**                       |                                        |                                       | **~$33 → $0**      |
 
 Usage-based costs are unchanged: LLM calls through Vercel AI Gateway, ElevenLabs text-to-speech (generated lazily and cached), and Resend email.
