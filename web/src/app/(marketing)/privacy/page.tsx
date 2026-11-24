@@ -9,7 +9,7 @@ export const metadata: Metadata = {
 
 export default function PrivacyPage() {
   return (
-    <LegalPage title="Privacy policy" updated="October 18, 2026">
+    <LegalPage title="Privacy policy" updated="November 24, 2026">
       <p>
         EnglishChunks.guru helps you learn English chunks by listening, speaking and writing. This
         page explains what we collect, why, who helps us process it, and the choices you have. If
@@ -23,6 +23,12 @@ export default function PrivacyPage() {
           When you record yourself, the audio is sent to our own scoring server, scored in memory
           and <strong>deleted as soon as it is scored</strong>. It is never saved to disk, never
           stored in our database and never sent to any third party.
+        </li>
+        <li>
+          During practice you can replay your own recording on your device to compare it with the
+          guide audio. That copy stays in the practice page&apos;s memory only: it is never saved on
+          your device or sent anywhere, and it is discarded when you record again, move to the next
+          step, finish the practice or leave the page.
         </li>
         <li>
           We keep only the results: your score, which sounds you found hard and the tip you were
@@ -76,8 +82,9 @@ export default function PrivacyPage() {
           <strong>Vercel</strong> hosts the website, and <strong>Neon</strong> hosts our database.
         </li>
         <li>
-          <strong>DigitalOcean</strong> hosts our scoring server (where recordings are scored and
-          deleted) and stores generated audio and profile photos.
+          <strong>Google Cloud</strong> (Cloud Run) hosts our scoring server, where recordings are
+          scored and deleted. <strong>Cloudflare</strong> (R2) stores generated audio and profile
+          photos.
         </li>
         <li>
           <strong>Vercel AI Gateway</strong> sends the sentences you write, and your scores and

@@ -7,12 +7,16 @@ import { cn } from "@/lib/utils";
 import type { AttemptResult } from "./types";
 import { MAX_RECORDING_MS, useRecorder } from "./use-recorder";
 
-/** Record → upload → result. The audio blob is only held until the upload finishes. */
+/**
+ * Record → upload → result. The panel drops the blob once the upload finishes; a parent may keep
+ * an on-device replay copy through `onClip` ("Hear yourself", FR-075).
+ */
 export function RecordPanel({
   sessionId,
   step,
   item,
   onResult,
+  onClip,
   onMicUnavailable,
   onLimitReached,
   compact = false,
@@ -21,6 +25,8 @@ export function RecordPanel({
   step: "speak_1" | "speak_2" | "read_aloud";
   item: string;
   onResult: (r: AttemptResult) => void;
+  /** A clip was recorded (before upload), for on-device replay only. */
+  onClip?: (blob: Blob) => void;
   onMicUnavailable: () => void;
   /** The practice's recording cap is used up; the parent must offer a way to move on. */
   onLimitReached?: () => void;
@@ -46,6 +52,7 @@ export function RecordPanel({
       return;
     }
     if (clip.kind === "empty") return;
+    onClip?.(clip.blob);
     setUploading(true);
     try {
       const form = new FormData();

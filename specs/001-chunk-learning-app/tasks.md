@@ -468,3 +468,11 @@ Task: "Play button in web/src/components/session/play-button.tsx"
 - [X] T169 Make unusable-recording messages encouraging and actionable (`wrong_content`, `too_short`, `too_noisy`) in `web/src/components/session/record-panel.tsx` per Constitution VI (friendly, encouraging copy)
 - [X] T170 Describe practice diagnostics and their 30-day retention on `/privacy` per FR-073
 - [X] T171 Stop sign-in lookups failing with a WebSocket `ErrorEvent` on reused Vercel functions: `attachDatabasePool` + 5 s idle timeout, pool `error` listener, and read-only retry in `web/src/db/connect.ts` / `web/src/db/retry.ts` (`tests/unit/db-retry.test.ts`) per research R21 / Constitution V
+
+## Phase 15: Hear yourself (on-device replay)
+
+- [X] T172 Amend `specs/001-chunk-learning-app/spec.md`: clarification 2026-11-24, US1 scenario 9, FR-019 exception, FR-075, SC-008 per FR-075
+- [X] T173 Add `web/src/lib/own-clips.ts` (in-memory clip store: one object URL per item, revoked on replace/clear) with `tests/unit/own-clips.test.ts`, and the `useOwnClips()` hook in `web/src/components/session/use-own-clips.ts` that clears on unmount and `pagehide` per FR-075
+- [X] T174 Add `onClip` to `web/src/components/session/record-panel.tsx` and a "Hear yourself" button (`web/src/components/session/own-clip-button.tsx`, tap-to-play, stops on unmount) to `speak-step.tsx` and `read-aloud-step.tsx` per FR-075 / US1 scenario 9
+- [X] T175 Update the in-step privacy note and `/privacy` (on-device replay; scoring on Google Cloud Run, media on Cloudflare R2) per FR-073 / FR-075
+- [X] T176 Add `tests/e2e/hear-yourself.spec.ts`: no button before recording, replay plays a `blob:` URL with no new network request, cleared on step change per FR-075
