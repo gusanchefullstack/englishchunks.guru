@@ -10,6 +10,19 @@ A web app that teaches English **chunks** — the ready-made phrases native spea
 ![Python](https://img.shields.io/badge/Python-3.12-3776AB)
 ![WCAG](https://img.shields.io/badge/WCAG-2.2%20AA-8789c0)
 ![License](https://img.shields.io/badge/license-MIT-blue)
+[![Decision log](https://img.shields.io/badge/decision%20log-rationals.md-f59e0b)](./docs/rationals.md)
+
+> [!IMPORTANT]
+> **How I made the decisions: [`docs/rationals.md`](./docs/rationals.md)**
+>
+> For each choice, from the first brief to production, it records the options I weighed, what I picked, and the evidence behind it. For example:
+>
+> - **Quality before cost.** I calibrated the speech scoring (89.1 % pair accuracy) before building any UI, and every later hosting move had to match that score.
+> - **$33/month → $0 hosting with no loss of quality.** I compared Cloud Run with five alternatives, then re-ran the calibration on it (88.8 %) before switching. ([How the hosting got to $0](./docs/rationals.md#5-how-the-hosting-got-to-0))
+> - **Measure, don't assume.** GitHub's "hourly" schedule ran only 17 times in 5 days, so I moved reminders to Cloud Scheduler.
+> - **Privacy by construction.** "Hear yourself" replays the learner's recording from the browser's memory instead of storing it anywhere.
+>
+> The [patterns of judgement](./docs/rationals.md#6-patterns-of-judgement) section sums up the criteria behind all of these.
 
 ## Table of Contents
 
