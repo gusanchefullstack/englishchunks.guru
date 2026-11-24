@@ -33,6 +33,14 @@ until an admin activates it.
 - Q: Are a privacy policy and terms of use required? → A: Yes. Public pages, linked from the
   landing footer and sign-up, kept in sync with how data is actually handled (FR-073).
 
+### Session 2026-11-24
+
+- Q: Can learners hear their own recording to compare it with the guide audio? → A: Yes. The
+  latest recording of each item can be replayed on the learner's device during the same step.
+  It is held in the page's memory only, never uploaded again or saved on the device, and is
+  discarded on re-record, when the step ends, when the practice ends, or when the page is left.
+  The server copy is still deleted as soon as it is scored (FR-019, FR-075).
+
 ## User Scenarios & Testing *(mandatory)*
 
 ### User Story 1 - Complete the daily chunk session (Priority: P1)
@@ -75,6 +83,10 @@ output and a daily score is stored.
    the system.
 8. **Given** a learner leaves mid-session, **When** they return the same day, **Then** they
    resume at the step where they stopped, with prior step results preserved.
+9. **Given** the learner has recorded an item in a Speak or Read-aloud step, **When** they press
+   "Hear yourself", **Then** their latest recording of that item plays next to the guide audio
+   so they can compare; recording again replaces it, and it is gone once they leave the step,
+   finish the practice, or close or reload the page.
 
 ---
 
@@ -356,8 +368,15 @@ limit becomes three.
 - **FR-018**: System MUST compute a daily score (0–100) as a weighted combination of try-2
   speaking, writing, and read-aloud results, save it, and update current and longest streak.
 - **FR-019**: System MUST delete every learner recording immediately after it is scored,
-  including when scoring fails; only scores and per-sound results are kept.
+  including when scoring fails; only scores and per-sound results are kept. The only other copy
+  is the on-device one allowed by FR-075.
 - **FR-020**: Learner recordings MUST NOT be sent to any third-party service.
+- **FR-075**: In Speak and Read-aloud steps the learner MUST be able to replay their latest
+  recording of each item ("Hear yourself") beside the guide audio. The clip MUST stay in the
+  page's memory only: never sent anywhere except the one scoring upload, never written to
+  browser storage (IndexedDB, local/session storage, Cache API), and released when the item is
+  recorded again, the step ends, the practice ends, or the page is left. Playback starts only
+  from the learner's tap.
 - **FR-021**: Session progress MUST persist so a learner can resume the same day.
 
 **Progress & ranking**
@@ -481,7 +500,8 @@ limit becomes three.
 - **SC-007**: At least 40% of test learners who complete one session return on 3 of the next 7
   days.
 - **SC-008**: 100% of recordings are absent from all storage once scoring completes or fails
-  (verified by audit).
+  (verified by audit); on-device replay copies (FR-075) are never persisted and are released by
+  the end of the step.
 - **SC-009**: Zero payment details are requested or stored while billing is inactive, and no
   card data is ever stored by the app.
 - **SC-010**: Duplicate-chunk detection suggests an existing chunk for at least 90% of

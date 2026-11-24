@@ -2,12 +2,14 @@
 
 import { ArrowRight, ChevronLeft, ChevronRight } from "lucide-react";
 import { useState } from "react";
+import { OwnClipButton } from "./own-clip-button";
 import { PlayButton } from "./play-button";
 import { RecordPanel } from "./record-panel";
 import { ScoreResult } from "./score-result";
 import type { Attempt, AttemptResult, Scored, SessionView } from "./types";
 import { SPEAK_ITEMS } from "./types";
 import { ActionBar, Card, Eyebrow, ghostBtn, primaryBtn } from "./ui";
+import { useOwnClips } from "./use-own-clips";
 
 /** Figma 2:675 / 2:918 — record the chunk and each example; try 1 then try 2 (FR-013, FR-015). */
 export function SpeakStep({
@@ -42,12 +44,15 @@ export function SpeakStep({
       items.findIndex((it) => !stored(it.key)),
     ),
   );
+  // One SpeakStep per step (session-flow keys it), so try-1 clips never leak into try 2.
+  const clips = useOwnClips();
   const [micMissing, setMicMissing] = useState(false);
   const [limitReached, setLimitReached] = useState(false);
   const current = items[index]!;
   const doneCount = items.filter((it) => results[it.key] || stored(it.key)).length;
   const result = results[current.key];
   const storedScore = stored(current.key)?.score;
+  const ownClip = clips.url(current.key);
 
   function onResult(r: AttemptResult) {
     if (r.kind === "scored") setResults((prev) => ({ ...prev, [current.key]: r }));
@@ -61,6 +66,7 @@ export function SpeakStep({
       step={step}
       item={current.key}
       onResult={onResult}
+      onClip={(blob) => clips.set(current.key, blob)}
       onMicUnavailable={() => setMicMissing(true)}
       onLimitReached={() => setLimitReached(true)}
     />
@@ -101,8 +107,9 @@ export function SpeakStep({
             <ChevronRight aria-hidden className="size-5" />
           </button>
         </div>
-        <div className="mt-4 flex justify-center">
-          <PlayButton audioRef={current.ref} label="Hear it first" />
+        <div className="mt-4 flex flex-wrap justify-center gap-x-6 gap-y-3">
+          <PlayButton audioRef={current.ref} label={ownClip ? "Hear the guide" : "Hear it first"} />
+          {ownClip ? <OwnClipButton url={ownClip} /> : null}
         </div>
         <p className="mt-5 text-[clamp(1.5rem,5vw,2.75rem)] leading-tight">“{current.text}”</p>
         <p className="text-ipa mt-1 text-sm" lang="en-fonipa">
@@ -124,7 +131,8 @@ export function SpeakStep({
           </>
         )}
         <p className="text-muted-foreground mt-2 text-xs">
-          Your recording is private and deleted as soon as it&apos;s scored.
+          Only you can replay your recording, on this device, until you leave this step. Our server
+          deletes it as soon as it&apos;s scored.
         </p>
       </Card>
 

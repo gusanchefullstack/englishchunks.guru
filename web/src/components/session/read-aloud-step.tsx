@@ -2,11 +2,13 @@
 
 import { ArrowRight } from "lucide-react";
 import { useState } from "react";
+import { OwnClipButton } from "./own-clip-button";
 import { PlayButton } from "./play-button";
 import { RecordPanel } from "./record-panel";
 import type { SessionView } from "./types";
 import { READ_ITEMS } from "./types";
 import { ActionBar, Card, Eyebrow, ghostBtn, primaryBtn } from "./ui";
+import { useOwnClips } from "./use-own-clips";
 
 /** Figma 2:1781 / 2:2022 — hear each corrected sentence, then read it aloud (FR-017). */
 export function ReadAloudStep({
@@ -25,6 +27,7 @@ export function ReadAloudStep({
   ) as Record<string, number>;
   const [scores, setScores] = useState<Record<string, number>>(initial);
   const [micMissing, setMicMissing] = useState(false);
+  const clips = useOwnClips();
   const done = READ_ITEMS.filter((k) => scores[k] !== undefined).length;
 
   return (
@@ -55,6 +58,12 @@ export function ReadAloudStep({
                 {removed ? null : (
                   <div className="flex flex-wrap items-center gap-3">
                     <PlayButton audioRef={`sentence:${w.id}`} label="Hear sentence" />
+                    {clips.url(key) ? (
+                      <OwnClipButton
+                        url={clips.url(key)!}
+                        ariaLabel={`Hear yourself read sentence ${i + 1}`}
+                      />
+                    ) : null}
                     {scores[key] !== undefined ? (
                       <span className="bg-tag-level text-tag-level-foreground rounded-full px-3 py-1 text-sm font-bold">
                         {scores[key]}%
@@ -65,6 +74,7 @@ export function ReadAloudStep({
                       step="read_aloud"
                       item={key}
                       compact
+                      onClip={(blob) => clips.set(key, blob)}
                       onMicUnavailable={() => setMicMissing(true)}
                       onLimitReached={() => setMicMissing(true)}
                       onResult={(r) =>
